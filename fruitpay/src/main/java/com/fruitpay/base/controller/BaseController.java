@@ -17,7 +17,7 @@ import com.fruitpay.base.model.Test;
 public class BaseController {
 
 	private static int counter = 0;
-	private static final String VIEW_INDEX = "index";
+	private static final String VIEW_INDEX = "main";
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(BaseController.class);
 	
 	@Autowired
