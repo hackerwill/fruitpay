@@ -8,7 +8,7 @@
 	<name>fruitpay Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<spring.version>4.1.1.RELEASE</spring.version>
 		<jstl.version>1.2</jstl.version>
 		<junit.version>4.11</junit.version>
@@ -16,6 +16,7 @@
 		<jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
 		<mysql.version>5.1.6</mysql.version>
 		<hibernate.version>5.0.0.Final</hibernate.version>
+		<jackson.version>2.2.3</jackson.version>
   	</properties>
   
   	<dependencies>
@@ -106,6 +107,23 @@
    			<artifactId>hibernate-jpa-2.1-api</artifactId>
     		<version>1.0.0.Final</version>
  		</dependency>
+ 		
+ 		<!-- Jackson JSON Mapper -->
+		<dependency>
+       		<groupId>com.fasterxml.jackson.core</groupId>
+        	<artifactId>jackson-core</artifactId>
+        	<version>${jackson.version}</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>com.fasterxml.jackson.core</groupId>
+        	<artifactId>jackson-databind</artifactId>
+        	<version>${jackson.version}</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>com.fasterxml.jackson.core</groupId>
+        	<artifactId>jackson-annotations</artifactId>
+        	<version>${jackson.version}</version>
+    	</dependency>
 
 	</dependencies>
 

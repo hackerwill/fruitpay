@@ -47,6 +47,5 @@
 		   info@fruitpay.com.tw| Tel: 02-2338-0958| 台北市松山區南京東路四段197號7F
 		</p>
 	</div>
-</div>
 </body>
 </html>
