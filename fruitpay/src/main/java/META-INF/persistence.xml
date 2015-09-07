@@ -6,9 +6,9 @@
 		<class>com.fruitpay.base.model.Test</class>
 		
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://willdb.cfjiobyuld0u.us-west-2.rds.amazonaws.com:3306/jbossTest"	/>
-   			<property name="javax.persistence.jdbc.user" value="fruitpayAdmin" />
-  			<property name="javax.persistence.jdbc.password" value="FruitpayGreat"	/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://[url]:[port]/[schema_name]"	/>
+   			<property name="javax.persistence.jdbc.user" value="[user_name]" />
+  			<property name="javax.persistence.jdbc.password" value="[user_password]"	/>
   	 		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"	/>
 		</properties>
 
