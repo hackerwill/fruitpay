@@ -7,14 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
-  <style type="text/css">
-	@media only screen and (max-width: 750px){
-		.navbar-nav{
-			display:none;
-		}
-	}
-  </style>
-  
   
   <script src="vendor/angularjs/1.4.4/angular.min.js"></script>
   <script src="vendor/angular-strap/2.3.1/angular-strap.min.js"></script>
