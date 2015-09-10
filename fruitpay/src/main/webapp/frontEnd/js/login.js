@@ -4,7 +4,16 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 		
 		$scope.onSubmit = function(){	
 			
-			if($scope.loginform.$invalid){
+			var response = $http.post('getAllCustomer');
+			response.success(function(data, status, headers, config) {
+				alert(1);
+				console.log(data);
+			});
+			response.error(function(data, status, headers, config) {
+				alert( "Exception details: " + JSON.stringify({data: data}));
+			});
+			
+			/*if($scope.loginform.$invalid){
 				return;
 			}
 			
@@ -14,7 +23,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 			});
 			response.error(function(data, status, headers, config) {
 				alert( "Exception details: " + JSON.stringify({data: data}));
-			});
+			});*/
 		}
 		
 	}]);
