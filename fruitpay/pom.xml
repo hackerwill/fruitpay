@@ -90,6 +90,7 @@
 			<version>${mysql.version}</version>
 		</dependency>
 		
+  		<!-- Hibernate Validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -101,6 +102,12 @@
     		<artifactId>hibernate-core</artifactId>
     		<version>${hibernate.version}</version>
   		</dependency>
+  		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
   		
   		<dependency>
    			<groupId>org.hibernate.javax.persistence</groupId>
@@ -114,11 +121,13 @@
         	<artifactId>jackson-core</artifactId>
         	<version>${jackson.version}</version>
     	</dependency>
+    	
     	<dependency>
         	<groupId>com.fasterxml.jackson.core</groupId>
         	<artifactId>jackson-databind</artifactId>
         	<version>${jackson.version}</version>
     	</dependency>
+    	
     	<dependency>
         	<groupId>com.fasterxml.jackson.core</groupId>
         	<artifactId>jackson-annotations</artifactId>
