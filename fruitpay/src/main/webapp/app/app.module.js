@@ -1,6 +1,7 @@
 'use strict';
 angular.module('app',[
-	'ui.router'
+	'ui.router',
+	'checkout'
 ]); 
  
 appRouter.$inject = ['$stateProvider','$urlRouterProvider'];
@@ -17,7 +18,8 @@ function appRouter($stateProvider, $urlRouterProvider){
         })
 		.state('index.checkout', {
             url: "/checkout",
-            templateUrl: 'app/checkout/checkout.html'
+            templateUrl: 'app/checkout/checkout.html',
+            controller:'check'
         })
 		.state('index.login', {
             url: "/login",
