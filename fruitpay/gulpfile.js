@@ -41,7 +41,7 @@ gulp.task('wrap', function() {
       .pipe(remember('scripts'))      // add back all files to the stream
       .pipe(concat('main.js'))         // do things that require all files
       .pipe(uglify())
-      .pipe(gulp.dest('webapp'));
+      .pipe(gulp.dest('src/main/webapp'));
 });
 
 gulp.task('watch', function () {
@@ -62,7 +62,7 @@ gulp.task('server',function(){
 	server.start();
 	//頁面綁上<script src="//localhost:35729/livereload.js"></script>
 	//當檔案變更時可以觸發browser reload
-	gulp.watch(['src/main/webapp/**/*.css', 'src/main/webapp/**/*.html','src/main/webapp/**/*.js',], function (file) {
+	gulp.watch(['src/main/webapp/content/*.css', 'src/main/webapp/app/**/*.html','src/main/webapp/app/**/*.js',], function (file) {
 		server.notify.apply(server, [file]);
 	});
 });
