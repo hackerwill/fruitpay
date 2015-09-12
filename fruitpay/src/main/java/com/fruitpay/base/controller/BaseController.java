@@ -14,17 +14,23 @@ public class BaseController {
 	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 	private static int counter = 0;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String welcome(ModelMap model) {
+//	@RequestMapping(value = "/", method = RequestMethod.GET)
+//	public String welcome(ModelMap model) {
+//
+//		model.addAttribute("message", "Welcome");
+//		model.addAttribute("counter", ++counter);
+//		logger.debug("[welcome] counter : {}", counter);
+//
+//		// Spring uses InternalResourceViewResolver and return back index.jsp
+//		return PageConst.MAIN_PAGE.toString();
+//
+//	}
 
-		model.addAttribute("message", "Welcome");
-		model.addAttribute("counter", ++counter);
-		logger.debug("[welcome] counter : {}", counter);
-
-		// Spring uses InternalResourceViewResolver and return back index.jsp
-		return PageConst.MAIN_PAGE.toString();
-
-	}
+	
+	@RequestMapping({"/"})
+	public String showHomePage() {
+	    return "index.html";   
+	 }
 
 }
 

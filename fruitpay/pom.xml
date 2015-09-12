@@ -9,6 +9,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<jdk.version>1.8</jdk.version>
+		<javax.version>1</javax.version>
 		<spring.version>4.1.1.RELEASE</spring.version>
 		<jstl.version>1.2</jstl.version>
 		<junit.version>4.11</junit.version>
@@ -20,14 +21,26 @@
   	</properties>
   
   	<dependencies>
-  	
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Unit Test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>${javax.version}</version>
+		</dependency>
+		
 		<!-- Spring Core -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -90,6 +103,7 @@
 			<version>${mysql.version}</version>
 		</dependency>
 		
+  		<!-- Hibernate Validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -101,6 +115,12 @@
     		<artifactId>hibernate-core</artifactId>
     		<version>${hibernate.version}</version>
   		</dependency>
+  		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
   		
   		<dependency>
    			<groupId>org.hibernate.javax.persistence</groupId>
@@ -114,11 +134,13 @@
         	<artifactId>jackson-core</artifactId>
         	<version>${jackson.version}</version>
     	</dependency>
+    	
     	<dependency>
         	<groupId>com.fasterxml.jackson.core</groupId>
         	<artifactId>jackson-databind</artifactId>
         	<version>${jackson.version}</version>
     	</dependency>
+    	
     	<dependency>
         	<groupId>com.fasterxml.jackson.core</groupId>
         	<artifactId>jackson-annotations</artifactId>
