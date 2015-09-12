@@ -3,9 +3,9 @@
 	1.nodejs ,官網就有 
 	2.gulp相關套件 ,裝了nodejs 就有npm(套件管理工具)可用
  - 開command line ,安裝gulp套件(如果裝不了 可能要用系統管理員權限開啟command line)
-    npm install -g gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html
+    npm install -g gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html bower
  - cd 到fruitpay目錄下,設定連結到global的目錄 ,讓gulp在執行時可以引用到lib
-    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember --save-dev gulp-minify-html
+    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember --save-dev gulp-minify-html bower
  - 執行gulp
     gulp
 uglify : Minify files 
@@ -26,6 +26,7 @@ var jshint = require('gulp-jshint');
 var cached = require('gulp-cached');
 var minifyHTML  = require('gulp-minify-html');
 var remember = require('gulp-remember');	
+var bower = require('bower');
 
 //要打包的檔案
 var config = {
@@ -64,12 +65,19 @@ gulp.task('html-minify',function() {
     .pipe(gulp.dest('build'));
 });
 
+gulp.task('bower', function(cb){
+  bower.commands.install([], {save: true}, {})
+    .on('end', function(installed){
+      cb(); // notify gulp that this task is finished
+    });
+});
+
 gulp.task('watch', function () {
   //檔案變更,就重新打包釋出
-  var watcher = gulp.watch(config.scriptsGlob, ['wrap']); // watch the same files in our scripts task 
-  var watcher = gulp.watch(config.htmlGlob, ['html-minify']); // watch the same files in our scripts task 
+  var scriptWatcher = gulp.watch(config.scriptsGlob, ['wrap']); // watch the same files in our scripts task 
+  var htmlWatcher = gulp.watch(config.htmlGlob, ['html-minify']); // watch the same files in our scripts task 
   
-  watcher.on('change', function (event) {
+  scriptWatcher.on('change', function (event) {
    //假如有檔案刪除,要拿掉相對在記憶體catch的檔案資訊
     if (event.type === 'deleted') { // if a file is deleted, forget about it 
       delete cached.caches['scripts'][event.path];
@@ -88,4 +96,4 @@ gulp.task('server',function(){
 	});
 });
 
-gulp.task('default', ['server','watch', 'html-minify', 'wrap']);
+gulp.task('default', ['bower', 'server','watch', 'html-minify', 'wrap']);
