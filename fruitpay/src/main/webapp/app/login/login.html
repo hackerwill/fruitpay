@@ -4,48 +4,48 @@
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
             <div class="panel panel-info" >
             	<div class="panel-heading">
-            		<div class="panel-title">ÁôªÂÖ•</div>
-                    <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#">ÂøòË®òÂØÜÁ¢º</a></div>
+            		<div class="panel-title">µn§J</div>
+                    <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#">ß—∞O±KΩX</a></div>
                 </div>     
                 <div style="padding-top:30px" class="panel-body" >
                     <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
                     <form name="loginform" class="form-horizontal" role="form" ng-submit="onSubmit()" novalidate >
                         <span style="color:red" ng-show="loginform.email.$dirty && loginform.email.$invalid">
-                        	<span ng-show="loginform.email.$error.required">‰ø°ÁÆ±ÁÇ∫Á©∫</span>
-  							<span ng-show="loginform.email.$error.email">‰ø°ÁÆ±Ê†ºÂºèÈåØË™§</span>           
+                        	<span ng-show="loginform.email.$error.required">´HΩc¨∞™≈</span>
+  							<span ng-show="loginform.email.$error.email">´HΩcÆÊ¶°ø˘ª~</span>           
                         </span>           
                         <div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        	<input type="email" class="form-control" name="email" ng-model="user.email" value="" placeholder="Ë´ãËº∏ÂÖ•‰ø°ÁÆ±" required />                
+                        	<input type="email" class="form-control" name="email" ng-model="user.email" value="" placeholder="Ω–øÈ§J´HΩc" required />                
                      	</div>
                      	<span style="color:red" ng-show="loginform.password.$dirty && loginform.password.$invalid">
-                        	<span ng-show="loginform.password.$error.required">ÂØÜÁ¢ºÁÇ∫Á©∫</span>   
-                        	<span ng-show="loginform.password.$error.minlength">ÂØÜÁ¢ºËá≥Â∞ëÁÇ∫ÂÖ≠Á¢º</span>         
+                        	<span ng-show="loginform.password.$error.required">±KΩX¨∞™≈</span>   
+                        	<span ng-show="loginform.password.$error.minlength">±KΩX¶‹§÷¨∞§ªΩX</span>         
                         </span>    
                     	<div style="margin-bottom: 25px" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input id="login-password" type="password" class="form-control" name="password" ng-model="user.password" placeholder="Ë´ãËº∏ÂÖ•ÂØÜÁ¢º" required ng-minlength="6"/>
+                            <input id="login-password" type="password" class="form-control" name="password" ng-model="user.password" placeholder="Ω–øÈ§J±KΩX" required ng-minlength="6"/>
                         </div>
 <!--                         <div class="input-group"> -->
 <!--                         	<div class="checkbox"> -->
 <!--                             	<label> -->
-<!--                             		<input id="login-remember" type="checkbox" ng-model="user.remember" value="1"> Ë®ò‰ΩèÊàë -->
+<!--                             		<input id="login-remember" type="checkbox" ng-model="user.remember" value="1"> ∞O¶Ìß⁄ -->
 <!--                            		</label> -->
 <!--                         	</div> -->
 <!--                         </div> -->
                         <div style="margin-top:10px" class="form-group">
                         	<!-- Button -->
                             <div class="col-sm-12 controls">
-                            	<Button type="submit" class="btn btn-success"/>ÁôªÂÖ•</Button>
-<!--                             	<Button type="submit" class="btn btn-primary"/>FacebookÁôªÂÖ•</Button> -->
+                            	<Button type="submit" class="btn btn-success"/>µn§J</Button>
+<!--                             	<Button type="submit" class="btn btn-primary"/>Facebookµn§J</Button> -->
 							</div>
                      	</div>
                         <div class="form-group">
                         	<div class="col-md-12 control">
                             	<div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
-                                	Ê≤íÊúâÂ∏≥Ëôü 
+                                	®S¶≥±b∏π 
                                 	<a href="#" onClick="$('#loginbox').hide(); $('#signupbox').show()">
-                                		Ë®ªÂÜä
+                                		µ˘•U
                                 	</a>
                                 </div>
                             </div>
@@ -58,20 +58,20 @@
         <div id="signupbox" style="display:none; margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         	<div class="panel panel-info">
             	<div class="panel-heading">
-                	<div class="panel-title">Ë®ªÂÜä</div>
-                	<div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">ÁôªÂÖ•</a></div>
+                	<div class="panel-title">µ˘•U</div>
+                	<div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">µn§J</a></div>
                 </div>  
                 <div class="panel-body" >
              		<form id="signupform" class="form-horizontal" role="form">
                     	<div id="signupalert" style="display:none" class="alert alert-danger">
-                        	<p>ÈåØË™§:</p>
+                        	<p>ø˘ª~:</p>
                             <span></span>
                         </div>
                         <div class="row">
                     		<div class="col-sm-12">
                     			<div style="margin-bottom: 25px" class="input-group">
 	                				<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                     				<input type="text" class="form-control" name="email" placeholder="Ë´ãËº∏ÂÖ•‰ø°ÁÆ±" />
+                     				<input type="text" class="form-control" name="email" placeholder="Ω–øÈ§J´HΩc" />
                      			</div>
                     		</div>
                     	</div>
@@ -79,13 +79,13 @@
 	                		<div class="col-sm-6">
 	                			<div style="margin-bottom: 25px" class="input-group">
 	                				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-	                				<input type="text" class="form-control" name="firstname" placeholder="Ë´ãËº∏ÂÖ•ÂßìÊ∞è" />
+	                				<input type="text" class="form-control" name="firstname" placeholder="Ω–øÈ§J©m§Û" />
 	                		    </div>
 	                		</div>
                     		<div class="col-sm-6">
                     			<div style="margin-bottom: 25px" class="input-group">
 	                				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-	                				<input type="text" class="form-control" name="lastname" placeholder="Ë´ãËº∏ÂÖ•ÂêçÂ≠ó" />
+	                				<input type="text" class="form-control" name="lastname" placeholder="Ω–øÈ§J¶W¶r" />
                     			</div>
                     		</div>
                     	</div>
@@ -93,20 +93,20 @@
                         	<div class="col-sm-12">
                         		<div style="margin-bottom: 25px" class="input-group">
 	                				<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                      				<input type="password" class="form-control" name="passwd" placeholder="Ë´ãËº∏ÂÖ•ÂØÜÁ¢º" />
+                      				<input type="password" class="form-control" name="passwd" placeholder="Ω–øÈ§J±KΩX" />
                       			</div>
                         	</div>
                   		</div>
 						<div>
                     		<!-- Button -->                                        
                     		<div class="col-md-offset-3 col-md-9">
-                        		<button id="btn-signup" type="button" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp Ë®ªÂÜä</button>
-<!--                             	<span style="margin-left:8px;">Êàñ</span>   -->
+                        		<button id="btn-signup" type="button" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp µ˘•U</button>
+<!--                             	<span style="margin-left:8px;">©Œ</span>   -->
                          	</div>
                      	</div>
 <!--                      	<div style="border-top: 1px solid #999; padding-top:20px"  class="form-group"> -->
 <!-- 	                 		<div class="col-md-offset-3 col-md-9"> -->
-<!--                        			<button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   FacebookË®ªÂÜä</button> -->
+<!--                        			<button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Facebookµ˘•U</button> -->
 <!--                         	</div>                                            -->
 <!--                    	 	</div> -->
 	             	</form>
