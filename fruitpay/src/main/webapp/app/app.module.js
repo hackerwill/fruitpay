@@ -14,16 +14,16 @@ function appRouter($stateProvider, $urlRouterProvider){
       $stateProvider
         .state('index', {
             url: "/index",
-            templateUrl: 'app/layout/shell.html'
+            templateUrl: 'layout/shell.html'
         })
 		.state('index.checkout', {
             url: "/checkout",
-            templateUrl: 'app/checkout/checkout.html',
+            templateUrl: 'checkout/checkout.html',
             controller:'check'
         })
 		.state('index.login', {
             url: "/login",
-            templateUrl: 'app/login/login.html'
+            templateUrl: 'login/login.html'
         })
 
 }
