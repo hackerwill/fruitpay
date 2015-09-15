@@ -96,4 +96,4 @@ gulp.task('server', ['html-minify', 'wrap'], function(){
 	});
 });
 
-gulp.task('default', ['bower', 'server','watch']);
+gulp.task('default', ['bower', 'server','watch'] );
