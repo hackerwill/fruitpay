@@ -86,7 +86,7 @@ gulp.task('watch', function () {
   });
 });
 
-gulp.task('server',function(){
+gulp.task('server', ['html-minify', 'wrap'], function(){
 	var server = gls.static('build',8888);	//他會自己去找到對應的webapp底下的index.html
 	server.start();
 	//頁面綁上<script src="//localhost:35729/livereload.js"></script>
@@ -96,4 +96,4 @@ gulp.task('server',function(){
 	});
 });
 
-gulp.task('default', ['bower', 'server','watch', 'html-minify', 'wrap']);
+gulp.task('default', ['bower', 'server','watch']);
