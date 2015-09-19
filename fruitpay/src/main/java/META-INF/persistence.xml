@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="fruitpay">
+		
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>com.fruitpay.base.model.AbstractDataBean</class>
+		<class>com.fruitpay.base.model.Area</class>
+		<class>com.fruitpay.base.model.City</class>
+		<class>com.fruitpay.base.model.Customer</class>
+		<class>com.fruitpay.base.model.Order</class>
+		
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://willdb.cfjiobyuld0u.us-west-2.rds.amazonaws.com:3306/jbossTest"    />
+            <property name="javax.persistence.jdbc.user" value="fruitpayAdmin" />
+            <property name="javax.persistence.jdbc.password" value="FruitpayGreat"    />
+  	 		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"	/>
+		</properties>
+
+	</persistence-unit>
+</persistence>
