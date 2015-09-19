@@ -68,6 +68,7 @@ gulp.task('html-minify',function() {
 gulp.task('bower', function(cb){
   bower.commands.install([], {save: true}, {})
     .on('end', function(installed){
+	  gulp.task('watch');
       cb(); // notify gulp that this task is finished
     });
 });
@@ -86,7 +87,7 @@ gulp.task('watch', function () {
   });
 });
 
-gulp.task('server', ['html-minify', 'wrap'], function(){
+gulp.task('server', function(){
 	var server = gls.static('build',8888);	//他會自己去找到對應的webapp底下的index.html
 	server.start();
 	//頁面綁上<script src="//localhost:35729/livereload.js"></script>
@@ -96,4 +97,4 @@ gulp.task('server', ['html-minify', 'wrap'], function(){
 	});
 });
 
-gulp.task('default', ['bower', 'server','watch'] );
+gulp.task('default', ['bower', 'server', 'html-minify', 'wrap']  );
