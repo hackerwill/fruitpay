@@ -16,7 +16,6 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="customer_id")
 	private int customerId;
 
@@ -25,8 +24,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date birthday;
 
-	@Column(name="contact_phone")
-	private String contactPhone;
+	private String cellphone;
 
 	private String email;
 
@@ -46,15 +44,27 @@ public class Customer extends AbstractDataBean implements Serializable {
 
 	private String password;
 
-	//bi-directional many-to-one association to Area
-	@ManyToOne
-	@JoinColumn(name="area_id")
-	private Area area;
+	//bi-directional many-to-one association to CreditCardInfo
+	@OneToMany(mappedBy="customer")
+	private List<CreditCardInfo> creditCardInfos;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="referenced_id")
 	private Customer customer;
+
+	//bi-directional many-to-one association to Customer
+	@OneToMany(mappedBy="customer")
+	private List<Customer> customers;
+
+	//bi-directional many-to-one association to Area
+	@ManyToOne
+	@JoinColumn(name="area_id")
+	private Area area;
+
+	//bi-directional many-to-one association to Order
+	@OneToMany(mappedBy="customer")
+	private List<Order> orders;
 
 	public Customer() {
 	}
@@ -83,12 +93,12 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.birthday = birthday;
 	}
 
-	public String getContactPhone() {
-		return this.contactPhone;
+	public String getCellphone() {
+		return this.cellphone;
 	}
 
-	public void setContactPhone(String contactPhone) {
-		this.contactPhone = contactPhone;
+	public void setCellphone(String cellphone) {
+		this.cellphone = cellphone;
 	}
 
 	public String getEmail() {
@@ -147,12 +157,26 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.password = password;
 	}
 
-	public Area getArea() {
-		return this.area;
+	public List<CreditCardInfo> getCreditCardInfos() {
+		return this.creditCardInfos;
 	}
 
-	public void setArea(Area area) {
-		this.area = area;
+	public void setCreditCardInfos(List<CreditCardInfo> creditCardInfos) {
+		this.creditCardInfos = creditCardInfos;
+	}
+
+	public CreditCardInfo addCreditCardInfo(CreditCardInfo creditCardInfo) {
+		getCreditCardInfos().add(creditCardInfo);
+		creditCardInfo.setCustomer(this);
+
+		return creditCardInfo;
+	}
+
+	public CreditCardInfo removeCreditCardInfo(CreditCardInfo creditCardInfo) {
+		getCreditCardInfos().remove(creditCardInfo);
+		creditCardInfo.setCustomer(null);
+
+		return creditCardInfo;
 	}
 
 	public Customer getCustomer() {
@@ -161,6 +185,58 @@ public class Customer extends AbstractDataBean implements Serializable {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public List<Customer> getCustomers() {
+		return this.customers;
+	}
+
+	public void setCustomers(List<Customer> customers) {
+		this.customers = customers;
+	}
+
+	public Customer addCustomer(Customer customer) {
+		getCustomers().add(customer);
+		customer.setCustomer(this);
+
+		return customer;
+	}
+
+	public Customer removeCustomer(Customer customer) {
+		getCustomers().remove(customer);
+		customer.setCustomer(null);
+
+		return customer;
+	}
+
+	public Area getArea() {
+		return this.area;
+	}
+
+	public void setArea(Area area) {
+		this.area = area;
+	}
+
+	public List<Order> getOrders() {
+		return this.orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	public Order addOrder(Order order) {
+		getOrders().add(order);
+		order.setCustomer(this);
+
+		return order;
+	}
+
+	public Order removeOrder(Order order) {
+		getOrders().remove(order);
+		order.setCustomer(null);
+
+		return order;
 	}
 
 }

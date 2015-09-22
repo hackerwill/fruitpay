@@ -11,11 +11,10 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="City.findAll", query="SELECT c FROM City c")
-public class City extends AbstractDataBean implements Serializable {
+public class City implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="city_id")
 	private int cityId;
 
@@ -24,6 +23,10 @@ public class City extends AbstractDataBean implements Serializable {
 
 	@Column(name="city_name")
 	private String cityName;
+
+	//bi-directional many-to-one association to Area
+	@OneToMany(mappedBy="city")
+	private List<Area> areas;
 
 	public City() {
 	}
@@ -52,11 +55,24 @@ public class City extends AbstractDataBean implements Serializable {
 		this.cityName = cityName;
 	}
 
+	public List<Area> getAreas() {
+		return this.areas;
+	}
+
+	public void setAreas(List<Area> areas) {
+		this.areas = areas;
+	}
+
 	public Area addArea(Area area) {
+		getAreas().add(area);
+		area.setCity(this);
+
 		return area;
 	}
 
 	public Area removeArea(Area area) {
+		getAreas().remove(area);
+		area.setCity(null);
 
 		return area;
 	}

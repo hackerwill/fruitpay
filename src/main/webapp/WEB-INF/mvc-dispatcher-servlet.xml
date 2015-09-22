@@ -18,14 +18,15 @@
 	<context:component-scan base-package="com.fruitpay" />
 	
 	<mvc:annotation-driven />
-	<mvc:resources mapping="/**" location="/" />
+	<mvc:resources mapping="/images/**" location="/content/images/" />
+	<mvc:resources mapping="/**" location="/build/" />
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
-			<value>/</value>
+			<value>/build/</value>
 		</property>
 		<property name="suffix">
-			<value>.jsp</value>
+			<value>.html</value>
 		</property>
 	</bean>
     
