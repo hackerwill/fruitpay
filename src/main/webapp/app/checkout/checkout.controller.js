@@ -7,5 +7,5 @@ angular.module('checkout', [
 ]);
 angular.module('checkout')
 	.controller('check',["$scope",function($scope){
-		$scope.test="hhhh"; 
+		$scope.test="1111111"; 
 	}]);

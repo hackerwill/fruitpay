@@ -3,17 +3,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5¥[±K¤u¨ãÃş
+ * MD5åŠ å¯†å·¥å…·é¡
  * 
  */
 public class Md5Util {
 
 	/**
-	 * ®Ú¾Ú¿é¤Jªº¦r²Å¦ê¥Í¦¨©T©wªº32¦ìMD5½X
+	 * æ ¹æ“šè¼¸å…¥çš„å­—ç¬¦ä¸²ç”Ÿæˆå›ºå®šçš„32ä½MD5ç¢¼
 	 * 
 	 * @param str
-	 *            ¿é¤Jªº¦r²Å¦ê
-	 * @return MD5½X
+	 *            è¼¸å…¥çš„å­—ç¬¦ä¸²
+	 * @return MD5ç¢¼
 	 */
 	public final static String getMd5(String str) {
 		MessageDigest mdInst = null;
@@ -22,8 +22,8 @@ public class Md5Util {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		mdInst.update(str.getBytes());// ¨Ï¥Î«ü©wªº¦r¸`§ó·sºK­n
-		byte[] md = mdInst.digest();// Àò±o±K¤å
+		mdInst.update(str.getBytes());// ä½¿ç”¨æŒ‡å®šçš„å­—ç¯€æ›´æ–°æ‘˜è¦
+		byte[] md = mdInst.digest();// ç²å¾—å¯†æ–‡
 		return StrConvertUtil.byteArrToHexStr(md);
 	}
 	
