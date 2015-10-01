@@ -51,8 +51,18 @@ var config = {
 	}
 };
 
+gulp.task('bower', function(cb){
+  bower.commands.install([], {save: true}, {})
+    .on('end', function(installed){
+      cb(); // notify gulp that this task is finished
+    });
+ 
+});
+
+gulp.task('moveTasks', ['html-minify', 'js-minify', 'images-minify']);
+
 //打包並存放
-gulp.task('wrap', function() {
+gulp.task('js-minify', function() {
 	return  gulp.src(config.scriptsGlob)
 	  .pipe(cached('scripts'))        // only pass through changed files
       .pipe(jshint())                 // do special things to the changed files...
@@ -72,23 +82,16 @@ gulp.task('html-minify',function() {
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('bower', function(cb){
-  bower.commands.install([], {save: true}, {})
-    .on('end', function(installed){
-	  gulp.task('watch');
-      cb(); // notify gulp that this task is finished
-    });
-});
-
 gulp.task('images-minify', function() {
     return gulp.src(config.imagesGlob)
     .pipe(imagemin({ progressive: true }))
     .pipe(gulp.dest('build/images'));
 });
 
-gulp.task('watch', function () {
+
+gulp.task('watch',['bower','moveTasks'], function () {
   //檔案變更,就重新打包釋出
-  var scriptWatcher = gulp.watch(config.scriptsGlob, ['wrap']); // watch the same files in our scripts task 
+  var scriptWatcher = gulp.watch(config.scriptsGlob, ['js-minify']); // watch the same files in our scripts task 
   var htmlWatcher = gulp.watch(config.htmlGlob, ['html-minify']); 
   var imagesWatcher = gulp.watch(config.imagesGlob, ['images-minify']); 
   
@@ -107,11 +110,10 @@ gulp.task('server', function(){
 	//頁面綁上<script src="//localhost:35729/livereload.js"></script>
 	//當檔案變更時可以觸發browser reload
 	gulp.watch(config.getAllPath(), function (file) {
-		gulp.task('moveTasks');
+		
 		server.notify.apply(server, [file]);
 	});
 });
 
-gulp.task('moveTasks', ['html-minify', 'wrap', 'images-minify']);
 
-gulp.task('default', ['bower', 'server', 'moveTasks']  );
+gulp.task('default', ['bower','moveTasks','watch', 'server' ]  );
