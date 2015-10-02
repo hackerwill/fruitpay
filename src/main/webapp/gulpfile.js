@@ -34,7 +34,7 @@ var config = {
 	scriptsGlob : [
 		'app/app.module.js',	//the top app setup
 		'app/**/*.module.js', 	//every feature module setup
-		'app/**/*.js'			//all function
+		'app/**/*.controller.js'			//all function
 	],
 	htmlGlob : [
 		'app/**/*.html',

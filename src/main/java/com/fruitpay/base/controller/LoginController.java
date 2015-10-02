@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.PageConst;
+import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.LoginBean;
 import com.fruitpay.base.service.LoginService;
 
@@ -56,6 +57,18 @@ public class LoginController {
 			return PageConst.LOGIN_PAGE.toString();
 		}
 		
+	}
+	
+	@RequestMapping(value = "/loginOneCustomer", method = RequestMethod.POST )
+	public String loginOneCustomer(@RequestBody Customer customer){
+		
+		int i = 0;
+		i ++;
+		if(false){
+			return PageConst.MAIN_PAGE.toString();
+		}else{
+			return PageConst.LOGIN_PAGE.toString();
+		}
 	}
 
 }
