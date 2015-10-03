@@ -174,6 +174,7 @@
 			<artifactId>maven-compiler-plugin</artifactId>
 			<version>3.3</version>
 			<configuration>
+				<executable>${JAVA_HOME}/bin/javac</executable>
 				<source>${jdk.version}</source>
 				<target>${jdk.version}</target>
 			</configuration>
@@ -186,7 +187,6 @@
 			<version>2.2</version>
 			<configuration>
 				<path>/fruitpay</path>
-				<executable>${JAVA_HOME}/bin/javac</executable>
 			</configuration>
 		  </plugin>
 
