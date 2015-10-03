@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fruitpay.base.comm.PageConst;
-import com.fruitpay.base.dao.impl.CustomerDAOImpl;
+import com.fruitpay.base.dao.impl.FakeCustomerDAOImpl;
 import com.fruitpay.base.model.Customer;
 
 @Controller
@@ -33,7 +33,7 @@ public class BaseController {
 //	}
 	
 	@Inject
-	private CustomerDAOImpl customerDAOImpl;
+	private FakeCustomerDAOImpl customerDAOImpl;
 
 	@RequestMapping({"/testPage"})
 	public String testPage() {
