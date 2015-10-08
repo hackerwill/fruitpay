@@ -1,23 +1,37 @@
-	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" bs-navbar>
-		<div class="navbar-header">
-			<a class="pull-left" href="#" ><img class="img-responsive" src="images/logo211.jpg"/></a>
-		</div>
-		<ul class="nav navbar-nav navbar-right">
-			<li data-match-route="/$"><a href="#$">首頁</a></li>
+<header class="container" >
+	<nav>
+		<ul>
+			<li><a href="#$"><img src="images/logo211.jpg"/></a></li>
 			<li data-match-route="/page-one"><a ui-sref="index.checkout">果物箱</a></li>
 			<li data-match-route="/page-two"><a>常見問題</a></li>
 			<li data-match-route="/page-third"><a href="#/page-third">部落格</a></li>
 			<li data-match-route="/page-forth"><a href="#/page-forth">聯絡我們</a></li>
 			<li data-match-route="/page-five"><a ui-sref="index.login"><span class="glyphicon glyphicon-log-in"></span> 會員中心</a></li>
+			<li class='menuButton'>
+				<span 
+					ng-init="isShowMenu=false" ng-click="isShowMenu=!isShowMenu"
+					class="glyphicon glyphicon glyphicon-menu-hamburger" aria-hidden="true">
+				</span>
+			</li>
 		</ul>
+
+		<div class="menu" id="menu" ng-show="isShowMenu">
+			<div data-match-route="/page-one"><a ui-sref="index.checkout">果物箱</a></div>
+			<div data-match-route="/page-two"><a>常見問題</a></div>
+			<div data-match-route="/page-third"><a href="#/page-third">部落格</a></div>
+			<div data-match-route="/page-forth"><a href="#/page-forth">聯絡我們</a></div>
+			<div data-match-route="/page-five"><a ui-sref="index.login"><span class="glyphicon glyphicon-log-in"></span> 會員中心</a></div>
+		</div>
+
 	</nav>
-    <hr>
+</header>
+
 	
-	<div ui-view></div>
+<section class="container" ui-view></section>
 	
 	
-	<div class="footer" id="footer">
-		<p>Copyright 2015果物配| All Rights Reserved | <br>
-		   info@fruitpay.com.tw| Tel: 02-2338-0958| 台北市松山區南京東路四段197號7F
-		</p>
-	</div>
+<footer class="container" class="footer" id="footer">
+	<p>Copyright 2015果物配| All Rights Reserved | <br>
+	   info@fruitpay.com.tw| Tel: 02-2338-0958| 台北市松山區南京東路四段197號7F
+	</p>
+</footer>
