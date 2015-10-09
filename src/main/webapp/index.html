@@ -6,65 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="bower_components/bootstrap-additions/dist/bootstrap-additions.min.css">
-  <style>
-
-/*first menu*/
-	nav > ul:nth-child(1){
-		width:100%;
-		height:70px;
-		padding:20px 0 20px 0;
-	}
-	nav > ul:nth-child(1)> li{
-		width:12%;
-		padding:4px;
-		background-color:#ffffff;
-		list-style-type:none;
-	}
-	nav > ul:nth-child(1)> li{
-		float:right;
-	}
-	nav > ul:nth-child(1)> li:nth-child(1){
-		float:left;
-	}
-	nav > ul:nth-child(1)> li:nth-child(1) img{
-		float:left;
-		margin-top:-20px;
-	}
-/*menu button for second menu*/
-	nav .menuButton{
-		display:none;
-	}
-	nav .menuButton span{
-		padding:0.5em;
-	}
-	nav .menuButton span:hover{
-		background-color:#f0f0f0;
-	}
-/*second menu*/
-	#menu{
-		display:none;
-		text-align:center;
-	}
-
-	
-/*800px以下的狀況*/
-	@media only screen and (max-width: 800px){	
-		nav > ul:nth-child(1)> li{
-			display:none;
-		}
-		nav > ul:nth-child(1)> li:nth-child(1){
-			display:inline;
-		}
-		nav > ul:nth-child(1) .menuButton{
-			float:right;
-			display:inline;
-		}
-		#menu{
-			display:block;	
-		}
-	}
-
-  </style>
+  <link rel="stylesheet" href="css/style.min.css">
 </head>
 <body>
   <div class="container" ui-view></div>

@@ -3,9 +3,9 @@
 	1.nodejs ,官網就有 
 	2.gulp相關套件 ,裝了nodejs 就有npm(套件管理工具)可用
  - 開command line ,安裝gulp套件(如果裝不了 可能要用系統管理員權限開啟command line)
-    npm install -g gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html gulp-imagemin bower
+    npm install -g gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html gulp-imagemin gulp-minify-css gulp-autoprefixer bower
  - cd 到fruitpay目錄下,設定連結到global的目錄 ,讓gulp在執行時可以引用到lib
-    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember --save-dev gulp-minify-html gulp-imagemin bower
+    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember --save-dev gulp-minify-html gulp-imagemin gulp-minify-css gulp-autoprefixer bower
  - 執行gulp
     gulp
 uglify : Minify files 
@@ -28,6 +28,8 @@ var minifyHTML  = require('gulp-minify-html');
 var remember = require('gulp-remember');	
 var bower = require('bower');
 var imagemin = require('gulp-imagemin');
+var minifyCSS = require('gulp-minify-css');
+var autoprefixer = require('gulp-autoprefixer');
 
 //要打包的檔案
 var config = {
@@ -40,6 +42,9 @@ var config = {
 		'app/**/*.html',
 		'index.html'
 	],
+	stylesGlob : [
+		'app/**/css/*.css'
+	],
 	imagesGlob : [
 		'content/images/*.jpg',
 		'content/images/*.png'
@@ -47,7 +52,8 @@ var config = {
 	getAllPath : function(){
 		return this.scriptsGlob
 			.concat(this.htmlGlob)
-			.concat(this.imagesGlob);
+			.concat(this.imagesGlob)
+			.concat(this.stylesGlob);
 	}
 };
 
@@ -59,7 +65,7 @@ gulp.task('bower', function(cb){
  
 });
 
-gulp.task('moveTasks', ['html-minify', 'js-minify', 'images-minify']);
+gulp.task('moveTasks', ['html-minify', 'js-minify', 'images-minify', 'css-minify']);
 
 //打包並存放
 gulp.task('js-minify', function() {
@@ -82,6 +88,14 @@ gulp.task('html-minify',function() {
     .pipe(gulp.dest('build'));
 });
 
+gulp.task('css-minify', function(){
+    return gulp.src(config.stylesGlob)
+    .pipe(minifyCSS())
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
+    .pipe(concat('style.min.css'))
+    .pipe(gulp.dest('build/css'))
+});
+
 gulp.task('images-minify', function() {
     return gulp.src(config.imagesGlob)
     .pipe(imagemin({ progressive: true }))
@@ -94,6 +108,7 @@ gulp.task('watch',['bower','moveTasks'], function () {
   var scriptWatcher = gulp.watch(config.scriptsGlob, ['js-minify']); // watch the same files in our scripts task 
   var htmlWatcher = gulp.watch(config.htmlGlob, ['html-minify']); 
   var imagesWatcher = gulp.watch(config.imagesGlob, ['images-minify']); 
+  var styleWatcher = gulp.watch(config.stylesGlob, ['css-minify']); 
   
   scriptWatcher.on('change', function (event) {
    //假如有檔案刪除,要拿掉相對在記憶體catch的檔案資訊

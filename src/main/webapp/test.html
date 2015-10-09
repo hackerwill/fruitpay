@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="BIG5">
+<title>Test</title>
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" href="bower_components/bootstrap-additions/dist/bootstrap-additions.min.css">
+<style>
+	div {
+    border:1px solid red;
+}
+</style>
+
+</head>
+<body ng-app="miniapp" >
+  
+  <div ng-style="style()" resizemenu>
+  window.height: {{windowHeight}}
+    <br />window.width: {{windowWidth}}
+    <br />
+  </div>
+
+  <!-- all vendor -->
+  <script src="bower_components/angular/angular.min.js"></script>
+  <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+  <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+  <script>
+  var app = angular.module('miniapp', [])
+	.directive('resizemenu', function ($window) {
+      return function (scope, element) {
+          var w = angular.element($window);
+          scope.getWindowDimensions = function () {
+              return {
+                  'h': window.innerHeight,
+                  'w': window.innerWidth
+              };
+          };
+          scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+        	  console.log(w[0].innerHeight);
+              console.log(w[0].innerWidth);
+              scope.windowHeight = newValue.h;
+              scope.windowWidth = newValue.w;
+
+              scope.style = function () {
+                  return {
+                      'height': (newValue.h - 100) + 'px',
+                      'width': (newValue.w - 100) + 'px'
+                  };
+              };
+
+          }, true);
+
+          window.onresize = function(){
+			scope.$apply(scope.getWindowDimensions);
+		  };
+
+      }
+  });	
+  </script>
+</body>
+</html>
