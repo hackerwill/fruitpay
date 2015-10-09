@@ -2,14 +2,11 @@
 	<nav>
 		<div class="navbar-header">
 			<a class="pull-left" href="#$" ><img class="img-responsive" src="images/logo211.jpg"/></a>
-			window.width: {{windowWidth}}
-		</div>
-		<div class="navbar-header" id="menuButton">
-			<span ng-init="isShowMenu=false" ng-click="isShowMenu=!isShowMenu"
+			<span id="menuButton" ng-init="isShowMenu=false" ng-click="isShowMenu=!isShowMenu"
 					class="glyphicon glyphicon glyphicon-menu-hamburger" aria-hidden="true">
 			</span>
 		</div>
-		<ul id="wideMenu"  class="nav navbar-nav navbar-right" ng-hide="isShowMenu" resizemenu>
+		<ul id="wideMenu"  class="nav navbar-nav navbar-right" ng-hide="isShowMenu">
 			<li data-match-route="/page-one"><a ui-sref="index.checkout">果物箱</a></li>
 			<li data-match-route="/page-two"><a>常見問題</a></li>
 			<li data-match-route="/page-third"><a href="#/page-third">部落格</a></li>

@@ -125,7 +125,6 @@ gulp.task('server', function(){
 	//頁面綁上<script src="//localhost:35729/livereload.js"></script>
 	//當檔案變更時可以觸發browser reload
 	gulp.watch(config.getAllPath(), function (file) {
-		
 		server.notify.apply(server, [file]);
 	});
 });
