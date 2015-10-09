@@ -4,7 +4,8 @@ var app = angular.module('app',[
 	'ui.router',
 	'shell',
 	'checkout',
-	'login'])
+	'login',
+	'member'])
 	.config(appRouter);
 
 function appRouter($stateProvider, $urlRouterProvider){
@@ -21,10 +22,10 @@ function appRouter($stateProvider, $urlRouterProvider){
             templateUrl: 'checkout/checkout.html',
             controller:'checkoutController'
         })
-		.state('index.login', {
-            url: "/login",
-            templateUrl: 'login/login.html',
-            controller:'loginController'
+		.state('index.member', {
+            url: "/member",
+            templateUrl: 'member/member.html',
+            controller:'memberController'
         })
 
 }

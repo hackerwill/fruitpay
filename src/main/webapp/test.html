@@ -39,8 +39,6 @@
               };
           };
           scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
-        	  console.log(w[0].innerHeight);
-              console.log(w[0].innerWidth);
               scope.windowHeight = newValue.h;
               scope.windowWidth = newValue.w;
 
