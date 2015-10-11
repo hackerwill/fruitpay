@@ -37,7 +37,7 @@ var config = {
 		'app/app.module.js',	//the top app setup
 		'app/**/*.module.js', 	//every feature module setup
 		'app/**/controller/*.js',
-		'app/**/serivce/*.js',
+		'app/**/service/*.js',
 		'app/**/model/*.js'
 	],
 	htmlGlob : [

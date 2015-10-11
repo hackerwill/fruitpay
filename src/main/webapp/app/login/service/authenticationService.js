@@ -1,26 +1,25 @@
 'use strict';
  
-angular.module('app').factory('AuthenticationService', AuthenticationService);
+angular.module('app')
+	.factory('authenticationService', authenticationService);
 
-AuthenticationService.$inject = [ '$http', '$cookieStore', '$rootScope',
-		'$timeout', 'UserService' ];
-function AuthenticationService($http, $cookieStore, $rootScope, $timeout,
-		UserService) {
+authenticationService.$inject = [ '$http', '$cookieStore', '$rootScope', '$timeout', 'userService' ];
+function authenticationService($http, $cookieStore, $rootScope, $timeout, userService) {
 	var service = {};
 
-	service.Login = Login;
-	service.SetCredentials = SetCredentials;
-	service.ClearCredentials = ClearCredentials;
+	service.login = login;
+	service.setCredentials = setCredentials;
+	service.clearCredentials = clearCredentials;
 
 	return service;
 
-	function Login(username, password, callback) {
-
+	function login(email, password, callback) {
+		
 		/* Dummy authentication for testing, uses $timeout to simulate api call
 		 ----------------------------------------------*/
 		$timeout(function() {
 			var response;
-			UserService.GetByUsername(username).then(function(user) {
+			userService.getByUserEmail(email).then(function(user) {
 				if (user !== null && user.password === password) {
 					response = {
 						success : true
@@ -28,7 +27,7 @@ function AuthenticationService($http, $cookieStore, $rootScope, $timeout,
 				} else {
 					response = {
 						success : false,
-						message : 'Username or password is incorrect'
+						message : 'Email or password is incorrect'
 					};
 				}
 				callback(response);
@@ -43,7 +42,7 @@ function AuthenticationService($http, $cookieStore, $rootScope, $timeout,
 		//    });
 	}
 
-	function SetCredentials(username, password) {
+	function setCredentials(username, password) {
 		var authdata = Base64.encode(username + ':' + password);
 
 		$rootScope.globals = {
@@ -57,7 +56,7 @@ function AuthenticationService($http, $cookieStore, $rootScope, $timeout,
 		$cookieStore.put('globals', $rootScope.globals);
 	}
 
-	function ClearCredentials() {
+	function clearCredentials() {
 		$rootScope.globals = {};
 		$cookieStore.remove('globals');
 		$http.defaults.headers.common.Authorization = 'Basic ';

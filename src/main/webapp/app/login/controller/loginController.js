@@ -1,9 +1,17 @@
 'use strict';
 angular.module('login')
-	.controller('loginController', ['$scope', '$http', function($scope, $http) {
+	.controller('loginController', loginController);
+
+loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService'];	
+function loginController($scope, $location, $timeout, userService, authenticationService, flashService){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
+		(function initController() {
+	        // reset login status
+	        authenticationService.clearCredentials();
+	    })();
+
 		/**
 		 * 點擊切換註冊及登入頁面
 		 * */
@@ -12,46 +20,46 @@ angular.module('login')
 		}
 		
 		/**
-		 * 登入提交動作
+		 * 登入
 		 * */
-		$scope.onLoginSubmit = function(){	
+		$scope.onLoginSubmit = function() {
+			var user = $scope.user;
+			user.dataLoading = true;
 			
-			if($scope.loginform.$invalid){
-				return;
-			}
-			console.log($scope.user);
+			console.log(user);
 			
-			var response = $http.post('loginController/login', $scope.user);
-			response.success(function(data, status, headers, config) {
-				
-				console.log(data);
-			});
-			response.error(function(data, status, headers, config) {
-				alert( "Exception details: " + JSON.stringify({data: data}));
-			});
-		}
-		
-		/**
-		 * 註冊提交動作
-		 * */
-		$scope.onSignupSubmit = function(){	
+	        authenticationService.login(user.email, user.password, function (response) {
+				console.log(response);
+	            if (response.success) {
+	                authenticationService.setCredentials(user.email, user.password);
+	                $location.path('/index/user');
+	            } else {
+	                flashService.error(response.message);
+	                user.dataLoading = false;
+	            }
+	        });
+	    };
+
+	    /**
+	     * 註冊
+	     * */
+	    $scope.onSignupSubmit = function() {
+	    	var user = $scope.user;
+	    	user.dataLoading = true;
 			
-			if($scope.signupForm.$invalid){
-				return;
-			}
-			console.log($scope.user);
+			console.log(user);
 			
-			var response = $http.post('loginController/signup', $scope.user);
-			response.success(function(data, status, headers, config) {
-				
-				console.log(data);
-			});
-			response.error(function(data, status, headers, config) {
-				alert( "Exception details: " + JSON.stringify({data: data}));
-			});
-			
-			
-			
-		}
-		
-	}]);
+	        userService.create(user)
+	            .then(function (response) {
+					console.log(response);
+	                if (response.success) {
+	                    flashService.success('Registration successful', true);
+						$scope.isLoginPage = true;
+	                } else {
+	                    flashService.error(response.message);
+	                    user.dataLoading = false;
+	                }
+	            });
+	    }
+}
+
