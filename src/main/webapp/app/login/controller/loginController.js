@@ -1,10 +1,4 @@
 'use strict';
-angular.module('login', [
-	'ngAnimate',
-    'ngSanitize',
-    'mgcrea.ngStrap' 
-]);
-
 angular.module('login')
 	.controller('loginController', ['$scope', '$http', function($scope, $http) {
 		$scope.isLoginPage = true;
@@ -16,6 +10,7 @@ angular.module('login')
 		$scope.togglePage = function(){
 			$scope.isLoginPage = !$scope.isLoginPage;
 		}
+		
 		/**
 		 * 登入提交動作
 		 * */

@@ -1,13 +1,9 @@
-'use strict';
-angular.module('shell', [
-	'ngAnimate',
-	'ngSanitize',
-	'mgcrea.ngStrap' 
-]);
-
 angular.module('shell')
 	.controller('shellController',["$scope",function($scope){
-		//check whether to show menu when resize the window
+		
+		/**
+		 * check whether to show menu when resize the window
+		 */
 		window.onresize = function(){
 				var data = {
 					divideValue : 768,
