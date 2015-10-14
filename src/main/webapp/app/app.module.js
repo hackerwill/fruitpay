@@ -51,9 +51,7 @@ function run( $rootScope, $location, $cookies, $http, $timeout) {
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         var restrictedPage = inArray($location.path(), ['/user']);
         var loggedIn = $rootScope.globals.currentUser;
-		
         if (restrictedPage && !loggedIn) {
-			console.log($location.path());
 			$timeout(function () {
 				$location.path('/index/login');
 			});

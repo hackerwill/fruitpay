@@ -1,5 +1,9 @@
 angular.module('shell')
-	.controller('shellController',["$scope",function($scope){
+	.controller('shellController',["$scope", "$location",function($scope, $location){
+		
+		$scope.isActive = function (viewLocation) { 
+			return viewLocation === $location.path();
+		};
 		
 		/**
 		 * check whether to show menu when resize the window
