@@ -17,7 +17,7 @@ import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
 
 @Controller
-@RequestMapping("loginController")
+@RequestMapping("loginCtrl")
 public class LoginController {
 	
 	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());

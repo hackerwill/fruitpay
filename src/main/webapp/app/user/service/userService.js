@@ -2,28 +2,50 @@
  
 	angular
         .module('app')
-        .factory('userService', userService);
+        //.factory('userService', userLocalStorageService);
+		.factory('userService', userService);
+	
+	userService.$inject = ['$http'];
+	function userService($http){
+		var service = {};
+		service.signup = signup;
+		service.login = login;
+		
+		return service;
+		
+		function signup(user){
+			console.log("111");
+			return $http.post('loginCtrl/signup', user).then(successCallback, errorCallback);
+		}
+		
+		function login(user){
+			
+		}
+		
+		function successCallback(data){
+			console.log("success");
+			console.log(data);
+		}
+		
+		function errorCallback(data){
+			console.log("error");
+			console.log(data);
+		}
+	}
+	
+	
  
-    userService.$inject = ['$timeout', '$filter', '$q'];
-    function userService($timeout, $filter, $q) {
+    userLocalStorageService.$inject = ['$timeout', '$filter', '$q'];
+    function userLocalStorageService($timeout, $filter, $q) {
  
         var service = {};
  
-        service.getById = getById;
         service.getByUserEmail = getByUserEmail;
         service.create = create;
         service.update = update;
         service.del = del;
  
         return service;
- 
-        function getById(id) {
-            var deferred = $q.defer();
-            var filtered = $filter('filter')(getUsers(), { id: id });
-            var user = filtered.length ? filtered[0] : null;
-            deferred.resolve(user);
-            return deferred.promise;
-        }
  
         function getByUserEmail(email) {
 			

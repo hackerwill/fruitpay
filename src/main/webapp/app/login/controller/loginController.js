@@ -47,18 +47,16 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 	    	var user = $scope.user;
 	    	user.dataLoading = true;
 			
-			console.log(user);
-			
-	        userService.create(user)
+	        userService.signup(user)
 	            .then(function (response) {
 					console.log(response);
-	                if (response.success) {
+	                /*if (response.success) {
 	                    flashService.success('Registration successful', true);
 						$scope.isLoginPage = true;
 	                } else {
 	                    flashService.error(response.message);
 	                    user.dataLoading = false;
-	                }
+	                }*/
 	            });
 	    }
 }
