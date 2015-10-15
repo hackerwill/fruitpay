@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.AssertUtils;
+import com.fruitpay.base.comm.Md5Util;
 import com.fruitpay.base.comm.returndata.LoginReturnMessage;
 import com.fruitpay.base.comm.returndata.ReturnData;
 import com.fruitpay.base.comm.returndata.ReturnObject;
@@ -53,15 +54,15 @@ public class LoginController {
 			return LoginReturnMessage.RequiredFieldsIsEmpty.getReturnMessage(); 
 		}
 		
+		customer.setPassword(encodePassword(customer.getPassword()));
+		
 		ReturnData lrm = loginService.signup(customer);
 		
-		if("0".equals(lrm.getErrorCode())){
-			ReturnObject<String> ro = new ReturnObject<String>(lrm, "mainPage");
-			return ro;
-		}else{
-			return lrm;
-		}
-		
+		return lrm;
+	}
+	
+	private String encodePassword(String password){
+		return Md5Util.getMd5(password);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.fruitpay.base.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.returndata.LoginReturnMessage;
 import com.fruitpay.base.comm.returndata.ReturnData;
@@ -14,9 +15,10 @@ import com.fruitpay.base.service.LoginService;
 public class LoginServiceImpl implements LoginService {
 
 	@Autowired
-	@Qualifier("FakeCustomerDAOImpl")
+	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
 
+	@Transactional
 	@Override
 	public ReturnData signup(Customer customer) {
 
