@@ -17,7 +17,7 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.fruitpay" />
+	<context:component-scan base-package="com.fruitpay.comm.model,com.fruitpay.comm.service,com.fruitpay.comm.utils" />
 	
 	<mvc:annotation-driven />
 	<mvc:resources mapping="/images/**" location="/content/images/" />
@@ -32,10 +32,6 @@
 		</property>
 	</bean>
 	
-	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
-	<task:executor id="myExecutor" pool-size="5" />
-	<task:scheduler id="myScheduler" pool-size="10" />
-    
 	<!--  jpa configure -->
 
 	 <bean id="entityManagerFactory"
@@ -49,6 +45,5 @@
  		  p:entityManagerFactory-ref="entityManagerFactory" />
   
 	 <tx:annotation-driven transaction-manager="transactionManager" />
-	 
 
 </beans>

@@ -1,4 +1,4 @@
-package com.fruitpay.base.comm;
+package com.fruitpay.comm.utils;
 /**
  * 字符串轉換工具類
  * 

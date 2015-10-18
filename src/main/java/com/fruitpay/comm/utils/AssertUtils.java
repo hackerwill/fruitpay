@@ -1,4 +1,4 @@
-package com.fruitpay.base.comm;
+package com.fruitpay.comm.utils;
 
 public class AssertUtils {
 	

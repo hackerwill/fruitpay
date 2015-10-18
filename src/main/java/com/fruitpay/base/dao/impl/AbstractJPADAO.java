@@ -7,14 +7,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.fruitpay.base.dao.DAO;
 import com.fruitpay.base.model.AbstractDataBean;
 
 public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<T> {
 	
-	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@PersistenceContext
 	private EntityManager entityManager;

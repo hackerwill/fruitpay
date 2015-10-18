@@ -1,4 +1,4 @@
-package com.fruitpay.base.comm;
+package com.fruitpay.comm.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

@@ -3,12 +3,14 @@ package com.fruitpay.base.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.fruitpay.base.comm.returndata.LoginReturnMessage;
-import com.fruitpay.base.comm.returndata.ReturnData;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
+import com.fruitpay.comm.model.ReturnData;
+import com.fruitpay.comm.utils.Md5Util;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -18,13 +20,17 @@ public class LoginServiceImpl implements LoginService {
 	CustomerDAO customerDAO;
 
 	@Override
+	@Transactional
 	public ReturnData signup(Customer customer) {
 
 		if(customerDAO.isEmailExisted(customer.getEmail())){
-			return LoginReturnMessage.EmailAlreadyExisted.getReturnMessage();
+			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
+			//加密密碼
+			customer.setPassword(Md5Util.getMd5(customer.getPassword()));
 			customerDAO.create(customer); 
-			return LoginReturnMessage.Success.getReturnMessage();
+			
+			return ReturnMessageEnum.Common.Success.getReturnMessage();
 		}
 	}
 
@@ -32,11 +38,11 @@ public class LoginServiceImpl implements LoginService {
 	public ReturnData login(String email, String password) {
 
 		if(!customerDAO.isEmailExisted(email)){
-			return LoginReturnMessage.EmailNotFound.getReturnMessage();
+			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else if(!customerDAO.isEmailMatchPassword(email, password)){
-			return LoginReturnMessage.EmailNotFound.getReturnMessage();
+			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else{
-			return LoginReturnMessage.Success.getReturnMessage();
+			return ReturnMessageEnum.Common.Success.getReturnMessage();
 		}
 	}
 	

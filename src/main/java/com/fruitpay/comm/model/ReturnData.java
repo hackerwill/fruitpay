@@ -1,4 +1,4 @@
-package com.fruitpay.base.comm.returndata;
+package com.fruitpay.comm.model;
 
 import java.io.Serializable;
 
