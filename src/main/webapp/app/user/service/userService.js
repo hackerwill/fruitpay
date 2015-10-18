@@ -14,7 +14,6 @@
 		return service;
 		
 		function signup(user){
-			console.log("111");
 			return $http.post('loginCtrl/signup', user).then(successCallback, errorCallback);
 		}
 		
@@ -22,14 +21,19 @@
 			
 		}
 		
-		function successCallback(data){
-			console.log("success");
-			console.log(data);
+		function successCallback(response){
+			var returnData = response.data;
+			if(returnData.errorCode == '0'){
+				return true;
+			}else{
+				console.log(response);
+				return false;
+			}
 		}
 		
-		function errorCallback(data){
-			console.log("error");
-			console.log(data);
+		function errorCallback(response){
+			console.log(response);
+			return false;
 		}
 	}
 	

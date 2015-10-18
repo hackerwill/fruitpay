@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import com.fruitpay.base.dao.DAO;
 import com.fruitpay.base.model.AbstractDataBean;
 

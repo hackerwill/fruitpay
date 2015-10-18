@@ -16,7 +16,7 @@ import com.fruitpay.comm.utils.Md5Util;
 public class LoginServiceImpl implements LoginService {
 
 	@Autowired
-	@Qualifier("FakeCustomerDAOImpl")
+	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
 
 	@Override
@@ -26,12 +26,16 @@ public class LoginServiceImpl implements LoginService {
 		if(customerDAO.isEmailExisted(customer.getEmail())){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
-			//加密密碼
-			customer.setPassword(Md5Util.getMd5(customer.getPassword()));
+			customer = getEncodedPasswordCustomer(customer);
 			customerDAO.create(customer); 
 			
 			return ReturnMessageEnum.Common.Success.getReturnMessage();
 		}
+	}
+	//加密密碼
+	private Customer getEncodedPasswordCustomer(Customer customer){
+		 customer.setPassword(Md5Util.getMd5(customer.getPassword()));
+		 return customer;
 	}
 
 	@Override

@@ -2,8 +2,8 @@
 angular.module('login')
 	.controller('loginController', loginController);
 
-loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService'];	
-function loginController($scope, $location, $timeout, userService, authenticationService, flashService){
+loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog'];	
+function loginController($scope, $location, $timeout, userService, authenticationService, flashService, ngDialog){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
@@ -48,15 +48,19 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 	    	user.dataLoading = true;
 			
 	        userService.signup(user)
-	            .then(function (response) {
-					console.log(response);
-	                /*if (response.success) {
+	            .then(function (success) {
+					console.log(success);
+	                if (success) {
 	                    flashService.success('Registration successful', true);
+	                    ngDialog.open({
+	                        template: '<p>my template</p>',
+	                        plain: true
+	                    });
 						$scope.isLoginPage = true;
 	                } else {
-	                    flashService.error(response.message);
+	                    flashService.error(success);
 	                    user.dataLoading = false;
-	                }*/
+	                }
 	            });
 	    }
 }

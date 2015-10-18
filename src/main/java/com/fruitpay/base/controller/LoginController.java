@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.controller.MessageSendController;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
-import com.fruitpay.comm.service.impl.EmailContentFactory;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.AssertUtils;
 
