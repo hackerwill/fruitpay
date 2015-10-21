@@ -2,8 +2,8 @@
 angular.module('login')
 	.controller('loginController', loginController);
 
-loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog'];	
-function loginController($scope, $location, $timeout, userService, authenticationService, flashService, ngDialog){
+loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog', '$alert'];	
+function loginController($scope, $location, $timeout, userService, authenticationService, flashService, ngDialog, $alert){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
@@ -51,11 +51,14 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 	            .then(function (success) {
 					console.log(success);
 	                if (success) {
-	                    flashService.success('Registration successful', true);
-	                    ngDialog.open({
-	                        template: '<p>my template</p>',
-	                        plain: true
-	                    });
+	                    flashService.success('Registration successful', success);
+	                    $alert({
+	        				title: '歡迎您成為我們的會員，請再次點選登入',
+	        				placement: 'top',
+	        				type: 'success',
+	        				duration: '3',
+	        				animation: 'am-fade-and-scale'
+	        			});
 						$scope.isLoginPage = true;
 	                } else {
 	                    flashService.error(success);

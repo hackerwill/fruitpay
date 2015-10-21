@@ -2,11 +2,10 @@
  
 	angular
         .module('app')
-        //.factory('userService', userLocalStorageService);
 		.factory('userService', userService);
 	
-	userService.$inject = ['$http'];
-	function userService($http){
+	userService.$inject = ['$http','logService'];
+	function userService($http, logService){
 		var service = {};
 		service.signup = signup;
 		service.login = login;
@@ -14,27 +13,15 @@
 		return service;
 		
 		function signup(user){
-			return $http.post('loginCtrl/signup', user).then(successCallback, errorCallback);
+			return $http.post('loginCtrl/signup', user)
+			.then(logService.successCallback, logService.errorCallback);
 		}
 		
 		function login(user){
 			
 		}
 		
-		function successCallback(response){
-			var returnData = response.data;
-			if(returnData.errorCode == '0'){
-				return true;
-			}else{
-				console.log(response);
-				return false;
-			}
-		}
 		
-		function errorCallback(response){
-			console.log(response);
-			return false;
-		}
 	}
 	
 	

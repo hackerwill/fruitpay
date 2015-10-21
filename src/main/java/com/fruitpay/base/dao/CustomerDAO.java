@@ -5,14 +5,14 @@ import com.fruitpay.base.model.Customer;
 public interface CustomerDAO extends DAO<Customer> {
 	
 	/**
-     * 驗證該信箱是否已存在
+     * 用信箱得到顧客資訊
      *
      * @param  email
      *         信箱
      *
-     * @return 是否存在
+     * @return 顧客
      */
-	public boolean isEmailExisted(String email);
+	public Customer getCustomerByEmail(String email);
 	
 	/**
      * 驗證該信箱與密碼是否與資料庫資料吻合

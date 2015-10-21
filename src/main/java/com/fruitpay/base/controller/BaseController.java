@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fruitpay.base.dao.impl.FakeCustomerDAOImpl;
-
 @Controller
 public class BaseController {
 	
@@ -27,9 +25,6 @@ public class BaseController {
 //		return PageConst.MAIN_PAGE.toString();
 //
 //	}
-	
-	@Inject
-	private FakeCustomerDAOImpl customerDAOImpl;
 
 	@RequestMapping({"/testPage"})
 	public String testPage() {

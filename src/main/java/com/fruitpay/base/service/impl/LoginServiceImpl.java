@@ -23,7 +23,7 @@ public class LoginServiceImpl implements LoginService {
 	@Transactional
 	public ReturnData signup(Customer customer) {
 
-		if(customerDAO.isEmailExisted(customer.getEmail())){
+		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
 			customer = getEncodedPasswordCustomer(customer);
@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public ReturnData login(String email, String password) {
 
-		if(!customerDAO.isEmailExisted(email)){
+		if(customerDAO.getCustomerByEmail(email) != null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else if(!customerDAO.isEmailMatchPassword(email, password)){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
