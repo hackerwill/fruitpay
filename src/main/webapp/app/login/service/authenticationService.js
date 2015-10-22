@@ -3,8 +3,8 @@
 angular.module('app')
 	.factory('authenticationService', authenticationService);
 
-authenticationService.$inject = [ '$http', '$cookieStore', '$rootScope', '$timeout', 'userService' ];
-function authenticationService($http, $cookieStore, $rootScope, $timeout, userService) {
+authenticationService.$inject = [ '$http', '$rootScope', '$timeout', 'userService' ];
+function authenticationService($http, $rootScope, $timeout, userService) {
 	var service = {};
 
 	service.login = login;
@@ -13,11 +13,11 @@ function authenticationService($http, $cookieStore, $rootScope, $timeout, userSe
 
 	return service;
 
-	function login(email, password, callback) {
+	function login(user, callback) {
 		
 		/* Dummy authentication for testing, uses $timeout to simulate api call
 		 ----------------------------------------------*/
-		$timeout(function() {
+		/*$timeout(function() {
 			var response;
 			userService.getByUserEmail(email).then(function(user) {
 				if (user !== null && user.password === password) {
@@ -32,14 +32,15 @@ function authenticationService($http, $cookieStore, $rootScope, $timeout, userSe
 				}
 				callback(response);
 			});
-		}, 1000);
+		}, 1000);*/
 
 		/* Use this for real authentication
 		 ----------------------------------------------*/
-		//$http.post('/api/authenticate', { username: username, password: password })
-		//    .success(function (response) {
-		//        callback(response);
-		//    });
+		return userService.login(user).then(function(result) {
+			if(result)
+				setCredentials(user.email, user.password);
+			return result;
+		});
 	}
 
 	function setCredentials(username, password) {
@@ -51,13 +52,15 @@ function authenticationService($http, $cookieStore, $rootScope, $timeout, userSe
 				authdata : authdata
 			}
 		};
+		
+		localStorage.fruitpayGlobals =  JSON.stringify($rootScope.globals);
+		console.log(localStorage.fruitpayGlobals);
 		$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
-		$cookieStore.put('globals', $rootScope.globals);
 	}
 
 	function clearCredentials() {
 		$rootScope.globals = {};
-		$cookieStore.remove('globals');
+		localStorage.fruitpayGlobals={};
 		$http.defaults.headers.common.Authorization = 'Basic ';
 	}
 }

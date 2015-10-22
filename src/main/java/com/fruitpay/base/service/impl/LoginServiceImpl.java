@@ -32,6 +32,7 @@ public class LoginServiceImpl implements LoginService {
 			return ReturnMessageEnum.Common.Success.getReturnMessage();
 		}
 	}
+	
 	//加密密碼
 	private Customer getEncodedPasswordCustomer(Customer customer){
 		 customer.setPassword(Md5Util.getMd5(customer.getPassword()));
@@ -41,9 +42,9 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public ReturnData login(String email, String password) {
 
-		if(customerDAO.getCustomerByEmail(email) != null){
+		if(customerDAO.getCustomerByEmail(email) == null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
-		}else if(!customerDAO.isEmailMatchPassword(email, password)){
+		}else if(!customerDAO.isEmailMatchPassword(email, Md5Util.getMd5(password))){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else{
 			return ReturnMessageEnum.Common.Success.getReturnMessage();

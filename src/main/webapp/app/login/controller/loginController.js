@@ -7,10 +7,10 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
-		(function initController() {
+		/*(function initController() {
 	        // reset login status
 	        authenticationService.clearCredentials();
-	    })();
+	    })();*/
 
 		/**
 		 * 點擊切換註冊及登入頁面
@@ -26,15 +26,12 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 			var user = $scope.user;
 			user.dataLoading = true;
 			
-			console.log(user);
-			
-	        authenticationService.login(user.email, user.password, function (response) {
-				console.log(response);
-	            if (response.success) {
-	                authenticationService.setCredentials(user.email, user.password);
+	        authenticationService.login(user)
+	        .then(function(success){
+	            if (success) {
 	                $location.path('/index/user');
 	            } else {
-	                flashService.error(response.message);
+	                flashService.error(success);
 	                user.dataLoading = false;
 	            }
 	        });
@@ -49,7 +46,6 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 			
 	        userService.signup(user)
 	            .then(function (success) {
-					console.log(success);
 	                if (success) {
 	                    flashService.success('Registration successful', success);
 	                    $alert({

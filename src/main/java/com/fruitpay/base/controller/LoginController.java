@@ -36,7 +36,7 @@ public class LoginController {
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
 		
-		logger.info("email: " + customer.getEmail());
+		logger.debug("email: " + customer.getEmail());
 		
 		ReturnData lrm = loginService.login(customer.getEmail(), customer.getPassword());
 		

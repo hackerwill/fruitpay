@@ -38,10 +38,10 @@ function appRouter($stateProvider, $urlRouterProvider){
 
 }
 
-run.$inject = ['$rootScope', '$location', '$cookies', '$http', '$timeout'];
-function run( $rootScope, $location, $cookies, $http, $timeout) {
+run.$inject = ['$rootScope', '$location', '$http', '$timeout'];
+function run( $rootScope, $location, $http, $timeout) {
     // keep user logged in after page refresh
-    $rootScope.globals = $cookies.get('globals') || {};
+    $rootScope.globals = JSON.parse(localStorage.fruitpayGlobals) || {};
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
     }
@@ -56,6 +56,14 @@ function run( $rootScope, $location, $cookies, $http, $timeout) {
 			$timeout(function () {
 				$location.path('/index/login');
 			});
+			$rootScope.dropdown = [];
+        }else{
+        	$rootScope.dropdown = [
+        	                   {
+        	                     "text": "登出",
+        	                     "click": "$alert(\"Holy guacamole!\")"
+        	                   }
+        	                 ];
         }
         
         function inArray(path, comparePaths){

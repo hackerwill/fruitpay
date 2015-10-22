@@ -38,8 +38,22 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 
 	@Override
 	public boolean isEmailMatchPassword(String email, String password) {
-		// TODO Auto-generated method stub
-		return false;
+
+		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.email = ?1 AND c.password = ?2 ");
+		q.setParameter(1, email);
+		q.setParameter(2, password);
+		Customer customer = null;
+		try{
+			customer = (Customer)q.getSingleResult();
+		}catch(NoResultException e){
+			logger.debug("the customer of email : " + email + " is not found.");;
+		}
+		
+		if(customer != null){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 }

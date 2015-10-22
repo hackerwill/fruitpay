@@ -18,7 +18,8 @@
 		}
 		
 		function login(user){
-			
+			return $http.post('loginCtrl/login', user)
+			.then(logService.successCallback, logService.errorCallback);
 		}
 		
 		
@@ -114,7 +115,6 @@
             if(!localStorage.users){
                 localStorage.users = JSON.stringify([]);
             }
-			console.log(localStorage.users);
             return JSON.parse(localStorage.users);
         }
  

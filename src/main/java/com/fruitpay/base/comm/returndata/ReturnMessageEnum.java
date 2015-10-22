@@ -20,7 +20,7 @@ public class ReturnMessageEnum{
 	
 	public enum Login{
 		EmailNotFound(new ReturnMessage("-1", "找不到這個信箱")),
-		EmailPasswordNotMatch(new ReturnMessage("-1", "信箱或密碼不符")),
+		EmailPasswordNotMatch(new ReturnMessage("-1", "信箱與密碼不符")),
 		EmailAlreadyExisted(new ReturnMessage("-1", "信箱已被註冊"));
 		
 		private ReturnMessage rm;
