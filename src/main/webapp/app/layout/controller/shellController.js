@@ -1,9 +1,27 @@
 angular.module('shell')
-	.controller('shellController',["$scope", "$location",function($scope, $location){
+	.controller('shellController',["$rootScope", "$scope", "$location",
+	                               function($rootScope, $scope, $location){
 		
 		$scope.isActive = function (viewLocation) { 
 			return viewLocation === $location.path();
 		};
+		
+		var loggedIn = $rootScope.globals.currentUser || null;
+		if(loggedIn){
+			$scope.dropdown = [
+        	                   {
+        	                     "text": "登出",
+        	                     "href": "#/index/logout"
+        	                   }
+        	               ];
+		}else{
+			$scope.dropdown = [
+        	                   {
+        	                     "text": "登入",
+        	                     "href": "#/index/login"
+        	                   }
+        	               ];
+		}
 		
 		/**
 		 * check whether to show menu when resize the window

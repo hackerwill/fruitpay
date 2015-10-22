@@ -2,15 +2,16 @@
 angular.module('login')
 	.controller('loginController', loginController);
 
-loginController.$inject = ['$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog', '$alert'];	
-function loginController($scope, $location, $timeout, userService, authenticationService, flashService, ngDialog, $alert){
+loginController.$inject = ['$rootScope', '$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog', '$alert'];	
+function loginController($rootScope, $scope, $location, $timeout, userService, authenticationService, flashService, ngDialog, $alert){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
-		/*(function initController() {
-	        // reset login status
-	        authenticationService.clearCredentials();
-	    })();*/
+		(function(){
+			if($rootScope.globals.currentUser || null){
+				$location.path('/index/user');
+			}
+		})();
 
 		/**
 		 * 點擊切換註冊及登入頁面
@@ -30,6 +31,7 @@ function loginController($scope, $location, $timeout, userService, authenticatio
 	        .then(function(success){
 	            if (success) {
 	                $location.path('/index/user');
+	                //location.reload();
 	            } else {
 	                flashService.error(success);
 	                user.dataLoading = false;

@@ -10,6 +10,7 @@ import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.model.ReturnData;
+import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.utils.Md5Util;
 
 @Service
@@ -41,13 +42,14 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public ReturnData login(String email, String password) {
-
-		if(customerDAO.getCustomerByEmail(email) == null){
+		Customer customer = customerDAO.getCustomerByEmail(email); 
+		if(customer == null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else if(!customerDAO.isEmailMatchPassword(email, Md5Util.getMd5(password))){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else{
-			return ReturnMessageEnum.Common.Success.getReturnMessage();
+			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+					customer);
 		}
 	}
 	

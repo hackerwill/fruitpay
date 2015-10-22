@@ -35,13 +35,22 @@ function appRouter($stateProvider, $urlRouterProvider){
             templateUrl: 'login/login.html',
             controller:'loginController'
         })
+        .state('index.logout', {
+            url: "/logout",
+            templateUrl: 'login/logout.html',
+            controller:'logoutController'
+        })
 
 }
 
 run.$inject = ['$rootScope', '$location', '$http', '$timeout'];
 function run( $rootScope, $location, $http, $timeout) {
     // keep user logged in after page refresh
-    $rootScope.globals = JSON.parse(localStorage.fruitpayGlobals) || {};
+	$rootScope.globals = {};
+	if(localStorage.fruitpayGlobals){
+		$rootScope.globals = JSON.parse(localStorage.fruitpayGlobals) || {};
+	}
+	
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
     }
@@ -51,19 +60,12 @@ function run( $rootScope, $location, $http, $timeout) {
 	 */
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         var restrictedPage = inArray($location.path(), ['/user']);
-        var loggedIn = $rootScope.globals.currentUser;
+        var loggedIn = $rootScope.globals.currentUser || null;
+        
         if (restrictedPage && !loggedIn) {
-			$timeout(function () {
+			$timeout(function () {				
 				$location.path('/index/login');
 			});
-			$rootScope.dropdown = [];
-        }else{
-        	$rootScope.dropdown = [
-        	                   {
-        	                     "text": "登出",
-        	                     "click": "$alert(\"Holy guacamole!\")"
-        	                   }
-        	                 ];
         }
         
         function inArray(path, comparePaths){

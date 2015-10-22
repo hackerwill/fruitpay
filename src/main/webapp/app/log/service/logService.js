@@ -9,11 +9,23 @@ function logService($alert){
 	var service = {};
 	service.successCallback = successCallback;
 	service.errorCallback = errorCallback;
+	service.showSuccess = showSuccess;
 		
 	return service;
 	
+	function showSuccess(message){
+		$alert({
+			title: message,
+			placement: 'top',
+			type: 'success',
+			duration: '3',
+			animation: 'am-fade-and-scale'
+		});
+	}
+	
 	function successCallback(response){
 		var returnData = response.data;
+		console.log(returnData);
 		if(returnData.errorCode == '0'){
 			return true;
 		}else{

@@ -32,7 +32,7 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST )
 	public @ResponseBody ReturnData loginAsOneCustomer(@RequestBody Customer customer){
 		
-		if(AssertUtils.isEmpty(customer.getEmail())){
+		if(AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword())){
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
 		
@@ -40,12 +40,7 @@ public class LoginController {
 		
 		ReturnData lrm = loginService.login(customer.getEmail(), customer.getPassword());
 		
-		if("0".equals(lrm.getErrorCode())){
-			ReturnObject<String> ro = new ReturnObject<String>(lrm, "mainPage");
-			return ro;
-		}else{
-			return lrm;
-		}
+		return lrm;
 	}
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST )

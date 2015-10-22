@@ -14,7 +14,6 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 	return service;
 
 	function login(user, callback) {
-		
 		/* Dummy authentication for testing, uses $timeout to simulate api call
 		 ----------------------------------------------*/
 		/*$timeout(function() {
@@ -54,13 +53,12 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		};
 		
 		localStorage.fruitpayGlobals =  JSON.stringify($rootScope.globals);
-		console.log(localStorage.fruitpayGlobals);
 		$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
 	}
 
 	function clearCredentials() {
 		$rootScope.globals = {};
-		localStorage.fruitpayGlobals={};
+		localStorage.fruitpayGlobals = null;
 		$http.defaults.headers.common.Authorization = 'Basic ';
 	}
 }
