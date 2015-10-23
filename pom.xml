@@ -314,6 +314,7 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.3-SNAPSHOT</version>
 				<configuration>
+					<server>fruitpay</server>
 					<path>/fruitpay</path>
 					<url>http://139.162.2.196:8080/manager</url>
 				</configuration>
