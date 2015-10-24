@@ -41,6 +41,7 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
+	@Transactional 
 	public ReturnData login(String email, String password) {
 		Customer customer = customerDAO.getCustomerByEmail(email); 
 		if(customer == null){

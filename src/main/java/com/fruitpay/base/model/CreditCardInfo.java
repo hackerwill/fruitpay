@@ -3,6 +3,9 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 /**
  * The persistent class for the CreditCardInfo database table.
@@ -35,6 +38,7 @@ public class CreditCardInfo implements Serializable {
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="customer_id")
+	@JsonManagedReference
 	private Customer customer;
 
 	public CreditCardInfo() {

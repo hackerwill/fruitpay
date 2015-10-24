@@ -2,6 +2,11 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.Date;
 import java.util.List;
 
@@ -46,15 +51,18 @@ public class Customer extends AbstractDataBean implements Serializable {
 
 	//bi-directional many-to-one association to CreditCardInfo
 	@OneToMany(mappedBy="customer")
+	@JsonIgnore
 	private List<CreditCardInfo> creditCardInfos;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="referenced_id")
+	//@JsonManagedReference
 	private Customer customer;
 
 	//bi-directional many-to-one association to Customer
 	@OneToMany(mappedBy="customer")
+	@JsonBackReference
 	private List<Customer> customers;
 
 	//bi-directional many-to-one association to Area

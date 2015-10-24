@@ -4,6 +4,8 @@ package com.fruitpay.base.controller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +31,7 @@ public class LoginController {
 	@Autowired
 	MessageSendController messageSendController;
 	
-	@RequestMapping(value = "/login", method = RequestMethod.POST )
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody ReturnData loginAsOneCustomer(@RequestBody Customer customer){
 		
 		if(AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword())){
@@ -39,8 +41,12 @@ public class LoginController {
 		logger.debug("email: " + customer.getEmail());
 		
 		ReturnData lrm = loginService.login(customer.getEmail(), customer.getPassword());
-		
+		try{
 		return lrm;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST )

@@ -35,7 +35,7 @@
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
 	<task:executor id="myExecutor" pool-size="5" />
 	<task:scheduler id="myScheduler" pool-size="10" />
-    
+
 	<!--  jpa configure -->
 
 	 <bean id="entityManagerFactory"
@@ -50,5 +50,26 @@
   
 	 <tx:annotation-driven transaction-manager="transactionManager" />
 	 
+	<!-- 建立视图内拦截器来解决JPA中访问延迟加载属性时产生的无会话异常 -->  
+    <!-- LazyInitializationException: could not initialize proxy no session -->  
+    <!-- 此拦截器会注入到servlet配置中的DefaultAnnotationHandlerMapping中 -->  
+    <bean name="openEntityManagerInViewInterceptor"   
+        class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor">  
+        <property name="entityManagerFactory">  
+        <ref bean="entityManagerFactory" />  
+        </property>  
+    </bean>  
+    
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />  
+    
+    <bean  
+    class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">  
+    <property name="interceptors">  
+        <list>  
+            <ref bean="openEntityManagerInViewInterceptor" />  
+        </list>  
+    </property>   
+    
+</bean> 
 
 </beans>
