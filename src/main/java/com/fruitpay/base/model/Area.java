@@ -2,6 +2,9 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.List;
 
 
@@ -34,11 +37,12 @@ public class Area implements Serializable {
 
 	//bi-directional many-to-one association to Customer
 	@OneToMany(mappedBy="area")
+	@JsonManagedReference
 	private List<Customer> customers;
 
 	//bi-directional many-to-one association to Order
 	@OneToMany(mappedBy="area")
-	private List<Order> orders;
+	private List<CustomerOrder> customerOrders;
 
 	//bi-directional many-to-one association to Shipment
 	@OneToMany(mappedBy="area")
@@ -109,26 +113,26 @@ public class Area implements Serializable {
 		return customer;
 	}
 
-	public List<Order> getOrders() {
-		return this.orders;
+	public List<CustomerOrder> getCustomerOrders() {
+		return this.customerOrders;
 	}
 
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
+	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
+		this.customerOrders = customerOrders;
 	}
 
-	public Order addOrder(Order order) {
-		getOrders().add(order);
-		order.setArea(this);
+	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().add(customerOrder);
+		customerOrder.setArea(this);
 
-		return order;
+		return customerOrder;
 	}
 
-	public Order removeOrder(Order order) {
-		getOrders().remove(order);
-		order.setArea(null);
+	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().remove(customerOrder);
+		customerOrder.setArea(null);
 
-		return order;
+		return customerOrder;
 	}
 
 	public List<Shipment> getShipments() {
