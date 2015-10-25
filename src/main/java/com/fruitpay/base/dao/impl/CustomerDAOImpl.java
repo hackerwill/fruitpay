@@ -1,13 +1,9 @@
 package com.fruitpay.base.dao.impl;
 
-import java.util.List;
-
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;

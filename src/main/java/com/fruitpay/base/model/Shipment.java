@@ -2,6 +2,9 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.util.Date;
 import java.sql.Timestamp;
 import java.util.List;
@@ -47,7 +50,7 @@ public class Shipment implements Serializable {
 	//bi-directional many-to-one association to Order
 	@ManyToOne
 	@JoinColumn(name="order_id")
-	private Order order;
+	private CustomerOrder order;
 
 	//bi-directional many-to-one association to Area
 	@ManyToOne
@@ -158,11 +161,11 @@ public class Shipment implements Serializable {
 		this.year = year;
 	}
 
-	public Order getOrder() {
+	public CustomerOrder getOrder() {
 		return this.order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(CustomerOrder order) {
 		this.order = order;
 	}
 

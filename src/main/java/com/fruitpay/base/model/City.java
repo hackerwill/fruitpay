@@ -24,10 +24,6 @@ public class City implements Serializable {
 	@Column(name="city_name")
 	private String cityName;
 
-	//bi-directional many-to-one association to Area
-	@OneToMany(mappedBy="city")
-	private List<Area> areas;
-
 	public City() {
 	}
 
@@ -53,28 +49,6 @@ public class City implements Serializable {
 
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
-	}
-
-	public List<Area> getAreas() {
-		return this.areas;
-	}
-
-	public void setAreas(List<Area> areas) {
-		this.areas = areas;
-	}
-
-	public Area addArea(Area area) {
-		getAreas().add(area);
-		area.setCity(this);
-
-		return area;
-	}
-
-	public Area removeArea(Area area) {
-		getAreas().remove(area);
-		area.setCity(null);
-
-		return area;
 	}
 
 }

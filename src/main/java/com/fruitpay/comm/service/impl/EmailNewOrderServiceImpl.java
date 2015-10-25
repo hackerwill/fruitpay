@@ -5,12 +5,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.fruitpay.base.model.Order;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.comm.model.EmailComponent;
 import com.fruitpay.comm.service.EmailContentService;
 
 @Component
-public class EmailNewOrderServiceImpl extends EmailContentService<Order> {
+public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder> {
 
 	@Override
 	protected EmailComponent getEmailComponet() {
@@ -21,7 +21,7 @@ public class EmailNewOrderServiceImpl extends EmailContentService<Order> {
 	}
 
 	@Override
-	protected Map<String, String> getConditionMap(Order order) {
+	protected Map<String, String> getConditionMap(CustomerOrder order) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("MESSAGE_TITLE", "測試抬頭");
 		return map;

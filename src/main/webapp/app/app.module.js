@@ -3,6 +3,7 @@ var app = angular.module('app',[
 	'ui.router',
 	'ngCookies',
 	'ngDialog',
+	'duScroll',
 	'shell',
 	'checkout',
 	'login',

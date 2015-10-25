@@ -2,8 +2,20 @@
 angular.module('login')
 	.controller('loginController', loginController);
 
-loginController.$inject = ['$rootScope', '$scope', '$location', '$timeout', 'userService', 'authenticationService', 'flashService', 'ngDialog', '$alert'];	
-function loginController($rootScope, $scope, $location, $timeout, userService, authenticationService, flashService, ngDialog, $alert){
+loginController.$inject = 
+	['$rootScope', 
+	 '$scope', 
+	 '$location', 
+	 'userService', 
+	 'authenticationService', 
+	 'flashService',  
+	 'logService',
+	 'sharedProperties'];	
+
+function loginController(
+		$rootScope, $scope, $location, userService, 
+		authenticationService, flashService, 
+		logService, sharedProperties){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
@@ -28,12 +40,13 @@ function loginController($rootScope, $scope, $location, $timeout, userService, a
 			user.dataLoading = true;
 			
 	        authenticationService.login(user)
-	        .then(function(success){
-	            if (success) {
+	        .then(function(result){
+	            if (result) {
+	            	sharedProperties.setUser(result);
 	                $location.path('/index/user');
-	                //location.reload();
+	                location.reload();
 	            } else {
-	                flashService.error(success);
+	                flashService.error(result);
 	                user.dataLoading = false;
 	            }
 	        });
@@ -50,13 +63,7 @@ function loginController($rootScope, $scope, $location, $timeout, userService, a
 	            .then(function (success) {
 	                if (success) {
 	                    flashService.success('Registration successful', success);
-	                    $alert({
-	        				title: '歡迎您成為我們的會員，請再次點選登入',
-	        				placement: 'top',
-	        				type: 'success',
-	        				duration: '3',
-	        				animation: 'am-fade-and-scale'
-	        			});
+	                    logService.showSuccess("歡迎您成為我們的會員，請再次點選登入");
 						$scope.isLoginPage = true;
 	                } else {
 	                    flashService.error(success);

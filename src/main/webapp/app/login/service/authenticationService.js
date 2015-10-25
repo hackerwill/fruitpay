@@ -10,7 +10,9 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 	service.login = login;
 	service.setCredentials = setCredentials;
 	service.clearCredentials = clearCredentials;
-
+	service.isCredentialsMatch = isCredentialsMatch;
+	service.getDecodedUser = getDecodedUser;
+	
 	return service;
 
 	function login(user, callback) {
@@ -40,6 +42,27 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 				setCredentials(user.email, user.password);
 			return result;
 		});
+	}
+	
+	function isCredentialsMatch(){
+		var match = false;
+		if($rootScope.globals && $http.defaults.headers.common['Authorization']){
+			var authData = 'Basic ' + $rootScope.globals.currentUser.authdata;
+			var auth = $http.defaults.headers.common['Authorization'];
+			if(authData == auth)
+				match = true;
+		}
+		
+		return match;
+	}
+	
+	function getDecodedUser(){
+		var authData = $rootScope.globals.currentUser.authdata;
+		var decoded = Base64.decode(authData).split(":");
+		var user = {};
+		user.email = decoded[0];
+		user.password = decoded[1];
+		return user;		
 	}
 
 	function setCredentials(username, password) {

@@ -1,4 +1,4 @@
-﻿<div class="container">	
+﻿<div class="container" ng-controller="userController">	
 	<div class="container-fluid">
 		<div class="col-sm-12">
 			<th><h1>個人資訊</h1></th>
@@ -6,8 +6,8 @@
 				<div class="form-inline">
 					<label for="email">姓</label>
 					<label for="email">名</label>
-					<input type="text" class="form-control" id="email">
-					<input type="text" class="form-control" id="email">
+					<input type="text" class="form-control" name="" ng-model="user.lastName">
+					<input type="text" class="form-control" name="" ng-model="user.firstName">
 					<input type="radio" class="form-control" name="sex"> 
 					<label for="sex"> 先生</label>
 					<input type="radio" class="form-control" name="sex"> 

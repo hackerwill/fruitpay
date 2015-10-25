@@ -38,7 +38,7 @@ public class CreditCardInfo implements Serializable {
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="customer_id")
-	@JsonManagedReference
+	@JsonBackReference
 	private Customer customer;
 
 	public CreditCardInfo() {

@@ -50,19 +50,19 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private String password;
 
 	//bi-directional many-to-one association to CreditCardInfo
-	@OneToMany(mappedBy="customer")
-	@JsonIgnore
+	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private List<CreditCardInfo> creditCardInfos;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="referenced_id")
-	//@JsonManagedReference
+	@JsonBackReference
 	private Customer customer;
 
 	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="customer")
-	@JsonBackReference
+	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private List<Customer> customers;
 
 	//bi-directional many-to-one association to Area
@@ -71,8 +71,9 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private Area area;
 
 	//bi-directional many-to-one association to Order
-	@OneToMany(mappedBy="customer")
-	private List<Order> orders;
+	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private List<CustomerOrder> customerOrders;
 
 	public Customer() {
 	}
@@ -225,26 +226,26 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.area = area;
 	}
 
-	public List<Order> getOrders() {
-		return this.orders;
+	public List<CustomerOrder> getCustomerOrders() {
+		return this.customerOrders;
 	}
 
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
+	public void setOrders(List<CustomerOrder> customerOrders) {
+		this.customerOrders = customerOrders;
 	}
 
-	public Order addOrder(Order order) {
-		getOrders().add(order);
-		order.setCustomer(this);
+	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().add(customerOrder);
+		customerOrder.setCustomer(this);
 
-		return order;
+		return customerOrder;
 	}
 
-	public Order removeOrder(Order order) {
-		getOrders().remove(order);
-		order.setCustomer(null);
+	public CustomerOrder removeOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().remove(customerOrder);
+		customerOrder.setCustomer(null);
 
-		return order;
+		return customerOrder;
 	}
 
 }

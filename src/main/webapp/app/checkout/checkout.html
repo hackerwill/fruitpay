@@ -3,10 +3,10 @@
 <div class="container">	
 
 	<div id="section1" class="container-fluid sectionDiv">
-		<h1>選擇方案</h1>
+		<h1>選擇方案</h1><button ng-click="toSection3()">按鈕</button>
 		<hr/>
 		<div class="row planDiv">
-			<div class="col-sm-6">
+			<div class="col-sm-6 itemDiv">
 				<table class="table">
 					<thead>
 						<tr>
@@ -32,7 +32,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6 itemDiv">
 				
 				<table class="table">
 					<thead>
@@ -62,6 +62,7 @@
 		</div>
 	</div>
 	<div id="section2" class="container-fluid sectionDiv">
+		<div class="col-sm-6">
 		<h1>訂單資訊</h1>
 		<hr/>
 		<form role="form">
@@ -111,6 +112,8 @@
 				<input type="text" class="form-control" id="address">
 			</div>
 		</form>
+		</div>
+		<div class="col-sm-6">
 		<form>
 			<h1>收件人資訊</h1>
 			<hr/>
@@ -156,6 +159,7 @@
 			</div>
 			<br>
 		</form>
+	</div>
 	</div>
 	<div id="section3" class="container-fluid sectionDiv">
 		<h1>結帳方式</h1>

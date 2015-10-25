@@ -25,9 +25,8 @@ function logService($alert){
 	
 	function successCallback(response){
 		var returnData = response.data;
-		console.log(returnData);
 		if(returnData.errorCode == '0'){
-			return true;
+			return returnData.object;
 		}else{
 			console.log(returnData);
 			$alert({

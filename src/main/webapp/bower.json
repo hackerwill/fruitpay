@@ -11,6 +11,7 @@
     "angular-ui-router": "~0.2.15",
     "bootstrap": "~3.3.5",
     "bootstrap-additions": "~0.3.1",
-    "ng-dialog": "~0.5.5"
+    "ng-dialog": "~0.5.5",
+    "angular-scroll": "~0.7.3"
   }
 }

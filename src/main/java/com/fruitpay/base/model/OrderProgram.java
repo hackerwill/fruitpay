@@ -26,7 +26,7 @@ public class OrderProgram implements Serializable {
 
 	//bi-directional many-to-one association to Order
 	@OneToMany(mappedBy="orderProgram")
-	private List<Order> orders;
+	private List<CustomerOrder> orders;
 
 	public OrderProgram() {
 	}
@@ -55,22 +55,22 @@ public class OrderProgram implements Serializable {
 		this.programName = programName;
 	}
 
-	public List<Order> getOrders() {
+	public List<CustomerOrder> getOrders() {
 		return this.orders;
 	}
 
-	public void setOrders(List<Order> orders) {
+	public void setOrders(List<CustomerOrder> orders) {
 		this.orders = orders;
 	}
 
-	public Order addOrder(Order order) {
+	public CustomerOrder addOrder(CustomerOrder order) {
 		getOrders().add(order);
 		order.setOrderProgram(this);
 
 		return order;
 	}
 
-	public Order removeOrder(Order order) {
+	public CustomerOrder removeOrder(CustomerOrder order) {
 		getOrders().remove(order);
 		order.setOrderProgram(null);
 

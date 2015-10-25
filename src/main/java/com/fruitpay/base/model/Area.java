@@ -3,6 +3,8 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="Area.findAll", query="SELECT a FROM Area a")
-public class Area implements Serializable {
+public class Area extends AbstractDataBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -37,15 +39,17 @@ public class Area implements Serializable {
 
 	//bi-directional many-to-one association to Customer
 	@OneToMany(mappedBy="area")
-	@JsonManagedReference
+	@JsonIgnore
 	private List<Customer> customers;
 
 	//bi-directional many-to-one association to Order
 	@OneToMany(mappedBy="area")
+	@JsonIgnore
 	private List<CustomerOrder> customerOrders;
 
 	//bi-directional many-to-one association to Shipment
 	@OneToMany(mappedBy="area")
+	@JsonIgnore
 	private List<Shipment> shipments;
 
 	public Area() {
