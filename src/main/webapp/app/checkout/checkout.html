@@ -66,50 +66,101 @@
 		<h1>訂單資訊</h1>
 		<hr/>
 		<form role="form">
-			<div class="form-group">
+			<div class="row">
+				<div class="col-xs-10 col-sm-1 col-md-1 col-lg-1">
+					<label for="fisrtName">姓名:</label>
+				</div>
+				<div class="col-xs-10 col-sm-3 col-md-3 col-lg-2">
+					<input type="text" class="form-control input-xs" ng-model="user.firstName" placeholder="姓氏">
+				</div>
+				<div class="col-xs-10 col-sm-5 col-md-5 col-lg-4">
+					<input type="text" class="form-control input-xs" placeholder="名字">
+				</div>
+				<div class="col-xs-4 col-sm-1 col-md-1 col-lg-2 form-inline">
+					<input type="radio" class="form-control" name="sex" checked> 
+					<label for="sex">小姐</label>
+				</div>
+				<div class="col-xs-4 col-sm-1 col-md-1 col-lg-2 form-inline">
+					<input type="radio" class="form-control" name="sex"> 
+					<label for="sex">先生</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-sm-1 col-md-1 col-lg-1">
 					<label for="email">信箱:</label>
-					<input type="email" class="form-control" id="email">
 				</div>
-				<div class="form-group">
+				<div class="col-xs-8 col-sm-5 col-md-5 col-lg-5">
+					<input type="email" class="form-control input-xs" placeholder="信箱" id="email">
+				</div>
+				<div class="col-xs-4 col-sm-1 col-md-1 col-lg-1">
+					<label for="phone">電話:</label>
+				</div>
+				<div class="col-xs-8 col-sm-4 col-md-4 col-lg-5">
+					<input type="text" class="form-control input-xs" placeholder="連絡電話" id="phone">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
 					<label for="pwd">密碼:</label>
-					<input type="password" class="form-control" id="pwd">
 				</div>
-				<div class="form-group">
-					<label for="pwd">確認密碼:</label>
-					<input type="password" class="form-control" id="pwd">
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+					<input type="password" class="form-control input-xs" placeholder="密碼" id="pwd">
+				</div>
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+					<input type="password" class="form-control input-xs" placeholder="確認密碼" id="pwd">
+				</div>
 			</div>
-			<div class="form-group form-inline">
-				<label for="email">中文全名:</label>
-				<input type="text" class="form-control" id="email">
-				<input type="radio" class="form-control" name="sex"> 
-				<label for="sex"> 先生</label>
-				<input type="radio" class="form-control" name="sex"> 
-				<label for="sex"> 小姐</label>
-			</div>
-			<div class="form-group form-inline">
-				<label for="ageRange">年齡:</label>
-				<select class="form-control" id="ageRange">
-					<option>15~25</option>
-					<option>25~35</option>
-					<option>35~45</option>
-					<option>45~55</option>
-				</select>
-				<div class="form-group" ng-class="{'has-error': datepickerForm.date2.$invalid}">
+			<div class="row">
+				<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
 					<label class="control-label"><small><i class="fa fa-calendar"></i>生日: </small></label>
+				</div>
+				<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 inline-group" ng-class="{'has-error': datepickerForm.date2.$invalid}">
 					<input type="text" class="form-control" ng-model="selectedDateAsNumber" data-date-format="yyyy-MM-dd" data-date-type="number" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date2" bs-datepicker>
 				</div>
 			</div>
-			<div class="form-group form-inline">
-				<label for="phoneNumber">手機號碼:</label>
-				<input type="text" class="form-control" id="phoneNumber">
+			<div class="row">
+				<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+					<label for="address">地址:</label>
+				</div>
+				<div class="col-xs-10 col-sm-11 col-md-11 col-lg-11 form-group form-inline">
+					<select>
+						<option>新北市</option>
+						<option>台北市</option>
+					</select>
+					<select>
+						<option>土城區</option>
+						<option>萬華區</option>
+					</select>
+				</div>
 			</div>
-			<div class="form-group form-inline">
-				<label for="address">聯絡地址:</label>
-				<input type="radio" class="form-control" name="homeOrCompany"> 
-				<label for="homeOrCompany">住家</label>
-				<input type="radio" class="form-control" name="homeOrCompany"> 
-				<label for="homeOrCompany">公司</label>
-				<input type="text" class="form-control" id="address">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<input type="text" class="form-control input-xs" placeholder="地址" id="address">
+				</div>
+				
+			</div class="row">
+			<div>
+				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+					<label for="address">收件方式:</label>
+				</div>
+				<div  class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<select name="billing_address_type" id="billing_address_type" class="select " placeholder="收件方式">
+						<option value="家裡(本人親收)" selected="selected">家裡(本人親收)</option>
+						<option value="家裡(管理室代收)">家裡(管理室代收)</option>
+						<option value="家裡(親友代收)">家裡(親友代收)</option>
+						<option value="公司">公司</option>
+					</select>
+				</div>
+				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+					<label for="address">配送時段:</label>
+				</div>
+				<div  class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<select name="billing_delivery_time" id="billing_delivery_time" class="select " placeholder="配送時段">
+						<option value="上午(9-12)">上午(9-12)</option>
+						<option value="下午(12-17)">下午(12-17)</option>
+						<option value="晚上(17-20)" selected="selected">晚上(17-20)</option>
+					</select>
+				</div>
 			</div>
 		</form>
 		</div>
