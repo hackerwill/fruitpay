@@ -7,6 +7,7 @@ angular.module('checkout')
 		$scope.slideToggle = slideToggle;
 		$scope.itemClick = itemClick;
 		$scope.scrollElement = scrollElement;
+		$scope.scrollElement($document, $scope, $window, commService);
 		
 		function slideToggle(id){
 				$scope.slideToggle1 = false;
@@ -36,10 +37,21 @@ angular.module('checkout')
 			}
 		}
 		
-		window.onresize = commService.windowResizeFunc(
-			1000, $scope, 
-			function(){
-				var scrollElement = $scope.scrollElement();
+		function scrollElement($document, $scope, $window, commService){
+			
+			if(commService.getWindowSize().width < 1000)
+				return;
+			
+			var onePageElements = document.getElementsByClassName("onepageElement");
+			var returnObj = {};
+			
+			returnObj.scrollToNext = scrollToNext;
+			returnObj.scrollToPrevious = scrollToPrevious;
+			triggerScrollElement();
+			
+			return returnObj;
+			
+			function triggerScrollElement(){
 				//bind scroll up and down event
 				angular.element($window).bind('DOMMouseScroll mousewheel onmousewheel', 
 					function(event) {
@@ -53,26 +65,12 @@ angular.module('checkout')
 						var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 				
 						if(delta > 0) {
-							scrollElement.scrollToPrevious();   
+							returnObj.scrollToPrevious();   
 						}else{
-							scrollElement.scrollToNext();
+							returnObj.scrollToNext();
 						}	
 				});
-		},  function(){
-				angular.element($window).bind('DOMMouseScroll mousewheel onmousewheel', 
-				function(event){
-					console.log(1);
-				});
-		});
-		
-		function scrollElement(){
-			var onePageElements = document.getElementsByClassName("onepageElement");
-			var returnObj = {};
-			
-			returnObj.scrollToNext = scrollToNext;
-			returnObj.scrollToPrevious = scrollToPrevious;
-			
-			return returnObj;
+			}
 			
 			function scrollToNext(){
 				moveToAnotherOne(1);
@@ -81,7 +79,6 @@ angular.module('checkout')
 			function scrollToPrevious(){
 				moveToAnotherOne(-1);
 			}
-			
 			
 			function currentActiveIndex(){
 				for(var i = 0; i < onePageElements.length ; i++){
