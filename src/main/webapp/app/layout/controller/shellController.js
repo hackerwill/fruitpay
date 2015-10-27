@@ -1,6 +1,6 @@
 angular.module('shell')
-	.controller('shellController',["$rootScope", "$scope", "$location",
-	                               function($rootScope, $scope, $location){
+	.controller('shellController',["$rootScope", "$scope", "$location", "commService",
+	                               function($rootScope, $scope, $location, commService){
 		
 		$scope.isActive = function (viewLocation) { 
 			return viewLocation === $location.path();
@@ -26,28 +26,8 @@ angular.module('shell')
 		/**
 		 * check whether to show menu when resize the window
 		 */
-		window.onresize = function(){
-				var data = {
-					divideValue : 768,
-					widthTemp : 0,
-					maxThanDevideValue : function(){
-						return this.widthTemp < this.divideValue && window.innerWidth >= this.divideValue;
-					},
-					minThanDevideValue : function(){
-						return this.widthTemp > this.divideValue && window.innerWidth <= this.divideValue;
-					}
-				};
-				
-				return function(){
-					$scope.$apply(function(){
-						if(data.maxThanDevideValue()){
-							$scope.isShowMenu = false;
-						};
-						if(data.minThanDevideValue()){
-							$scope.isShowMenu = true;
-						};
-						data.widthTemp = window.innerWidth;
-					});						
-				}	
-			}();
+		window.onresize = commService.windowResizeFunc(
+		768, $scope, function(){$scope.isShowMenu = false;}, function(){$scope.isShowMenu = true;});
+		
+		
 	}]);

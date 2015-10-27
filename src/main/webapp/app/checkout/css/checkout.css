@@ -17,3 +17,15 @@
 	background-color: #dd9933;
 	border-radius : 25px;
 }
+
+.selectedItem{
+	background-color: #dd9933;
+	border-radius : 25px;
+}
+
+.payMethodDesc{
+	background-color: #f6f6f6;
+	padding : 10px;
+	margin : 10px;
+	border-radius : 10px;
+}

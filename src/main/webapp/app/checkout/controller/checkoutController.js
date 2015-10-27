@@ -1,24 +1,68 @@
 'use strict';
 angular.module('checkout')
-	.controller('checkoutController',["$scope", "$document", "$window",function($scope, $document, $window){
-		var scrollElement = scrollElement();
+	.controller('checkoutController',["$scope", "$document", "$window", "commService", 
+		function($scope, $document, $window, commService){
+		$scope.order = {};
 		
-		//bind scroll up and down event
-		angular.element($window).bind('DOMMouseScroll mousewheel onmousewheel', function(event) {
-				event.returnValue = false;
-				// for Chrome and Firefox
-				if(event.preventDefault) {
-					event.preventDefault();                        
+		$scope.slideToggle = slideToggle;
+		$scope.itemClick = itemClick;
+		$scope.scrollElement = scrollElement;
+		
+		function slideToggle(id){
+				$scope.slideToggle1 = false;
+				$scope.slideToggle2 = false;
+				$scope.slideToggle3 = false;
+				if('slideToggle1' == id){
+					$scope.slideToggle1 = true;
+				}else if('slideToggle2' == id){
+					$scope.slideToggle2 = true;
+				}else if('slideToggle3' == id){
+					$scope.slideToggle3 = true;
 				}
-				// cross-browser wheel delta
-				var event = window.event || event; // old IE support
-				var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-				
-				if(delta > 0) {
-					scrollElement.scrollToPrevious();   
+				$scope.apply();
+			}
+		
+		function itemClick(itemName){
+			var itemDivs = document.getElementsByClassName('itemDiv');
+			$scope.order.itemName = itemName;
+			document.getElementsByClassName('itemName');
+			for(var i = 0; i < itemDivs.length ; i++){
+				var itemDiv = itemDivs[i];
+				if(itemDiv.id == itemName){
+					itemDiv.className = itemDiv.className + ' selectedItem';
 				}else{
-					scrollElement.scrollToNext();
-				}	
+					itemDiv.className = itemDiv.className.replace(' selectedItem', '');
+				}
+			}
+		}
+		
+		window.onresize = commService.windowResizeFunc(
+			1000, $scope, 
+			function(){
+				var scrollElement = $scope.scrollElement();
+				//bind scroll up and down event
+				angular.element($window).bind('DOMMouseScroll mousewheel onmousewheel', 
+					function(event) {
+						event.returnValue = false;
+						// for Chrome and Firefox
+						if(event.preventDefault) {
+							event.preventDefault();                        
+						}
+						// cross-browser wheel delta
+						var event = window.event || event; // old IE support
+						var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+				
+						if(delta > 0) {
+							scrollElement.scrollToPrevious();   
+						}else{
+							scrollElement.scrollToNext();
+						}	
+				});
+		},  function(){
+				angular.element($window).bind('DOMMouseScroll mousewheel onmousewheel', 
+				function(event){
+					console.log(1);
+				});
 		});
 		
 		function scrollElement(){

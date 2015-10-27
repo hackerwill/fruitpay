@@ -1,12 +1,12 @@
 
 
-<div class="container">	
+<div class="container" >	
 
 	<div class="container-fluid sectionDiv onepageElement active">
 		<h1>選擇方案</h1>
 		<hr/>
 		<div class="row planDiv">
-			<div class="col-sm-6 itemDiv">
+			<div class="col-xs-6 col-sm-6 itemDiv" id="single" ng-click="itemClick('single');">
 				<table class="table">
 					<thead>
 						<tr>
@@ -32,7 +32,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-sm-6 itemDiv">
+			<div class="col-xs-6 col-sm-6 itemDiv" id="family" ng-click="itemClick('family');">
 				
 				<table class="table">
 					<thead>
@@ -63,7 +63,11 @@
 	</div>
 	<div class="container-fluid sectionDiv onepageElement">
 		<div class="col-sm-6">
-		<h1>訂單資訊</h1>
+			<div class="row">
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+					<h1>訂單資訊</h1>
+				</div>
+			</div>
 		<hr/>
 		<form role="form">
 			<div class="row">
@@ -137,9 +141,8 @@
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<input type="text" class="form-control input-xs" placeholder="地址" id="address">
 				</div>
-				
 			</div class="row">
-			<div>
+			<div class="row">
 				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 					<label for="address">收件方式:</label>
 				</div>
@@ -162,49 +165,97 @@
 					</select>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+					<label for="address">配送頻率:</label>
+				</div>
+				<div  class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<select name="billing_address_type" id="billing_address_type" class="select " placeholder="配送頻率:">
+						<option value="每週配送" selected="selected">每週配送</option>
+						<option value="雙週配送">雙週配送</option>
+					</select>
+				</div>
+				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+					<label for="address">得知我們:</label>
+				</div>
+				<div  class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<select name="billing_delivery_time" id="billing_delivery_time" class="select " placeholder="配送時段">
+						<option value="Facebook" selected="selected">Facebook</option>
+						<option value="Google搜尋">Google搜尋</option>
+						<option value="line">line</option>
+						<option value="報章媒體">報章媒體</option>
+					</select>
+				</div>
+			</div>
 		</form>
 		</div>
 		<div class="col-sm-6">
-		<form>
-			<h1>收件人資訊</h1>
+			<div class="row">
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+					<h1>收件人資訊</h1>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 form-inline" style="margin-top:25px;">
+					<label for="note">同上請打勾:</label> 
+					<input type="checkbox" class="form-control" id="note">
+				</div>
+			</div>
 			<hr/>
-			<div class="form-group form-inline">
-				<label for="note">同上請打勾:</label>
-				<input type="checkbox" class="form-control" id="note">
-			</div>
-			<div class="form-group form-inline">
-				<label for="email">收件人姓名:</label>
-				<input type="text" class="form-control" id="email">
-				<input type="radio" class="form-control" name="sex"> 
-				<label for="sex"> 先生</label>
-				<input type="radio" class="form-control" name="sex"> 
-				<label for="sex"> 小姐</label>
-			</div>
-			<div class="form-group form-inline">
-				<label for="phoneNumber">手機號碼:</label>
-				<input type="text" class="form-control" id="phoneNumber">
-			</div>
-			<div class="form-group form-inline">
-				<label for="address">送貨地址:</label>
-				<input type="radio" class="form-control" name="homeOrCompany"> 
-				<label for="homeOrCompany">住家</label>
-				<input type="radio" class="form-control" name="homeOrCompany"> 
-				<label for="homeOrCompany">公司</label>
-				<input type="text" class="form-control" id="address">
-			</div>
-			<div class="form-group form-inline">
-				<label for="address">配送時段:</label>
-				<input type="radio" class="form-control" name="expertTime"> 
-				<label for="expertTime">上午</label>
-				<input type="radio" class="form-control" name="expertTime"> 
-				<label for="expertTime">下午(14~17)</label>
-				<input type="radio" class="form-control" name="expertTime"> 
-				<label for="expertTime">下午(17~20)</label>
-			</div>
-			<div class="form-group form-inline">
-				<label for="note">備註:</label>
-				<input type="text" class="form-control" id="note">
-			</div>
+			<form role="form">
+				<div class="row">
+					<div class="col-xs-10 col-sm-1 col-md-1 col-lg-1">
+						<label for="fisrtName">姓名:</label>
+					</div>
+					<div class="col-xs-10 col-sm-3 col-md-3 col-lg-2">
+						<input type="text" class="form-control input-xs" ng-model="user.firstName" placeholder="姓氏">
+					</div>
+					<div class="col-xs-10 col-sm-5 col-md-5 col-lg-4">
+						<input type="text" class="form-control input-xs" placeholder="名字">
+					</div>
+					<div class="col-xs-4 col-sm-1 col-md-1 col-lg-2 form-inline">
+						<input type="radio" class="form-control" name="sex" checked> 
+						<label for="sex">小姐</label>
+					</div>
+					<div class="col-xs-4 col-sm-1 col-md-1 col-lg-2 form-inline">
+						<input type="radio" class="form-control" name="sex"> 
+						<label for="sex">先生</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-4 col-sm-1 col-md-1 col-lg-1">
+						<label for="phone">電話:</label>
+					</div>
+					<div class="col-xs-8 col-sm-4 col-md-4 col-lg-5">
+						<input type="text" class="form-control input-xs" placeholder="連絡電話" id="phone">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+						<label for="address">地址:</label>
+					</div>
+					<div class="col-xs-10 col-sm-11 col-md-11 col-lg-11 form-group form-inline">
+						<select>
+							<option>新北市</option>
+							<option>台北市</option>
+						</select>
+						<select>
+							<option>土城區</option>
+							<option>萬華區</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<input type="text" class="form-control input-xs" placeholder="地址" id="address">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-4 col-sm-1 col-md-1 col-lg-1">
+						<label for="note">備註:</label>
+					</div>
+					<div class="col-xs-8 col-sm-10 col-md-10 col-lg-10">
+						<input type="text" class="form-control" id="note" placeholder="例如: 運送時的特殊需求，或是你要開立三聯式發票的統編及抬頭">
+					</div>
+				</div>
 			<div class="form-group form-inline">
 				<label>您的第一次配送時間:8/19(三)(固定週三配達，禮拜一12點以前訂購可以當週三送達，之後便是隔周三送達。)</label>
 			</div>
@@ -216,12 +267,42 @@
 		<h1>結帳方式</h1>
 		<hr/>
 		<form>
-			<div class="form-group form-inline">
-				<input type="radio" class="form-control" name="checkoutMethod"> 
-				<label for="checkoutMethod"> 信用卡</label>
-				<br>
-				<input type="radio" class="form-control" name="checkoutMethod"> 
-				<label for="checkoutMethod"> 貨到付款 (酌收30元手續費)</label>
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 form-inline">
+					<input type="radio" class="form-control" name="checkoutMethod" ng-click="slideToggle('slideToggle1');"> 
+					<label for="checkoutMethod"> 家庭方案</label>
+					<img src="http://fruitpay.com.tw/wp-content/plugins/allpay1/icon/allpay.png" alt="家庭方案">
+				</div>
+				<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 form-inline">
+					<div class="slide-toggle payMethodDesc" ng-show="slideToggle1">
+						<h4>每週自動扣款，週付699元。一天只要99元，免綁約，隨時可以終止!<br>
+						   國內前三大線上刷卡付款，提供 256 bit 加密傳輸，3D 驗證，ssl 加密保障!</h4>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 form-inline">
+					<input type="radio" class="form-control" name="checkoutMethod" ng-click="slideToggle('slideToggle2');"> 
+					<label for="checkoutMethod"> 單人方案</label>
+					<img src="http://fruitpay.com.tw/wp-content/plugins/allpay1/icon/allpay.png" alt="單人方案">
+				</div>
+				<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 form-inline">
+					<div class="slide-toggle payMethodDesc" ng-show="slideToggle2">
+						<h4>每週自動扣款，週付499元。一天只要71元，免綁約，隨時可以終止!<br>
+							國內前三大線上刷卡付款，提供 256 bit 加密傳輸，3D 驗證，ssl 加密保障!</h4>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 form-inline">
+					<input type="radio" class="form-control" name="checkoutMethod" ng-click="slideToggle('slideToggle3');"> 
+					<label for="checkoutMethod"> 每週貨到付款</label>
+				</div>
+				<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 form-inline">
+					<div class="slide-toggle payMethodDesc" ng-show="slideToggle3">
+						<h4>酌收30元手續費喔~!</h4>
+					</div>
+				</div>
 			</div>
 		</form>
 		<br>
