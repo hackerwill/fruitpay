@@ -30,7 +30,8 @@ angular.module('checkout')
 			for(var i = 0; i < itemDivs.length ; i++){
 				var itemDiv = itemDivs[i];
 				if(itemDiv.id == itemName){
-					itemDiv.className = itemDiv.className + ' selectedItem';
+					if(itemDiv.className.indexOf(' selectedItem') == -1)
+						itemDiv.className = itemDiv.className + ' selectedItem';
 				}else{
 					itemDiv.className = itemDiv.className.replace(' selectedItem', '');
 				}

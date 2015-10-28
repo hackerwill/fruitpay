@@ -5,7 +5,7 @@ angular.module('app')
 commService.$inject = [];
 function commService() {
 	var service = {};
-
+	
 	service.windowResizeFunc = windowResizeFunc;
 	service.getWindowSize = getWindowSize;
 	return service;

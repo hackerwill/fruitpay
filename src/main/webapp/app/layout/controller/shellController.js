@@ -1,7 +1,7 @@
 angular.module('shell')
 	.controller('shellController',["$rootScope", "$scope", "$location", "commService",
 	                               function($rootScope, $scope, $location, commService){
-		
+
 		$scope.isActive = function (viewLocation) { 
 			return viewLocation === $location.path();
 		};
@@ -21,6 +21,15 @@ angular.module('shell')
         	                     "href": "#/index/login"
         	                   }
         	               ];
+		}
+		
+		/**
+		 * whether to show menu at entering page
+		*/
+		if(commService.getWindowSize().width > 768){
+			$scope.isShowMenu = true;
+		}else{
+			$scope.isShowMenu = false;
 		}
 		
 		/**
