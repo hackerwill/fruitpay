@@ -39,7 +39,7 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		 ----------------------------------------------*/
 		return userService.login(user).then(function(result) {
 			if(result)
-				setCredentials(user.email, user.password);
+				setCredentials(result.email, result.password);
 			return result;
 		});
 	}

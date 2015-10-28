@@ -3,11 +3,40 @@ angular.module('checkout')
 	.controller('checkoutController',["$scope", "$document", "$window", "commService", 
 		function($scope, $document, $window, commService){
 		$scope.order = {};
+		$scope.user = {};
 		
 		$scope.slideToggle = slideToggle;
 		$scope.itemClick = itemClick;
 		$scope.scrollElement = scrollElement;
 		$scope.scrollElement($document, $scope, $window, commService);
+		$scope.onCheckoutSubmit = onCheckoutSubmit;
+		$scope.change = change;
+		
+		function onCheckoutSubmit(){
+			if ($scope.checkoutForm.$valid) {      
+				//form is valid
+				console.log("eee");
+			}else {
+				//if form is not valid set $scope.addContact.submitted to true     
+				$scope.checkoutForm.submitted=true;  
+				console.log("here");				
+			};
+		}
+		
+		function change(){
+			if($scope.confirmed){
+				if($scope.checkoutForm.$valid){
+					$scope.order.receiverFirstName = $scope.user.firstName;
+					$scope.order.receiverLastName = $scope.user.lastName;
+					$scope.order.receiverPhone = $scope.user.cellphone;
+					$scope.order.receiverAddress = $scope.user.address;
+					$scope.order.receiverGender = $scope.user.gender;
+				}else{
+					$scope.checkoutForm.submitted=true;  
+					$scope.confirmed = false;
+				}
+			}
+		}
 		
 		function slideToggle(id){
 				$scope.slideToggle1 = false;
@@ -21,7 +50,7 @@ angular.module('checkout')
 					$scope.slideToggle3 = true;
 				}
 				$scope.apply();
-			}
+		}
 		
 		function itemClick(itemName){
 			var itemDivs = document.getElementsByClassName('itemDiv');
