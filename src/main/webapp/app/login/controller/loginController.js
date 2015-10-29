@@ -10,12 +10,13 @@ loginController.$inject =
 	 'authenticationService', 
 	 'flashService',  
 	 'logService',
-	 'sharedProperties'];	
+	 'sharedProperties',
+	 'facebookLoginService'];	
 
 function loginController(
 		$rootScope, $scope, $location, userService, 
 		authenticationService, flashService, 
-		logService, sharedProperties){
+		logService, sharedProperties,facebookLoginService){
 		$scope.isLoginPage = true;
 		$scope.user = {};
 		
@@ -71,5 +72,16 @@ function loginController(
 	                }
 	            });
 	    }
+	    
+	    /**臉書註冊登入**/
+	    $scope.checkLoginState = function() {
+	    	facebookLoginService.checkLoginState();
+        }
+	    /**臉書註冊登出**/
+	    $scope.FBlogout = function() {
+	    	facebookLoginService.FBlogout();
+        }
+	    
+	   
 }
 
