@@ -18,12 +18,26 @@ public interface LoginService {
 	/**
      * 登入
      *
-     * @param  Customer
-     *         顧客資訊
-     *
      * @return 是否登入成功，回傳信息
      */
 	public ReturnData login(String email, String password);
+	
+	/**
+     * 登入
+     *
+     * @return 是否登入成功，回傳信息
+     */
+	public ReturnData  loginByCustomerId(Integer customerId, String password);
+	
+	/**
+	 * 若帳號存在直接登入，若不存在建立一個帳號
+	 * 
+	 * param  Customer
+     *         顧客資訊
+	 * 
+	 * @return 是否登入成功，回傳信息
+	 */
+	public ReturnData fbLogin(Customer customer);
 	
 	
 	

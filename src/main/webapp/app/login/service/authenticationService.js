@@ -7,13 +7,34 @@ authenticationService.$inject = [ '$http', '$rootScope', '$timeout', 'userServic
 function authenticationService($http, $rootScope, $timeout, userService) {
 	var service = {};
 
+	service.fbLogin = fbLogin;
 	service.login = login;
+	service.loginById = loginById;
 	service.setCredentials = setCredentials;
 	service.clearCredentials = clearCredentials;
 	service.isCredentialsMatch = isCredentialsMatch;
 	service.getDecodedUser = getDecodedUser;
 	
 	return service;
+	
+	function fbLogin(user, callback) {
+
+		return userService.fbLogin(user).then(function(result) {
+			console.log("here");
+			console.log(result);
+			if(result)
+				setCredentials(result.customerId, result.password);
+			return result;
+		});
+	}
+	
+	function loginById(user, callback) {
+		return userService.loginById(user).then(function(result) {
+			if(result)
+				setCredentials(result.customerId, result.password);
+			return result;
+		});
+	}
 
 	function login(user, callback) {
 		/* Dummy authentication for testing, uses $timeout to simulate api call
@@ -39,7 +60,7 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		 ----------------------------------------------*/
 		return userService.login(user).then(function(result) {
 			if(result)
-				setCredentials(result.email, result.password);
+				setCredentials(result.customerId, result.password);
 			return result;
 		});
 	}

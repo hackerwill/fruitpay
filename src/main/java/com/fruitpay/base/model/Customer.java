@@ -23,6 +23,9 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@Id
 	@Column(name="customer_id")
 	private int customerId;
+	
+	@Column(name="fb_id")
+	private String fbId;
 
 	private String address;
 
@@ -246,6 +249,14 @@ public class Customer extends AbstractDataBean implements Serializable {
 		customerOrder.setCustomer(null);
 
 		return customerOrder;
+	}
+
+	public String getFbId() {
+		return fbId;
+	}
+
+	public void setFbId(String fbId) {
+		this.fbId = fbId;
 	}
 
 }

@@ -7,7 +7,7 @@ import com.fruitpay.base.model.AbstractDataBean;
 
 public interface DAO<T extends AbstractDataBean> {
 
-	void create(T t);
+	T create(T t);
 
 	T findById(Serializable id);
 

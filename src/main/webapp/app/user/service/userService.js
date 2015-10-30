@@ -9,8 +9,14 @@
 		var service = {};
 		service.signup = signup;
 		service.login = login;
+		service.fbLogin = fbLogin;
 		
 		return service;
+		
+		function fbLogin(user){
+			return $http.post('loginCtrl/fbLogin', user)
+			.then(logService.successCallback, logService.errorCallback);
+		}
 		
 		function signup(user){
 			return $http.post('loginCtrl/signup', user)
@@ -19,6 +25,11 @@
 		
 		function login(user){
 			return $http.post('loginCtrl/login', user)
+			.then(logService.successCallback, logService.errorCallback);
+		}
+		
+		function loginById(user){
+			return $http.post('loginCtrl/loginById', user)
 			.then(logService.successCallback, logService.errorCallback);
 		}
 		

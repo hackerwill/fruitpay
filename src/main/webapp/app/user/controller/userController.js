@@ -9,7 +9,7 @@ angular.module('user')
 			setUserData(user);
 		//有驗證資料
 		}else if(authenticationService.isCredentialsMatch()){ 
-			 authenticationService.login(authenticationService.getDecodedUser())
+			 authenticationService.loginById(authenticationService.getDecodedUser())
 		        .then(function(result){
 		            if (result) {
 		            	user = result;

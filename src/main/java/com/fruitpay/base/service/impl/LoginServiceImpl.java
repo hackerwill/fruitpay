@@ -20,6 +20,7 @@ import com.fruitpay.comm.utils.Md5Util;
 @Service
 public class LoginServiceImpl implements LoginService {
 
+	private final String FB_PASSWORD = "FB_PASSWORD";
 	@Autowired
 	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
@@ -59,6 +60,33 @@ public class LoginServiceImpl implements LoginService {
 			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
 					customer);
 		}
+	}
+	
+	@Override
+	public ReturnData loginByCustomerId(Integer customerId, String password) {
+		Customer customer = customerDAO.findById(customerId);
+		if(customer == null){
+			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
+		}else if(!customerDAO.isCustomerIdMatchPassword(customerId, password)){
+			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
+		}else{
+			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+					customer);
+		}
+	}
+
+	@Override
+	@Transactional
+	public ReturnData fbLogin(Customer customer) {
+		Customer checkcustomer = customerDAO.getCustomerByFbId(customer.getFbId()); 
+		if(checkcustomer == null){
+			customer.setPassword(FB_PASSWORD);
+			customer = getEncodedPasswordCustomer(customer);
+			customer = customerDAO.create(customer); 
+		}
+		
+		return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+				customer);
 	}
 	
 	

@@ -31,6 +31,19 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 		}
 		return null;
 	}
+	
+	
+	@Override
+	public Customer getCustomerByFbId(String fbId) {
+		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
+		q.setParameter(1, fbId);
+		try{
+			return (Customer)q.getSingleResult();
+		}catch(NoResultException e){
+			logger.debug("the customer of fbId : " + fbId + " is not found.");;
+		}
+		return null;
+	}
 
 	@Override
 	public boolean isEmailMatchPassword(String email, String password) {
@@ -43,6 +56,26 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 			customer = (Customer)q.getSingleResult();
 		}catch(NoResultException e){
 			logger.debug("the customer of email : " + email + " is not found.");;
+		}
+		
+		if(customer != null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isCustomerIdMatchPassword(Integer customerId, String password) {
+
+		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.customerId = ?1 AND c.password = ?2 ");
+		q.setParameter(1, customerId);
+		q.setParameter(2, password);
+		Customer customer = null;
+		try{
+			customer = (Customer)q.getSingleResult();
+		}catch(NoResultException e){
+			logger.debug("the customer of customerId : " + customerId + " is not found.");;
 		}
 		
 		if(customer != null){

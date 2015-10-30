@@ -28,6 +28,9 @@ function logService($alert){
 		if(returnData.errorCode == '0'){
 			return returnData.object;
 		}else{
+			if(returnData == null || returnData.length == 0){
+				returnData = {message : "請檢查網路連線"};
+			}
 			console.log(returnData);
 			$alert({
 				title: returnData.message,

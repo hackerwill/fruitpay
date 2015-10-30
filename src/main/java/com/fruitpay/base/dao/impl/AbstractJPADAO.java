@@ -40,10 +40,11 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	}
 
 	@Override
-	public void create(T t) {
+	public T create(T t) {
 		logger.debug("enter create method");
 		EntityManager em = getEntityManager();
 		em.persist(t);
+		return t;
 	}
 	
 	@Override

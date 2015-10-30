@@ -34,6 +34,9 @@ public class CustomerOrder implements Serializable {
 
 	@Column(name="receiver_last_name")
 	private String receiverLastName;
+	
+	@Column(name="receiver_gender")
+	private String receiverGender;
 
 	@Column(name="receiver_phone")
 	private String receiverPhone;
@@ -251,6 +254,14 @@ public class CustomerOrder implements Serializable {
 		shipment.setOrder(null);
 
 		return shipment;
+	}
+
+	public String getReceiverGender() {
+		return receiverGender;
+	}
+
+	public void setReceiverGender(String receiverGender) {
+		this.receiverGender = receiverGender;
 	}
 
 }

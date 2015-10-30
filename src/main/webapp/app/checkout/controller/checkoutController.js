@@ -2,6 +2,7 @@
 angular.module('checkout')
 	.controller('checkoutController',["$scope", "$document", "$window", "commService", 
 		function($scope, $document, $window, commService){
+		
 		$scope.order = {};
 		$scope.user = {};
 		

@@ -33,20 +33,33 @@ public class LoginController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody ReturnData loginAsOneCustomer(@RequestBody Customer customer){
-		
+		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());
 		if(AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword())){
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
 		
-		logger.debug("email: " + customer.getEmail());
-		
-		ReturnData lrm = loginService.login(customer.getEmail(), customer.getPassword());
-		try{
-		return lrm;
-		}catch(Exception e){
-			e.printStackTrace();
+		return loginService.login(customer.getEmail(), customer.getPassword());
+	}
+	
+	@RequestMapping(value = "/loginById", method = RequestMethod.POST)
+	public @ResponseBody ReturnData loginByIdAsOneCustomer(@RequestBody Customer customer){
+		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());
+		if(AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()), customer.getPassword())){
+			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
-		return null;
+		
+		return loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());
+	}
+	
+	@RequestMapping(value = "/fbLogin", method = RequestMethod.POST)
+	public @ResponseBody ReturnData fbLoginAsOneCustomer(@RequestBody Customer customer){
+		
+		logger.debug("LoginController#fbLoginAsOneCustomer fbId=" + customer.getFbId());
+		if(AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())){
+			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+		}
+		
+		return loginService.fbLogin(customer);
 	}
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST )
