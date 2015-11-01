@@ -1,15 +1,15 @@
 'use strict';
 angular.module('user')
 	.controller('userController',
-			["$scope", "sharedProperties", "$location", "authenticationService",
-			 function($scope, sharedProperties, $location, authenticationService){
+			["$scope", "sharedProperties", "$location", "authenticationService", "flashService",
+			 function($scope, sharedProperties, $location, authenticationService, flashService){
 		var user = sharedProperties.getUser(); 	
 		//有登入資料
 		if(user){
 			setUserData(user);
 		//有驗證資料
 		}else if(authenticationService.isCredentialsMatch()){ 
-			 authenticationService.loginById(authenticationService.getDecodedUser())
+			 authenticationService.loginById()
 		        .then(function(result){
 		            if (result) {
 		            	user = result;
@@ -17,7 +17,6 @@ angular.module('user')
 		            	setUserData(user);
 		            } else {
 		                flashService.error(result);
-		                user.dataLoading = false;
 		            }
 		        });
 		}else{
@@ -25,7 +24,6 @@ angular.module('user')
 		}
 		
 		function setUserData(user){
-			console.log(user);
 			$scope.user = user;
 		}
 		

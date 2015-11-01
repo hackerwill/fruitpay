@@ -1,16 +1,12 @@
 package com.fruitpay.base.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
-import com.fruitpay.base.dao.AreaDAO;
 import com.fruitpay.base.dao.CustomerDAO;
-import com.fruitpay.base.model.Area;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.model.ReturnData;
@@ -24,10 +20,6 @@ public class LoginServiceImpl implements LoginService {
 	@Autowired
 	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
-	
-	@Autowired
-	@Qualifier("AreaDAOImpl")
-	AreaDAO areaDAO;
 
 	@Override
 	@Transactional
@@ -86,7 +78,7 @@ public class LoginServiceImpl implements LoginService {
 		}
 		
 		return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
-				customer);
+				checkcustomer);
 	}
 	
 	

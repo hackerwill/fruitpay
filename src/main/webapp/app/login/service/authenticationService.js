@@ -10,28 +10,25 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 	service.fbLogin = fbLogin;
 	service.login = login;
 	service.loginById = loginById;
-	service.setCredentials = setCredentials;
 	service.clearCredentials = clearCredentials;
 	service.isCredentialsMatch = isCredentialsMatch;
-	service.getDecodedUser = getDecodedUser;
 	
 	return service;
 	
 	function fbLogin(user, callback) {
 
 		return userService.fbLogin(user).then(function(result) {
-			console.log("here");
-			console.log(result);
 			if(result)
-				setCredentials(result.customerId, result.password);
+				setCredentials(result);
 			return result;
 		});
 	}
 	
-	function loginById(user, callback) {
+	function loginById(callback) {
+		var user = getDecodedUser();
 		return userService.loginById(user).then(function(result) {
 			if(result)
-				setCredentials(result.customerId, result.password);
+				setCredentials(result);
 			return result;
 		});
 	}
@@ -60,7 +57,7 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		 ----------------------------------------------*/
 		return userService.login(user).then(function(result) {
 			if(result)
-				setCredentials(result.customerId, result.password);
+				setCredentials(result);
 			return result;
 		});
 	}
@@ -81,16 +78,23 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		var authData = $rootScope.globals.currentUser.authdata;
 		var decoded = Base64.decode(authData).split(":");
 		var user = {};
-		user.email = decoded[0];
+		user.customerId = decoded[0];
 		user.password = decoded[1];
 		return user;		
 	}
 
-	function setCredentials(username, password) {
+	function setCredentials(user) {
+		var username = user.customerId;
+		var fbId = user.fbId;
+		var firstName = user.firstName;
+		var password = user.password;
+		
 		var authdata = Base64.encode(username + ':' + password);
 
 		$rootScope.globals = {
 			currentUser : {
+				fbId : fbId,
+				firstName : firstName,
 				username : username,
 				authdata : authdata
 			}

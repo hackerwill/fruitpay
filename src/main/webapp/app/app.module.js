@@ -30,7 +30,8 @@ function appRouter($stateProvider, $urlRouterProvider){
 		.state('index.user', {
             url: "/user",
             templateUrl: 'user/user.html',
-            controller:'userController'
+            controller:'userController',
+            authenticate: true
         })
 		.state('index.login', {
             url: "/login",
@@ -60,11 +61,9 @@ function run( $rootScope, $location, $http, $timeout) {
 	/**
 	 *  redirect to login page if not logged in and trying to access a restricted page
 	 */
-    $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        var restrictedPage = inArray($location.path(), ['/user']);
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
         var loggedIn = $rootScope.globals.currentUser || null;
-        
-        if (restrictedPage && !loggedIn) {
+        if (toState.authenticate && !loggedIn) {
 			$timeout(function () {				
 				$location.path('/index/login');
 			});

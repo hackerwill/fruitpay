@@ -10,8 +10,16 @@ public class AssertUtils {
 		return false;
 	}
 	
+	public static boolean isEmpty(Integer value){
+		return value == null;
+	}
+	
 	public static boolean isEmpty(String str){
 		return str == null || str.isEmpty();
+	}
+	
+	public static boolean isNotEmpty(Integer value){
+		return ! isEmpty(value);
 	}
 	
 	public static boolean isNotEmpty(String str){

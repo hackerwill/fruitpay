@@ -6,8 +6,9 @@ angular.module('shell')
 			return viewLocation === $location.path();
 		};
 		
-		var loggedIn = $rootScope.globals.currentUser || null;
-		if(loggedIn){
+		$scope.loggedIn = $rootScope.globals.currentUser || null;
+		
+		if($scope.loggedIn){
 			$scope.dropdown = [
         	                   {
         	                     "text": "登出",
@@ -21,6 +22,7 @@ angular.module('shell')
         	                     "href": "#/index/login"
         	                   }
         	               ];
+			
 		}
 		
 		/**

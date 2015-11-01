@@ -146,16 +146,14 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
-					<label for="address">地址:</label>
+					<label for="address">地址:										{{county}}</label>
 				</div>
 				<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10 form-group form-inline">
-					<select>
-						<option>新北市</option>
-						<option>台北市</option>
+					<select ng-options="option.name for option in countyList track by option.id" ng-model="county" ng-click="countyChange()">
 					</select>
-					<select>
-						<option>土城區</option>
-						<option>萬華區</option>
+					<select ng-options="option.name for option in towershipList track by option.id" ng-model="towership" ng-click="towershipChange()">
+					</select>
+					<select ng-options="option.name for option in villageList track by option.id" ng-model="village" >
 					</select>
 				</div>
 			</div>
@@ -269,15 +267,13 @@
 						<label for="address">地址:</label>
 					</div>
 					<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10 form-group form-inline">
-						<select>
-							<option>新北市</option>
-							<option>台北市</option>
+						<select ng-options="option.name for option in receiverCountyList track by option.id" ng-model="receiverCounty" ng-click="receiverCountyChange()">
 						</select>
-						<select>
-							<option>土城區</option>
-							<option>萬華區</option>
+						<select ng-options="option.name for option in receiverTowershipList track by option.id" ng-model="receiverTowership" ng-click="receiverCountyChange()">
 						</select>
-					</div>
+						<select ng-options="option.name for option in receiverVillageList track by option.id" ng-model="receiverVillage" >
+						</select>
+						</div>
 				</div>
 				<div class="row">
 					<div class="col-xs-0 col-sm-3 col-md-2 col-lg-2">

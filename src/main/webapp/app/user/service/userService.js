@@ -7,9 +7,11 @@
 	userService.$inject = ['$http','logService'];
 	function userService($http, logService){
 		var service = {};
+		
 		service.signup = signup;
 		service.login = login;
 		service.fbLogin = fbLogin;
+		service.loginById = loginById;
 		
 		return service;
 		

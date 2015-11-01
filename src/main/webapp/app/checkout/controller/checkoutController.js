@@ -1,10 +1,60 @@
 'use strict';
 angular.module('checkout')
-	.controller('checkoutController',["$scope", "$document", "$window", "commService", 
-		function($scope, $document, $window, commService){
-		
+	.controller('checkoutController',["$scope", "$document", "$window", "commService", '$q', 
+		function($scope, $document, $window, commService, $q){
+
 		$scope.order = {};
 		$scope.user = {};
+		$scope.countyList = {};
+		$scope.towershipList = {};
+		$scope.villageList = {};
+		
+		$scope.receiverCountyList = {};
+		$scope.receiverTowershipList = {};
+		$scope.receiverVillageList = {};
+		
+		(function(){
+			commService
+				.getAllCounties()
+				.then(setCountiesData)
+				.then(setTowershipsData)
+				.then(setVillagesData);
+		})();
+		
+		function setCountiesData(counties){
+			$scope.countyList = counties;
+			$scope.receiverCountyList = counties;
+			for(var i = 0; i < counties.length; i ++){
+				if(counties[i].id == 63){
+					$scope.receiverCounty = counties[i];
+					receiverCountyChange();
+					return counties[i];
+				}
+			}
+		}
+		
+		function setTowershipsData(county){
+			$scope.county = county;
+			var anotherDeferred = $q.defer();
+			commService
+				.getTowerships(county.id)
+				.then(function(towerships){
+					$scope.towershipList = towerships;
+					anotherDeferred.resolve(towerships[0]);
+				});
+
+			return anotherDeferred.promise;
+		}
+		
+		function setVillagesData(towership){
+			$scope.towership = towership;
+			commService
+				.getVillages(towership.id)
+				.then(function(villages){
+					$scope.villageList = villages;
+					$scope.village = villages[0];
+				});
+		}
 		
 		$scope.slideToggle = slideToggle;
 		$scope.itemClick = itemClick;
@@ -12,15 +62,61 @@ angular.module('checkout')
 		$scope.scrollElement($document, $scope, $window, commService);
 		$scope.onCheckoutSubmit = onCheckoutSubmit;
 		$scope.change = change;
+		$scope.countyChange = countyChange;
+		$scope.towershipChange = towershipChange;
+		$scope.receiverCountyChange = receiverCountyChange;
+		$scope.receiverTowershipChange = receiverTowershipChange;
+		
+		function countyChange(){
+				$q.when($scope.county)
+				.then(setTowershipsData)
+				.then(setVillagesData);
+		}
+		
+		function receiverCountyChange(towership, village){
+			commService
+				.getTowerships($scope.receiverCounty.id)
+				.then(function(towerships){
+					$scope.receiverTowershipList = towerships;
+					if(towership){
+						for(var i = 0; i < towerships.length; i ++){
+							if(towerships[i].id == towership.id)
+								$scope.receiverTowership = towerships[i];
+						}
+					}else{
+						$scope.receiverTowership = towerships[0];
+					}
+					receiverTowershipChange(village);
+				});
+		}
+		
+		function towershipChange(){
+			$q.when($scope.towership)
+			.then(setVillagesData);
+		}
+		
+		function receiverTowershipChange(village){
+			commService
+				.getVillages($scope.receiverTowership.id)
+				.then(function(villages){
+					$scope.receiverVillageList = villages;
+					if(village){
+						for(var i = 0; i < villages.length; i ++){
+							if(villages[i].id == village.id)
+								$scope.receiverVillage = villages[i];
+						}
+					}else{
+						$scope.receiverVillage = villages[0];
+					}
+				});
+		}
 		
 		function onCheckoutSubmit(){
 			if ($scope.checkoutForm.$valid) {      
-				//form is valid
-				console.log("eee");
+				
 			}else {
 				//if form is not valid set $scope.addContact.submitted to true     
-				$scope.checkoutForm.submitted=true;  
-				console.log("here");				
+				$scope.checkoutForm.submitted=true;  			
 			};
 		}
 		
@@ -32,6 +128,9 @@ angular.module('checkout')
 					$scope.order.receiverPhone = $scope.user.cellphone;
 					$scope.order.receiverAddress = $scope.user.address;
 					$scope.order.receiverGender = $scope.user.gender;
+					$scope.order.receiverGender = $scope.user.gender;
+					$scope.receiverCounty = $scope.county;
+					receiverCountyChange($scope.towership, $scope.village);
 				}else{
 					$scope.checkoutForm.submitted=true;  
 					$scope.confirmed = false;
