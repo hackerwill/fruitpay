@@ -70,10 +70,6 @@
 			</div>
 		<hr/>
 		<form role="form" name="checkoutForm" novalidate >
-<!-- 			<div class="row"> -->
-<!-- 				<pre>{{user | json}}</pre> -->
-<!-- 				<pre>{{order | json}}</pre> -->
-<!-- 			</div> -->
 			<div class="row">
 				<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
 					<label for="fisrtName">姓名:</label>
@@ -146,7 +142,7 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
-					<label for="address">地址:										{{county}}</label>
+					<label for="address">地址:</label>
 				</div>
 				<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10 form-group form-inline">
 					<select ng-options="option.name for option in countyList track by option.id" ng-model="county" ng-click="countyChange()">
@@ -269,7 +265,7 @@
 					<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10 form-group form-inline">
 						<select ng-options="option.name for option in receiverCountyList track by option.id" ng-model="receiverCounty" ng-click="receiverCountyChange()">
 						</select>
-						<select ng-options="option.name for option in receiverTowershipList track by option.id" ng-model="receiverTowership" ng-click="receiverCountyChange()">
+						<select ng-options="option.name for option in receiverTowershipList track by option.id" ng-model="receiverTowership" ng-click="receiverTowershipChange()">
 						</select>
 						<select ng-options="option.name for option in receiverVillageList track by option.id" ng-model="receiverVillage" >
 						</select>
