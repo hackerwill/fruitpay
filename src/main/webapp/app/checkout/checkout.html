@@ -68,77 +68,13 @@
 			<uib-slide ng-repeat="slide in slides" active="slide.active">
 				<div>
 					<div class="row">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+1].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+2].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+3].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+4].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+5].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+6].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+7].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+8].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+9].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+10].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+11].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+12].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+13].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+14].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+15].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+16].image}}" class="img-rounded"> 
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+17].image}}" class="img-rounded">
-							<input type="checkbox" />
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2" ng-repeat="n in range(1,imageNum, $index, totalImageAmount)">
+							<img ng-src="{{slide[getImageName(n)].imageLink}}" class="img-rounded" ng-class="{active:slide[getImageName(n)].checked}"
+								ng-click="slide[getImageName(n)].checked = !slide[getImageName(n)].checked"/>
+							<div class="desc">
+            					<p class="desc_content">{{slide[getImageName(n)].productName}}</p>
+        					</div>
+							<input type="checkbox" ng-model="slide[getImageName(n)].checked"/>
 						</div>
 					</div>
 				</div>
