@@ -38,3 +38,18 @@
 	margin : 10px;
 	border-radius : 10px;
 }
+
+#productsDiv .row>div>img{
+	width : 100%;
+	max-height: 120px;
+}
+
+#productsDiv .row>div{
+	text-align : center;
+	padding-right : 5px;
+	padding-right : 5px;
+}
+
+.carousel-control{
+	width : 5%;
+}

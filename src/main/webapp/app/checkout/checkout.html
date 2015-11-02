@@ -61,6 +61,90 @@
 			</div>
 		</div>
 	</div>
+	<div class="container-fluid sectionDiv onepageElement" id="productsDiv">
+		<h1>挑選水果</h1>
+		<hr/>
+		<uib-carousel interval="myInterval"> 
+			<uib-slide ng-repeat="slide in slides" active="slide.active">
+				<div>
+					<div class="row">
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+1].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+2].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+3].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+4].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+5].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+6].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+7].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+8].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+9].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+10].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+11].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+12].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+13].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+14].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+15].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+16].image}}" class="img-rounded"> 
+							<input type="checkbox" />
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
+							<img ng-src="{{slides[$index+17].image}}" class="img-rounded">
+							<input type="checkbox" />
+						</div>
+					</div>
+				</div>
+			</uib-slide> 
+		</uib-carousel>
+	</div>
 	<div class="container-fluid sectionDiv onepageElement">
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 			<div class="row">

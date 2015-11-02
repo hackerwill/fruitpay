@@ -1,5 +1,6 @@
 angular.module('checkout', [
 	'ngAnimate',
 	'ngSanitize',
-	'mgcrea.ngStrap' 
+	'mgcrea.ngStrap',
+	 'ui.bootstrap'
 ]);

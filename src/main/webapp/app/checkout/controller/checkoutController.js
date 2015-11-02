@@ -2,6 +2,29 @@
 angular.module('checkout')
 	.controller('checkoutController',["$scope", "$document", "$window", "commService", '$q', 
 		function($scope, $document, $window, commService, $q){
+		
+		var slides = $scope.slides = [];
+		$scope.myInterval = 5000;
+		$scope.addSlide = function(imageLink, text) {
+			console.log(imageLink + '?resize=200%2C150');
+			slides.push({
+				image: imageLink + '?resize=200%2C150',
+			    text: text
+			});
+			console.log(slides.length);
+			
+		};
+		  
+		commService.getAllProducts()
+			.then(function(result){
+				  for (var i = 0; i< result.length; i++) {
+					  if(result[i].imageLink != null && result[i].imageLink.length > 0 && result[i].productName.length > 0)
+						  $scope.addSlide(result[i].imageLink, result[i].productName);
+				  }
+			});
+		
+		  
+		 
 
 		$scope.order = {};
 		$scope.user = {};

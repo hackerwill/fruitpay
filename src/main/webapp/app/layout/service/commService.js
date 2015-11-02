@@ -11,8 +11,14 @@ function commService($http, logService, sharedProperties, $q) {
 	service.getAllCounties = getAllCounties;
 	service.getTowerships = getTowerships;
 	service.getVillages = getVillages;
+	service.getAllProducts = getAllProducts;
 	
 	return service;
+	
+	function getAllProducts(){
+		return $http.get('staticDataCtrl/getAllProducts')
+		.then(logService.successCallback, logService.errorCallback);
+	}
 	
 	function getVillages(towershipCode){
 		if(towershipCode == null || towershipCode.length == 0)
