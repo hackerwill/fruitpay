@@ -44,47 +44,12 @@
 	max-height: 120px;
 }
 
-#productsDiv .row>div>img:hover{
-    border: 2px solid #9ED720;
-    cursor: pointer;
-}
-
-#productsDiv .row>div>img.active{
-    border: 2px solid #9ED720;
-}
-
 #productsDiv .row>div{
 	text-align : center;
 	padding-right : 5px;
-    padding-left: 5px;
+	padding-right : 5px;
 }
-
-#productsDiv .row div.desc{
-    background-color: transparent;
-    bottom: 0;
-    color: #fff;
-    left: 0;
-    position: absolute;
-    width: 100%;
-    margin-bottom : 20px;
-    padding-right: 5px;
-    padding-left: 5px;
-}
-
-#productsDiv .row div.desc>p.desc_content{
-	background-color: black;
-    opacity: 0.5;
-}
-
 
 .carousel-control{
 	width : 5%;
-}
-
-.carousel-indicators li {
-	border: 1px solid black;
-}
-
-.carousel-indicators .active {
-	background-color : black;
 }
