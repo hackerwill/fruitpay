@@ -1,7 +1,8 @@
 'use strict';
 angular.module('checkout')
-	.controller('checkoutController',["$scope", "$document", "$window", "commService", '$q', 
-		function($scope, $document, $window, commService, $q){
+	.controller('checkoutController',
+			["$scope", "$document", "$window", "commService", '$q', "checkoutService", 
+		function($scope, $document, $window, commService, $q, checkoutService){
 		
 		var slides = $scope.slides = [];
 		$scope.myInterval = false;
@@ -18,6 +19,7 @@ angular.module('checkout')
 							&& result[i].imageLink.length > 0 
 							&& result[i].productName.length > 0){
 						result[i].imageLink = result[i].imageLink + resizeAppend;
+						result[i].checked = true;
 					}else{
 						delete result[i];
 					}
@@ -195,6 +197,11 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
+			//test
+			checkoutService.checkoutTest()
+				.then(function(result){
+					console.log(result);
+				});
 			if ($scope.checkoutForm.$valid) {      
 				
 			}else {
