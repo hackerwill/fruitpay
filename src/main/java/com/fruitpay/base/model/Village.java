@@ -3,8 +3,10 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -23,28 +25,28 @@ public class Village extends AbstractDataBean implements Serializable {
 	private String villageCode;
 
 	@Column(name="county_code")
-	private int countyCode;
+	private Integer countyCode;
 
 	@Column(name="county_name")
 	private String countyName;
 
 	@Column(name="towership_code")
-	private int towershipCode;
+	private Integer towershipCode;
 
 	@Column(name="towership_name")
 	private String towershipName;
 
-	@Column(name="villige_name")
-	private String villigeName;
+	@Column(name="village_name")
+	private String villageName;
 
 	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="village",  fetch = FetchType.LAZY)
-	@JsonIgnore
+	@OneToMany(mappedBy="village", fetch = FetchType.LAZY)
+	@JsonManagedReference("village")
 	private List<Customer> customers;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="village",  fetch = FetchType.LAZY)
-	@JsonIgnore
+	@JsonBackReference("village")
 	private List<CustomerOrder> customerOrders;
 
 	//bi-directional many-to-one association to Shipment
@@ -55,6 +57,7 @@ public class Village extends AbstractDataBean implements Serializable {
 	public Village() {
 	}
 
+	//@JsonProperty("villageCode")
 	public String getVillageCode() {
 		return this.villageCode;
 	}
@@ -63,11 +66,11 @@ public class Village extends AbstractDataBean implements Serializable {
 		this.villageCode = villageCode;
 	}
 
-	public int getCountyCode() {
+	public Integer getCountyCode() {
 		return this.countyCode;
 	}
 
-	public void setCountyCode(int countyCode) {
+	public void setCountyCode(Integer countyCode) {
 		this.countyCode = countyCode;
 	}
 
@@ -79,11 +82,11 @@ public class Village extends AbstractDataBean implements Serializable {
 		this.countyName = countyName;
 	}
 
-	public int getTowershipCode() {
+	public Integer getTowershipCode() {
 		return this.towershipCode;
 	}
 
-	public void setTowershipCode(int towershipCode) {
+	public void setTowershipCode(Integer towershipCode) {
 		this.towershipCode = towershipCode;
 	}
 
@@ -95,12 +98,12 @@ public class Village extends AbstractDataBean implements Serializable {
 		this.towershipName = towershipName;
 	}
 
-	public String getVilligeName() {
-		return this.villigeName;
+	public String getVillageName() {
+		return this.villageName;
 	}
 
-	public void setVilligeName(String villigeName) {
-		this.villigeName = villigeName;
+	public void setVillageName(String villageName) {
+		this.villageName = villageName;
 	}
 
 	public List<Customer> getCustomers() {

@@ -2,6 +2,9 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.util.List;
 
 
@@ -23,10 +26,19 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 
 	@Column(name="program_name")
 	private String programName;
+	
+	@Column(name="price")
+	private Integer price;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="orderProgram")
+	@JsonBackReference("orderProgram")
 	private List<CustomerOrder> customerOrders;
+	
+	//bi-directional many-to-one association to ShipmentPeriod
+	@ManyToOne
+	@JoinColumn(name="shipment_period_id")
+	private ShipmentPeriod shipmentPeriod;
 
 	public OrderProgram() {
 	}
@@ -77,4 +89,20 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 		return customerOrder;
 	}
 
+	public ShipmentPeriod getShipmentPeriod() {
+		return this.shipmentPeriod;
+	}
+
+	public void setShipmentPeriod(ShipmentPeriod shipmentPeriod) {
+		this.shipmentPeriod = shipmentPeriod;
+	}
+
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
+	}
+	
 }

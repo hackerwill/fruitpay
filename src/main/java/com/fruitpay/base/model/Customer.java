@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 
 	@Id
 	@Column(name="customer_id")
-	private int customerId;
+	private Integer customerId;
 
 	private String address;
 
@@ -70,21 +71,22 @@ public class Customer extends AbstractDataBean implements Serializable {
 	//bi-directional many-to-one association to Village
 	@ManyToOne
 	@JoinColumn(name="village_code")
+	@JsonBackReference("village")
 	private Village village;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
-	@JsonManagedReference
+	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
 
 	public Customer() {
 	}
 
-	public int getCustomerId() {
+	public Integer getCustomerId() {
 		return this.customerId;
 	}
 
-	public void setCustomerId(int customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 

@@ -62,83 +62,19 @@
 		</div>
 	</div>
 	<div class="container-fluid sectionDiv onepageElement" id="productsDiv">
-		<h1>挑選水果</h1>
+		<h1>水果喜好</h1>
 		<hr/>
 		<uib-carousel interval="myInterval"> 
 			<uib-slide ng-repeat="slide in slides" active="slide.active">
 				<div>
 					<div class="row">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+1].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+2].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+3].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+4].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+5].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+6].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+7].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+8].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+9].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+10].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+11].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+12].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+13].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+14].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+15].image}}" class="img-rounded">
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+16].image}}" class="img-rounded"> 
-							<input type="checkbox" />
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2">
-							<img ng-src="{{slides[$index+17].image}}" class="img-rounded">
-							<input type="checkbox" />
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2" ng-repeat="n in range(1,imageNum, $index, totalImageAmount)">
+							<img ng-src="{{slide[getImageName(n)].imageLink}}" class="img-rounded" ng-class="{active:slide[getImageName(n)].checked}"
+								ng-click="slide[getImageName(n)].checked = !slide[getImageName(n)].checked"/>
+							<div class="desc">
+            					<p class="desc_content">{{slide[getImageName(n)].productName}}</p>
+        					</div>
+							<span class="glyphicon glyphicon-heart" ng-class="{active:slide[getImageName(n)].checked}"></span>
 						</div>
 					</div>
 				</div>
@@ -370,14 +306,6 @@
 						<input type="text" class="form-control" id="note" placeholder="運送時的特殊需求，或是三聯式發票的統編及抬頭">
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
-						<label for="note">不吃水果:</label>
-					</div>
-					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
-						<input type="text" class="form-control" id="note" placeholder="可以在這裡註明不喜歡的水果喔!">
-					</div>	
-				</div>
 				<br>
 				<div class="row">
 					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
@@ -443,6 +371,10 @@
 			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
 				下單代表您已閱讀並接受我們的<a href="http://fruitpay.com.tw/rules/" target="_blank">使用條款</a>
 			</div>
+			<pre>
+				{{order | json}}
+				{{user | json}}
+			</pre>
 		</div>
 		</form>
 		<br>

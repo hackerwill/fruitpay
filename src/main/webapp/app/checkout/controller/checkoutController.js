@@ -1,31 +1,58 @@
 'use strict';
 angular.module('checkout')
-	.controller('checkoutController',["$scope", "$document", "$window", "commService", '$q', 
-		function($scope, $document, $window, commService, $q){
+	.controller('checkoutController',
+			["$scope", "$document", "$window", "commService", '$q', "checkoutService", 
+		function($scope, $document, $window, commService, $q, checkoutService){
 		
 		var slides = $scope.slides = [];
-		$scope.myInterval = 5000;
-		$scope.addSlide = function(imageLink, text) {
-			console.log(imageLink + '?resize=200%2C150');
-			slides.push({
-				image: imageLink + '?resize=200%2C150',
-			    text: text
-			});
-			console.log(slides.length);
-			
-		};
+		$scope.myInterval = false;
+		var imageNum = 18;
+		$scope.imageNum = imageNum;
+		
+		var resizeAppend = '?resize=200%2C150';
 		  
 		commService.getAllProducts()
 			.then(function(result){
-				  for (var i = 0; i< result.length; i++) {
-					  if(result[i].imageLink != null && result[i].imageLink.length > 0 && result[i].productName.length > 0)
-						  $scope.addSlide(result[i].imageLink, result[i].productName);
-				  }
+				//check null elements and set resize parameter
+				for (var i = 0; i< result.length; i++) {
+					if(result[i].imageLink != null 
+							&& result[i].imageLink.length > 0 
+							&& result[i].productName.length > 0){
+						result[i].imageLink = result[i].imageLink + resizeAppend;
+						result[i].checked = true;
+					}else{
+						delete result[i];
+					}
+				}
+				
+				var resultAfterRemove = [];
+				for (var i = 0; i< result.length; i++) {
+					if(result[i])
+						resultAfterRemove.push(result[i]);
+				}
+				
+				/**
+				 * 
+				 * 計算方法範例
+				 * 
+				 * slides[0]['image1'] = result[0]; 0/3, 0%3 + 1 
+				 * slides[0]['image2'] = result[1]; 1/3, 1%3 + 1
+				 * slides[0]['image3'] = result[2]; 2/3, 2%3 + 1
+				 * slides[1]['image1'] = result[3]; 3/3, 3%3 + 1
+				 * slides[1]['image2'] = result[4]; 4/3, 4%3 + 1
+				 * slides[1]['image3'] = result[5]; 5/3, 5%3 + 1
+				 * 
+				 * */
+				for (var i = 0; i< resultAfterRemove.length; i++) {
+					var index = Math.floor(i/imageNum);
+					var num = i%imageNum + 1;
+					if(!slides[index])
+						slides[index] = {};
+					slides[index]['image' + num] = resultAfterRemove[i];
+				}
+				$scope.totalImageAmount = resultAfterRemove.length;
 			});
 		
-		  
-		 
-
 		$scope.order = {};
 		$scope.user = {};
 		$scope.countyList = {};
@@ -46,6 +73,8 @@ angular.module('checkout')
 		$scope.towershipChange = towershipChange;
 		$scope.receiverCountyChange = receiverCountyChange;
 		$scope.receiverTowershipChange = receiverTowershipChange;
+		$scope.range = range;
+		$scope.getImageName = getImageName;
 		
 		(function(){
 			commService
@@ -60,6 +89,20 @@ angular.module('checkout')
 				.then(setReceiverTowershipsData)
 				.then(setReceiverVillagesData);
 		})();
+		
+		function getImageName(n){
+			return "image" + n;
+		}
+		
+		function range(min, max, index, maxLimit){
+			var totalAmount = maxLimit - index * max;
+			var imageTotal = totalAmount > max ? max : totalAmount;
+		    var input = [];
+		    for (var i = min; i <= imageTotal; i += 1) {
+		      input.push(i);
+		    }
+		    return input;
+		  };
 		
 		function setReceiverCountiesData(counties, county){
 			$scope.receiverCountyList = counties;
@@ -154,6 +197,11 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
+			//test
+			checkoutService.checkoutTest()
+				.then(function(result){
+					console.log(result);
+				});
 			if ($scope.checkoutForm.$valid) {      
 				
 			}else {
