@@ -18,6 +18,8 @@
 		}
 		
 		function checkoutTest(){
+			var sendObj = {};
+			
 			var user = {
 					  "lastName": "徐",
 					  "firstName": "瑋志",
@@ -36,31 +38,47 @@
 					    "villageName":"同安村"
 					  },
 					  "birthday": "1990-06-04"
-					}
+					};
 			
 			var order = {
-					  "programId": 1,
-					  "receiverFirstName": "瑋志",
-					  "receiverLastName": "徐",
-					  "receiverPhone": "0933370691",
-					  "receiverAddress": "西畔巷66弄40號",
-					  "receiverGender": "M",
-					  "platformId": 1,
-					  "village": {
-					    "countyCode": 10007,
-					    "countyName": "彰化縣",
-					    "towershipCode": "1000716",
-					    "towershipName": "永靖鄉",
-					    "villageCode": "1000716-019",
-					    "villageName": "同安村"
-					  },
-					  "paymentModeId": 1,
-					  "orderDate": "2015-11-08",
-					  "shipmentDays": 2,
-					  "orderStatusId": 1
-					}
+					  "orderProgram": {
+						    "programId": 1,
+						    "programName": "小農箱-家庭",
+						    "programDesc": "含進口水果",
+						    "price": 699,
+						    "periodId": 1
+						  },
+						  "receiverFirstName": "瑋志",
+						  "receiverLastName": "徐",
+						  "receiverPhone": "0933370691",
+						  "receiverAddress": "九鄰西畔巷66弄40號",
+						  "receiverGender": "M",
+						  "orderPlatform":{
+						    "platformId": 1
+						  },
+						  "village": {
+						    "countyCode": 10007,
+						    "countyName": "彰化縣",
+						    "towershipCode": "1000716",
+						    "towershipName": "永靖鄉",
+						    "villageCode": "1000716-019",
+						    "villageName": "同安村"
+						  },
+						  "paymentMode": {
+						    "paymentModeId" : 1
+						  },
+						  "orderDate": "2015-11-08",
+						  "shipmentDay": {
+						    "shipmentDaysId": 2
+						  },
+						  "orderStatus" : {
+						    "orderStatusId": 1
+						  }
+						};
 			
-			return $http.post('checkoutCtrl/checkout', user, order)
+			sendObj.customer = user;
+			sendObj.customerOrder = order;
+			return $http.post('checkoutCtrl/checkout', sendObj)
 			.then(logService.successCallback, logService.errorCallback);
 		}
 	}

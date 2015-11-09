@@ -22,10 +22,12 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	@Id
 	@Column(name="order_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int orderId;
 
 	
 	@Column(name="order_date")
+	@Temporal(TemporalType.DATE)
 	private Date orderDate;
 
 	@Column(name="receiver_address")

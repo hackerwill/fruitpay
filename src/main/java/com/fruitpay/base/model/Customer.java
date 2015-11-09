@@ -22,6 +22,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 
 	@Id
 	@Column(name="customer_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY )
 	private Integer customerId;
 
 	private String address;

@@ -37,7 +37,7 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 	
 	//bi-directional many-to-one association to ShipmentPeriod
 	@ManyToOne
-	@JoinColumn(name="shipment_period_id")
+	@JoinColumn(name="period_id")
 	private ShipmentPeriod shipmentPeriod;
 
 	public OrderProgram() {
