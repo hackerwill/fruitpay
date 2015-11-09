@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	<div class="container-fluid sectionDiv onepageElement" id="productsDiv">
-		<h1>挑選水果</h1>
+		<h1>水果喜好</h1>
 		<hr/>
 		<uib-carousel interval="myInterval"> 
 			<uib-slide ng-repeat="slide in slides" active="slide.active">
@@ -74,7 +74,7 @@
 							<div class="desc">
             					<p class="desc_content">{{slide[getImageName(n)].productName}}</p>
         					</div>
-							<input type="checkbox" ng-model="slide[getImageName(n)].checked"/>
+							<span class="glyphicon glyphicon-heart" ng-class="{active:slide[getImageName(n)].checked}"></span>
 						</div>
 					</div>
 				</div>
@@ -306,14 +306,6 @@
 						<input type="text" class="form-control" id="note" placeholder="運送時的特殊需求，或是三聯式發票的統編及抬頭">
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
-						<label for="note">不吃水果:</label>
-					</div>
-					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
-						<input type="text" class="form-control" id="note" placeholder="可以在這裡註明不喜歡的水果喔!">
-					</div>	
-				</div>
 				<br>
 				<div class="row">
 					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
@@ -379,6 +371,10 @@
 			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
 				下單代表您已閱讀並接受我們的<a href="http://fruitpay.com.tw/rules/" target="_blank">使用條款</a>
 			</div>
+			<pre>
+				{{order | json}}
+				{{user | json}}
+			</pre>
 		</div>
 		</form>
 		<br>

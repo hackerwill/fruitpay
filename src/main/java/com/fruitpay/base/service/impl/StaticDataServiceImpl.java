@@ -32,7 +32,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	Map<String, List<SelectOption>> towershipMap = null;
 	Map<String, List<SelectOption>> villageMap = null;
 	
-	@PostConstruct
+	//@PostConstruct
 	public void init(){
 		allVillages = getAllVillages();
 		allVillages = removeOffIslands(allVillages);
@@ -89,7 +89,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 			for (Iterator<Village> iterator = allVillages.iterator(); iterator.hasNext();) {
 				Village village = iterator.next();
 				if(towershipCode.equals(String.valueOf(village.getTowershipCode())))
-					villageList.add(new SelectOption(village.getVillageCode(), village.getVilligeName()));			
+					villageList.add(new SelectOption(village.getVillageCode(), village.getVillageName()));			
 			}
 			
 			if(villageList.size() > 0){

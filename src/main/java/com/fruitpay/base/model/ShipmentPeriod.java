@@ -23,10 +23,13 @@ public class ShipmentPeriod extends AbstractDataBean implements Serializable {
 
 	@Column(name="period_name")
 	private String periodName;
+	
+	@Column(name="duration")
+	private Integer duration;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="shipmentPeriod")
-	private List<CustomerOrder> customerOrders;
+	private List<OrderProgram> orderPrograms;
 
 	//bi-directional many-to-one association to Shipment
 	@OneToMany(mappedBy="shipmentPeriod")
@@ -59,26 +62,26 @@ public class ShipmentPeriod extends AbstractDataBean implements Serializable {
 		this.periodName = periodName;
 	}
 
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
+	public List<OrderProgram> getOrderPrograms() {
+		return this.orderPrograms;
 	}
 
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
+	public void setOrderPrograms(List<OrderProgram> orderPrograms) {
+		this.orderPrograms = orderPrograms;
 	}
 
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setShipmentPeriod(this);
+	public OrderProgram addOrderProgram(OrderProgram orderProgram) {
+		getOrderPrograms().add(orderProgram);
+		orderProgram.setShipmentPeriod(this);
 
-		return customerOrder;
+		return orderProgram;
 	}
 
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setShipmentPeriod(null);
+	public OrderProgram removeOrderProgram(OrderProgram orderProgram) {
+		getOrderPrograms().remove(orderProgram);
+		orderProgram.setShipmentPeriod(null);
 
-		return customerOrder;
+		return orderProgram;
 	}
 
 	public List<Shipment> getShipments() {
@@ -101,6 +104,14 @@ public class ShipmentPeriod extends AbstractDataBean implements Serializable {
 		shipment.setShipmentPeriod(null);
 
 		return shipment;
+	}
+
+	public Integer getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Integer duration) {
+		this.duration = duration;
 	}
 
 }

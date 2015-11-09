@@ -44,6 +44,7 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 		logger.debug("enter create method");
 		EntityManager em = getEntityManager();
 		em.persist(t);
+		em.flush();
 		return t;
 	}
 	

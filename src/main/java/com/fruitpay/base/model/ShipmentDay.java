@@ -2,6 +2,9 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.util.List;
 
 
@@ -27,6 +30,7 @@ public class ShipmentDay extends AbstractDataBean implements Serializable {
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="shipmentDay")
+	@JsonBackReference("shipmentDay")
 	private List<CustomerOrder> customerOrders;
 
 	//bi-directional many-to-one association to Shipment
