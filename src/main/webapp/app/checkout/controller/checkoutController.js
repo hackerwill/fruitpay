@@ -201,6 +201,11 @@ angular.module('checkout')
 			checkoutService.checkoutTest()
 				.then(function(result){
 					console.log(result);
+					if(!isNaN(result)){
+						document.getElementById("orderId").value = result;
+						document.getElementById("allpayCheckoutForm").submit();
+					}
+						
 				});
 			if ($scope.checkoutForm.$valid) {      
 				
