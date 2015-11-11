@@ -23,7 +23,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Id
 	@Column(name="order_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int orderId;
+	private Integer orderId;
 
 	
 	@Column(name="order_date")
@@ -104,11 +104,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	public CustomerOrder() {
 	}
 
-	public int getOrderId() {
+	public Integer getOrderId() {
 		return this.orderId;
 	}
 
-	public void setOrderId(int orderId) {
+	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
 	}
 

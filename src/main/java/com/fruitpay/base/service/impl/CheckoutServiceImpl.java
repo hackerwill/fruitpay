@@ -42,4 +42,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 		return customerOrder;
 	}
 
+	@Override
+	public CustomerOrder getCustomerOrder(Integer orderId) {
+		return customerOrderDAO.findById(orderId);
+	}
+
 }
