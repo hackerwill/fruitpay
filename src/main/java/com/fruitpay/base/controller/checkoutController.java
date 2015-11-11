@@ -53,12 +53,42 @@ public class checkoutController {
 		logger.debug(customer);
 		logger.debug(customerOrder);
 		
-		PrintWriter out = null;
 		
 		if(customer == null || customerOrder == null)
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		
 		customerOrder = checkoutService.checkoutOrder(customer, customerOrder);
+		
+	
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/checkoutSuccessful", method = RequestMethod.POST)
+	public void checkoutSuccessful(
+			HttpServletRequest request, HttpServletResponse response){
+		logger.info("I'm here");
+	}
+	
+	@RequestMapping(value = "/checkoutSuccessful111", method = RequestMethod.POST)
+	public void checkoutSuccessful111(
+			HttpServletRequest request, HttpServletResponse response){
+		logger.info("I'm here");
+	}
+	
+
+	@RequestMapping(value = "/checkoutSuccessful222", method = RequestMethod.POST)
+	public void checkoutSuccessful222(
+			HttpServletRequest request, HttpServletResponse response){
+		logger.info("I'm here");
+	}
+	
+	@RequestMapping(value = "/allpayCheckoutTest", method = RequestMethod.POST)
+	public void allpayCheckoutTest(
+			HttpServletRequest request, HttpServletResponse response){
+		
+		PrintWriter out = null;
+		response.setHeader("Content-type", "text/html;charset=UTF-8");  
 		
 		/*
 		 * 產生訂單的範例程式碼。
@@ -69,37 +99,37 @@ public class checkoutController {
 			AllInOne oPayment = new AllInOne();
 			/* 服務參數 */
 			oPayment.ServiceMethod = HttpMethod.HttpPOST;
-			oPayment.ServiceURL = "https://payment.allpay.com.tw/Cashier/QueryTradeInfo";
-			oPayment.HashKey = "<<AllPay提供給您的Hash Key>>";
-			oPayment.HashIV = "<<AllPay提供給您的Hash IV>>";
+			oPayment.ServiceURL = "http://payment.allpay.com.tw/Cashier/AioCheckOut";
+			oPayment.HashKey = "gXLhKG6NYxJOosdd";
+			oPayment.HashIV = "z2G1om86YlJ35noj";
 			oPayment.MerchantID = "1074763";
 			/* 基本參數 */
-			oPayment.Send.ReturnURL = "<<您要收到付款完成通知的伺服器端網址>>";
-			oPayment.Send.ClientBackURL = "<<您要歐付寶返回按鈕導向的瀏覽器端網址>>";
-			oPayment.Send.OrderResultURL = "<<您要收到付款完成通知的瀏覽器端網址>>";
-			oPayment.Send.MerchantTradeNo = "1";
+			oPayment.Send.ReturnURL = "http://localhost:8081/fruitpay/checkoutCtrl/checkoutSuccessful";
+			oPayment.Send.ClientBackURL = "http://localhost:8081/fruitpay";
+			oPayment.Send.OrderResultURL = "http://localhost:8081/fruitpay/checkoutCtrl/checkoutSuccessful";
+			oPayment.Send.MerchantTradeNo = "1234456789";
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
-			oPayment.Send.TotalAmount = new Decimal("499");
-			oPayment.Send.TradeDesc = "<<您該筆訂單的描述>>";
-			oPayment.Send.ChoosePayment = PaymentMethod.Alipay;
-			oPayment.Send.Remark = "<<您要填寫的其他備註>>";
+			oPayment.Send.TotalAmount = new Decimal("699");
+			oPayment.Send.TradeDesc = "test";
+			oPayment.Send.ChoosePayment = PaymentMethod.Credit;
+			oPayment.Send.Remark = "test";
 			oPayment.Send.ChooseSubPayment = PaymentMethodItem.None;
 			oPayment.Send.NeedExtraPaidInfo = ExtraPaymentInfo.No;
-			oPayment.Send.DeviceSource = DeviceType.PC;
-			// 加入選購商品資料。
+			//oPayment.Send.DeviceSource = DeviceType.PC;
+			// 加入選購商品資料。d
 			Item a1 = new Item();
-			a1.Name = "果物箱";
-			a1.Price = new Decimal("499");
-			a1.Currency = "<<幣別>>";
+			a1.Name = "果物箱 699 TWD x 1";
+			a1.Price = new Decimal("699");
+			a1.Currency = "ntd";
 			a1.Quantity = 1;// <<數量>>
-			a1.URL = "<<產品說明位址>>";
+			a1.URL = "";
 			oPayment.Send.Items.add(a1);
 			/* Credit 定期定額延伸參數 */
-			oPayment.SendExtend.PeriodAmount = new Decimal("499");
-			oPayment.SendExtend.PeriodType = PeriodType.Month;
+			oPayment.SendExtend.PeriodAmount = new Decimal("699");
+			oPayment.SendExtend.PeriodType = PeriodType.Day;
 			oPayment.SendExtend.Frequency = 7;// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = 999;// "<<執行次數>>";
-			oPayment.SendExtend.PeriodReturnURL = "<<定期定額執行結果的回應位址>>";
+			oPayment.SendExtend.PeriodReturnURL = "http://localhost:8081/fruitpay/checkoutCtrl/checkoutSuccessful";
 			/* 產生訂單 */
 			enErrors.addAll(oPayment.CheckOut(response.getWriter()));
 			/* 產生產生訂單 Html Code 的方法 */
@@ -113,8 +143,6 @@ public class checkoutController {
 			if (enErrors.size() > 0)
 				out.print(enErrors);
 		}
-		
-		return null;
 	}
 
 }
