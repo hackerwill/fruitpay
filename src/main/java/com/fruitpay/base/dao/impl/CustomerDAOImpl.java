@@ -1,8 +1,6 @@
 package com.fruitpay.base.dao.impl;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
@@ -16,13 +14,10 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	@PersistenceContext
-	private EntityManager em;
-	
 	@Override
 	public Customer getCustomerByEmail(String email){
 		
-		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.email = ?1");
+		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.email = ?1");
 		q.setParameter(1, email);
 		try{
 			return (Customer)q.getSingleResult();
@@ -35,7 +30,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	@Override
 	public Customer getCustomerByFbId(String fbId) {
-		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
+		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
 		q.setParameter(1, fbId);
 		try{
 			return (Customer)q.getSingleResult();
@@ -48,7 +43,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	@Override
 	public boolean isEmailMatchPassword(String email, String password) {
 
-		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.email = ?1 AND c.password = ?2 ");
+		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.email = ?1 AND c.password = ?2 ");
 		q.setParameter(1, email);
 		q.setParameter(2, password);
 		Customer customer = null;
@@ -68,7 +63,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	@Override
 	public boolean isCustomerIdMatchPassword(Integer customerId, String password) {
 
-		Query q = em.createQuery("SELECT c FROM Customer c WHERE c.customerId = ?1 AND c.password = ?2 ");
+		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.customerId = ?1 AND c.password = ?2 ");
 		q.setParameter(1, customerId);
 		q.setParameter(2, password);
 		Customer customer = null;

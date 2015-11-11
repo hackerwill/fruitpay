@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderProgramDAO;
@@ -45,6 +46,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
 		return customerOrderDAO.findById(orderId);
+	}
+
+	@Override
+	@Transactional
+	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus) {
+		return customerOrderDAO.updateOrderStatus(orderId, orderStatus);
 	}
 
 }

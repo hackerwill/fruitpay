@@ -197,6 +197,9 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
+			document.getElementById("orderId").value = 11;
+			document.getElementById("allpayCheckoutForm").submit();
+			return;
 			//test
 			checkoutService.checkoutTest()
 				.then(function(result){

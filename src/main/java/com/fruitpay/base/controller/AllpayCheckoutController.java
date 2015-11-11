@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 
@@ -36,8 +37,8 @@ public class AllpayCheckoutController {
 	
 	private boolean DEBUG_MODE = true;
 	private final Logger logger = Logger.getLogger(this.getClass());
-	private final String ORDER_RESULT_URL = "/checkoutCtrl/allpayCallback";
-	private final String PERIOD_RETURN_URL = "/checkoutCtrl/allpaySchduleCallback";
+	private final String ORDER_RESULT_URL = "/allpayCtrl/callback";
+	private final String PERIOD_RETURN_URL = "/allpayCtrl/schduleCallback";
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -56,6 +57,14 @@ public class AllpayCheckoutController {
 	@Inject
 	private CheckoutService checkoutService;
 	
+	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
+	public void callbackTest( 
+			HttpServletRequest request, HttpServletResponse response){
+		Integer orderId = 11;
+		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful);
+		
+	}
+	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
 	public void allpayCallback( 
 			HttpServletRequest request, HttpServletResponse response){
@@ -63,14 +72,14 @@ public class AllpayCheckoutController {
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", "orderURL");
+		response.setHeader("Location", getDomainURL(request));
 		
 		List<String> enErrors = new ArrayList<String>(); 
 		try { 
 		 out = response.getWriter();
 		 AllInOne oPayment = new AllInOne();      
-		 oPayment.HashKey = "5294y06JbISpM5x9";      
-		 oPayment.HashIV = "v77hoKGq4kWxNNIS"; 
+		 oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
+		 oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
 		  
 		 Hashtable<String, String> htFeedback = new Hashtable<String, String>(); 
 		 enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request)); 
@@ -223,7 +232,7 @@ public class AllpayCheckoutController {
 			oPayment.Send.ReturnURL = index;
 			oPayment.Send.ClientBackURL = index + ORDER_RESULT_URL;
 			oPayment.Send.OrderResultURL = index + ORDER_RESULT_URL;
-			oPayment.Send.MerchantTradeNo = String.valueOf(orderId);
+			oPayment.Send.MerchantTradeNo = String.valueOf((int)(Math.random() * 1000000));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = new Decimal(String.valueOf(customerOrder.getOrderProgram().getPrice()));
 			oPayment.Send.TradeDesc = "no";

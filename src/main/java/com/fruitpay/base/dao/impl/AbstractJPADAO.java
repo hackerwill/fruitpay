@@ -15,12 +15,12 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager em;
 	private Class<T> modelClass;
 
 	protected EntityManager getEntityManager() {
 		logger.debug("enter getEntityManager method");
-		return entityManager;
+		return em;
 	}
 
 	@SuppressWarnings("unchecked")
