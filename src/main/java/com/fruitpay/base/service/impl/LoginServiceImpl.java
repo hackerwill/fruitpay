@@ -23,15 +23,17 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	@Transactional
-	public ReturnData signup(Customer customer) {
+	public ReturnData<Customer> signup(Customer customer) {
 
 		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
 			customer = getEncodedPasswordCustomer(customer);
-			customerDAO.create(customer); 
+			customer = customerDAO.create(customer); 
 			
-			return ReturnMessageEnum.Common.Success.getReturnMessage();
+			return new ReturnObject<Customer>(
+					ReturnMessageEnum.Common.Success.getReturnMessage(),
+					customer);
 		}
 	}
 	
@@ -47,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
 		if(customer == null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else if(!customerDAO.isEmailMatchPassword(email, Md5Util.getMd5(password))){
-			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
+			return ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage();
 		}else{
 			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
 					customer);

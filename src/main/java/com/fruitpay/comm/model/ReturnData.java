@@ -2,7 +2,7 @@ package com.fruitpay.comm.model;
 
 import java.io.Serializable;
 
-public interface ReturnData extends Serializable {
+public interface ReturnData<T> extends Serializable {
 	
 	/**
      * 得到錯誤代碼
@@ -23,6 +23,6 @@ public interface ReturnData extends Serializable {
      *
      * @return 回傳物件
      */
-	public Object getObject();
+	public T getObject();
 
 }

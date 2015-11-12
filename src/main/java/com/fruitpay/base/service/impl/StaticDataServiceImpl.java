@@ -32,7 +32,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	Map<String, List<SelectOption>> towershipMap = null;
 	Map<String, List<SelectOption>> villageMap = null;
 	
-	//@PostConstruct
+	@PostConstruct
 	public void init(){
 		allVillages = getAllVillages();
 		allVillages = removeOffIslands(allVillages);

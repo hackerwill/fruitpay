@@ -72,114 +72,116 @@ public class AllpayCheckoutController {
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", getDomainURL(request));
-		
-		List<String> enErrors = new ArrayList<String>(); 
-		try { 
-		 out = response.getWriter();
-		 AllInOne oPayment = new AllInOne();      
-		 oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
-		 oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
-		  
-		 Hashtable<String, String> htFeedback = new Hashtable<String, String>(); 
-		 enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request)); 
-		  
-		 Set<String> key = htFeedback.keySet(); 
-		 String name[] = key.toArray(new String[key.size()]); 
-		       /* 支付後的回傳的基本參數 */ 
-		     String szMerchantID = ""; 
-		     String szMerchantTradeNo = ""; 
-		     String szPaymentDate = ""; 
-		     String szPaymentType = ""; 
-		     String szPaymentTypeChargeFee = ""; 
-		     String szRtnCode = ""; 
-		     String szRtnMsg = ""; 
-		     String szSimulatePaid = ""; 
-		     String szTradeAmt = ""; 
-		     String szTradeDate = ""; 
-		     String szTradeNo = "";      /* 使用定期定額交易時，回傳的額外參數 */ 
-		     String szPeriodType = ""; 
-		     String szFrequency = ""; 
-		     String szExecTimes = ""; 
-		     String szAmount = ""; 
-		     String szGwsr = ""; 
-		     String szProcessDate = ""; 
-		     String szAuthCode = ""; 
-		     String szFirstAuthAmount = ""; 
-		     String szTotalSuccessTimes = "";  // 取得資料 
-		 for(int i = 0 ; i < name.length ; i++) {   /* 支付後的回傳的基本參數 */ 
-		  if(name[i].equals("MerchantID")) 
-		   szMerchantID = htFeedback.get(name[i]); 
-		  else if(name[i].equals("MerchantTradeNo")) 
-		   szMerchantTradeNo = htFeedback.get(name[i]); 
-		  else if(name[i].equals("PaymentDate")) 
-		   szPaymentDate = htFeedback.get(name[i]); 
-		  else if(name[i].equals("PaymentType")) 
-		   szPaymentType = htFeedback.get(name[i]); 
-		  else if(name[i].equals("PaymentTypeChargeFee")) 
-		   szPaymentTypeChargeFee = htFeedback.get(name[i]); 
-		  else if(name[i].equals("RtnCode")) 
-		   szRtnCode = htFeedback.get(name[i]); 
-		  else if(name[i].equals("RtnMsg")) 
-		   szRtnMsg = htFeedback.get(name[i]); 
-		  else if(name[i].equals("SimulatePaid")) 
-		   szSimulatePaid = htFeedback.get(name[i]); 
-		  else if(name[i].equals("TradeAmt")) 
-		   szTradeAmt = htFeedback.get(name[i]); 
-		  else if(name[i].equals("TradeDate")) 
-		   szTradeDate = htFeedback.get(name[i]); 
-		  else if(name[i].equals("TradeNo")) 
-		   szTradeNo = htFeedback.get(name[i]); 
-		  else if(name[i].equals("PeriodType")) 
-		   szPeriodType = htFeedback.get(name[i]); 
-		  else if(name[i].equals("Frequency")) 
-		   szFrequency = htFeedback.get(name[i]); 
-		  else if(name[i].equals("ExecTimes")) 
-		   szExecTimes = htFeedback.get(name[i]); 
-		  else if(name[i].equals("Amount")) 
-		   szAmount = htFeedback.get(name[i]); 
-		  else if(name[i].equals("Gwsr")) 
-		   szGwsr = htFeedback.get(name[i]); 
-		  else if(name[i].equals("ProcessDate")) 
-		   szProcessDate = htFeedback.get(name[i]); 
-		  else if(name[i].equals("AuthCode")) 
-		   szAuthCode = htFeedback.get(name[i]); 
-		  else if(name[i].equals("FirstAuthAmount")) 
-		   szFirstAuthAmount = htFeedback.get(name[i]); 
-		  else if(name[i].equals("TotalSuccessTimes")) 
-		   szTotalSuccessTimes = htFeedback.get(name[i]); 
-		 } 
-		 System.out.println("MerchantID = " + szMerchantID); 
-		 System.out.println("MerchantTradeNo = " + szMerchantTradeNo); 
-		 System.out.println("PaymentDate = " + szPaymentDate); 
-		 System.out.println("PaymentType = " + szPaymentType); 
-		 System.out.println("PaymentTypeChargeFee = " + szPaymentTypeChargeFee); 
-		 System.out.println("RtnCode = " + szRtnCode); 
-		 System.out.println("RtnMsg = " + szRtnMsg); 
-		 System.out.println("SimulatePaid = " + szSimulatePaid); 
-		 System.out.println("TradeAmt = " + szTradeAmt); 
-		 System.out.println("TradeDate = " + szTradeDate); 
-		 System.out.println("TradeNo = " + szTradeNo);  /* 使用定期定額交易時，回傳的額外參數 */ 
-		 System.out.println("PeriodType = " + szPeriodType); 
-		 System.out.println("Frequency = " + szFrequency); 
-		 System.out.println("ExecTimes = " + szExecTimes); 
-		 System.out.println("Amount = " + szAmount); 
-		 System.out.println("Gwsr = " + szGwsr); 
-		 System.out.println("ProcessDate = " + szProcessDate); 
-		 System.out.println("AuthCode = " + szAuthCode); 
-		 System.out.println("FirstAuthAmount = " + szFirstAuthAmount); 
-		 System.out.println("TotalSuccessTimes = " + szTotalSuccessTimes); 
-		 out.println(""); 
-		} 
-		catch (Exception e) { 
-		 enErrors.add(e.getMessage()); 
-		} 
-		finally {  // 回覆成功訊息。 
-		 if (enErrors.size() == 0) 
-		    out.println("1|OK");  // 回覆錯誤訊息。 
-		 else 
-		   out.println("0|" + enErrors); 
-		} 
+
+		List<String> enErrors = new ArrayList<String>();
+		try {
+			out = response.getWriter();
+			AllInOne oPayment = new AllInOne();
+			oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
+
+			Hashtable<String, String> htFeedback = new Hashtable<String, String>();
+			enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request));
+
+			Set<String> key = htFeedback.keySet();
+			String name[] = key.toArray(new String[key.size()]);
+			/* 支付後的回傳的基本參數 */
+			String szMerchantID = "";
+			String szMerchantTradeNo = "";
+			String szPaymentDate = "";
+			String szPaymentType = "";
+			String szPaymentTypeChargeFee = "";
+			String szRtnCode = "";
+			String szRtnMsg = "";
+			String szSimulatePaid = "";
+			String szTradeAmt = "";
+			String szTradeDate = "";
+			String szTradeNo = ""; /* 使用定期定額交易時，回傳的額外參數 */
+			String szPeriodType = "";
+			String szFrequency = "";
+			String szExecTimes = "";
+			String szAmount = "";
+			String szGwsr = "";
+			String szProcessDate = "";
+			String szAuthCode = "";
+			String szFirstAuthAmount = "";
+			String szTotalSuccessTimes = ""; // 取得資料
+			for (int i = 0; i < name.length; i++) { /* 支付後的回傳的基本參數 */
+				if (name[i].equals("MerchantID"))
+					szMerchantID = htFeedback.get(name[i]);
+				else if (name[i].equals("MerchantTradeNo"))
+					szMerchantTradeNo = htFeedback.get(name[i]);
+				else if (name[i].equals("PaymentDate"))
+					szPaymentDate = htFeedback.get(name[i]);
+				else if (name[i].equals("PaymentType"))
+					szPaymentType = htFeedback.get(name[i]);
+				else if (name[i].equals("PaymentTypeChargeFee"))
+					szPaymentTypeChargeFee = htFeedback.get(name[i]);
+				else if (name[i].equals("RtnCode"))
+					szRtnCode = htFeedback.get(name[i]);
+				else if (name[i].equals("RtnMsg"))
+					szRtnMsg = htFeedback.get(name[i]);
+				else if (name[i].equals("SimulatePaid"))
+					szSimulatePaid = htFeedback.get(name[i]);
+				else if (name[i].equals("TradeAmt"))
+					szTradeAmt = htFeedback.get(name[i]);
+				else if (name[i].equals("TradeDate"))
+					szTradeDate = htFeedback.get(name[i]);
+				else if (name[i].equals("TradeNo"))
+					szTradeNo = htFeedback.get(name[i]);
+				else if (name[i].equals("PeriodType"))
+					szPeriodType = htFeedback.get(name[i]);
+				else if (name[i].equals("Frequency"))
+					szFrequency = htFeedback.get(name[i]);
+				else if (name[i].equals("ExecTimes"))
+					szExecTimes = htFeedback.get(name[i]);
+				else if (name[i].equals("Amount"))
+					szAmount = htFeedback.get(name[i]);
+				else if (name[i].equals("Gwsr"))
+					szGwsr = htFeedback.get(name[i]);
+				else if (name[i].equals("ProcessDate"))
+					szProcessDate = htFeedback.get(name[i]);
+				else if (name[i].equals("AuthCode"))
+					szAuthCode = htFeedback.get(name[i]);
+				else if (name[i].equals("FirstAuthAmount"))
+					szFirstAuthAmount = htFeedback.get(name[i]);
+				else if (name[i].equals("TotalSuccessTimes"))
+					szTotalSuccessTimes = htFeedback.get(name[i]);
+			}
+			System.out.println("MerchantID = " + szMerchantID);
+			System.out.println("MerchantTradeNo = " + szMerchantTradeNo);
+			System.out.println("PaymentDate = " + szPaymentDate);
+			System.out.println("PaymentType = " + szPaymentType);
+			System.out.println("PaymentTypeChargeFee = " + szPaymentTypeChargeFee);
+			System.out.println("RtnCode = " + szRtnCode);
+			System.out.println("RtnMsg = " + szRtnMsg);
+			System.out.println("SimulatePaid = " + szSimulatePaid);
+			System.out.println("TradeAmt = " + szTradeAmt);
+			System.out.println("TradeDate = " + szTradeDate);
+			System.out
+					.println("TradeNo = " + szTradeNo); /* 使用定期定額交易時，回傳的額外參數 */
+			System.out.println("PeriodType = " + szPeriodType);
+			System.out.println("Frequency = " + szFrequency);
+			System.out.println("ExecTimes = " + szExecTimes);
+			System.out.println("Amount = " + szAmount);
+			System.out.println("Gwsr = " + szGwsr);
+			System.out.println("ProcessDate = " + szProcessDate);
+			System.out.println("AuthCode = " + szAuthCode);
+			System.out.println("FirstAuthAmount = " + szFirstAuthAmount);
+			System.out.println("TotalSuccessTimes = " + szTotalSuccessTimes);
+			out.println("");
+		} catch (Exception e) {
+			enErrors.add(e.getMessage());
+		} finally { // 回覆成功訊息。
+			if (enErrors.size() == 0) {
+				response.setHeader("Location", getDomainURL(request));
+				out.println("1|OK"); // 回覆錯誤訊息。
+			} else {
+				response.setHeader("Location", getDomainURL(request));
+				out.println("0|" + enErrors);
+			}
+
+		}
 		
 	}
 	

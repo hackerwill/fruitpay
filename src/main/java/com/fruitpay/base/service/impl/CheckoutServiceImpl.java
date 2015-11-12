@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.OrderStatus;
-import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderProgramDAO;
-import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.service.CheckoutService;
@@ -23,18 +21,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Inject
 	private CustomerOrderDAO customerOrderDAO;
 	@Inject
-	private CustomerDAO customerDAO;
-	@Inject
 	private OrderProgramDAO orderProgramDAO;
 	
 	@Override
 	@Transactional
-	public CustomerOrder checkoutOrder(Customer customer, CustomerOrder customerOrder) {
-		logger.debug("add a customer, email is " + customer.getEmail());
-		customer = customerDAO.create(customer);
-		
-		logger.debug("add a customerOrder, email is " + customer.getEmail());
-		customerOrder.setCustomer(customer);
+	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
+		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		customerOrder = customerOrderDAO.create(customerOrder);
 		
 		OrderProgram orderProgram = orderProgramDAO.findById(customerOrder.getOrderProgram().getProgramId());

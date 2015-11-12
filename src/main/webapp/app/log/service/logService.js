@@ -43,7 +43,6 @@ function logService($alert){
 	}
 			
 	function errorCallback(response){
-			console.log(response);
 			$alert({
 				title: '請確認網路連線',
 				placement: 'top',
