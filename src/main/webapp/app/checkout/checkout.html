@@ -64,11 +64,10 @@
 	<div class="container-fluid sectionDiv onepageElement" id="productsDiv">
 		<h1>水果喜好</h1>
 		<hr/>
-		<uib-carousel interval="myInterval"> 
-			<uib-slide ng-repeat="slide in slides" active="slide.active">
-				<div>
-					<div class="row">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-2" ng-repeat="n in range(1,imageNum, $index, totalImageAmount)">
+			<ul rn-carousel rn-carousel-index="carouselIndex">
+				<li ng-repeat="slide in slides">
+					<div class="row productRow">
+						<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2" ng-repeat="n in range(1,imageNum, $index, totalImageAmount)">
 							<img ng-src="{{slide[getImageName(n)].imageLink}}" class="img-rounded" ng-class="{active:slide[getImageName(n)].checked}"
 								ng-click="slide[getImageName(n)].checked = !slide[getImageName(n)].checked"/>
 							<div class="desc">
@@ -77,9 +76,13 @@
 							<span class="glyphicon glyphicon-heart" ng-class="{active:slide[getImageName(n)].checked}"></span>
 						</div>
 					</div>
-				</div>
-			</uib-slide> 
-		</uib-carousel>
+				</li>
+				<span class="glyphicon glyphicon-chevron-left fruitpayArray" id="fruitpayArrayLeft" ng-click="fruitLeft()"></span>
+				<span class="glyphicon glyphicon-chevron-right fruitpayArray" id="fruitpayArrayRight" ng-click="fruitRight()"></span>
+			</ul>
+			<div id="indicatorDiv">
+				<div rn-carousel-indicators ng-if="slides.length > 1" slides="slides" rn-carousel-index="carouselIndex"></div>
+			</div>
 	</div>
 	<div class="container-fluid sectionDiv onepageElement">
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
