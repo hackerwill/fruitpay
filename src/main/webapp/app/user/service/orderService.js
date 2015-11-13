@@ -13,8 +13,8 @@
 		return service;
 		
 		function getOrderByCustomerId(customerId){
-			$http.get('CustomerDataCtrl/' + customerId + '/getOrder/')
-			.then(logService.successCallback, logService.errorCallback);
+			return $http.get('CustomerDataCtrl/' + customerId + '/getOrder/')
+				.then(logService.successCallback, logService.errorCallback);
 		}
 		
 	}
