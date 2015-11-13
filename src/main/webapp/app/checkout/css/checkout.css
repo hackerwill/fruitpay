@@ -76,7 +76,6 @@
     opacity: 0.5;
 }
 
-
 .carousel-control{
 	width : 5%;
 }
@@ -98,3 +97,55 @@
 .glyphicon-heart.active{
 	color : #E86262;
 }
+
+.row.productRow{
+	margin-right: 0px;
+    margin-left: 0px;
+}
+
+#indicatorDiv{
+	text-align: center;
+}
+
+div.rn-carousel-indicator span.active {
+    color: #EBCCD1;
+}
+
+.fruitpayArray{
+	position: absolute;
+	font-size: 50px;
+	cursor : pointer; 
+}
+
+#fruitpayArrayRight{
+	right: -3px;
+    top: 40%;
+}
+
+#fruitpayArrayLeft{
+    left: -3px;
+    top: 40%;
+}
+
+ul[rn-carousel]{
+	height: 500px;
+}	
+
+@media only screen and (max-width: 1200px){	
+	ul[rn-carousel]{
+		height: 450px;
+	}	
+}
+
+@media only screen and (max-width: 991px){	
+	ul[rn-carousel]{
+		height: 450px;
+	}	
+}
+
+@media only screen and (max-width: 768px){	
+	ul[rn-carousel]{
+		height: 75vh;
+	}	
+}
+

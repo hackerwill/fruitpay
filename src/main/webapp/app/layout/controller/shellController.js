@@ -10,6 +10,10 @@ angular.module('shell')
 		
 		if($scope.loggedIn){
 			$scope.dropdown = [
+			                   {
+			                	 "text": "訂單",
+			                	 "href": "#/index/user/orders"
+			                   },
         	                   {
         	                     "text": "登出",
         	                     "href": "#/index/logout"

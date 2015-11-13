@@ -29,7 +29,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	
 	@Override
-	public Customer getCustomerByFbId(String fbId) {
+	public Customer findByFbId(String fbId) {
 		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
 		q.setParameter(1, fbId);
 		try{

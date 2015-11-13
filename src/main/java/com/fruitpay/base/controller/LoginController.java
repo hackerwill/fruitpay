@@ -1,6 +1,9 @@
 package com.fruitpay.base.controller;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +21,7 @@ import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.AuthenticationUtil;
 
 @Controller
 @RequestMapping("loginCtrl")
@@ -32,33 +36,43 @@ public class LoginController {
 	MessageSendController messageSendController;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody ReturnData loginAsOneCustomer(@RequestBody Customer customer){
+	public @ResponseBody ReturnData<Customer> loginAsOneCustomer(@RequestBody Customer customer,
+			HttpServletRequest request, HttpServletResponse response){
 		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());
 		if(AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword())){
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
-		
+		ReturnData<Customer> returnData = loginService.login(customer.getEmail(), customer.getPassword());
+		if(returnData.getObject() != null)
+			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
 		return loginService.login(customer.getEmail(), customer.getPassword());
 	}
 	
 	@RequestMapping(value = "/loginById", method = RequestMethod.POST)
-	public @ResponseBody ReturnData loginByIdAsOneCustomer(@RequestBody Customer customer){
+	public @ResponseBody ReturnData<Customer> loginByIdAsOneCustomer(@RequestBody Customer customer,
+			HttpServletRequest request, HttpServletResponse response){
 		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());
 		if(AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()), customer.getPassword())){
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
-		
-		return loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());
+		ReturnData<Customer> returnData = 
+				loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());
+		if(returnData.getObject() != null)
+			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
+		return returnData;
 	}
 	
 	@RequestMapping(value = "/fbLogin", method = RequestMethod.POST)
-	public @ResponseBody ReturnData fbLoginAsOneCustomer(@RequestBody Customer customer){
+	public @ResponseBody ReturnData<Customer> fbLoginAsOneCustomer(@RequestBody Customer customer, 
+			HttpServletRequest request, HttpServletResponse response){
 		
 		logger.debug("LoginController#fbLoginAsOneCustomer fbId=" + customer.getFbId());
 		if(AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())){
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
-		
+		ReturnData<Customer> returnData = loginService.fbLogin(customer);
+		if(returnData.getObject() != null)
+			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
 		return loginService.fbLogin(customer);
 	}
 	
@@ -80,5 +94,12 @@ public class LoginController {
 		return lrm;
 		
 	}
-
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	public @ResponseBody ReturnData logout(
+			HttpServletRequest request, HttpServletResponse response){
+		
+		AuthenticationUtil.setSessionCustomer(request, null);
+		return ReturnMessageEnum.Common.Success.getReturnMessage();
+	}
 }

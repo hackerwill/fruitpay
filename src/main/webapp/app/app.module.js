@@ -27,12 +27,6 @@ function appRouter($stateProvider, $urlRouterProvider){
             templateUrl: 'checkout/checkout.html',
             controller:'checkoutController'
         })
-		.state('index.user', {
-            url: "/user",
-            templateUrl: 'user/user.html',
-            controller:'userController',
-            authenticate: true
-        })
 		.state('index.login', {
             url: "/login",
             templateUrl: 'login/login.html',
@@ -43,7 +37,18 @@ function appRouter($stateProvider, $urlRouterProvider){
             templateUrl: 'login/logout.html',
             controller:'logoutController'
         })
-
+        .state('index.user', {
+            url: "/user",
+            templateUrl: 'user/user.html',
+            controller:'userController',
+            authenticate: true
+        })
+        .state('index.user.orders', {
+            url: "/orders",
+            templateUrl: 'user/order.html',
+            controller:'orderController',
+            authenticate: true
+        })
 }
 
 run.$inject = ['$rootScope', '$location', '$http', '$timeout'];
@@ -69,14 +74,6 @@ function run( $rootScope, $location, $http, $timeout) {
 			});
         }
         
-        function inArray(path, comparePaths){
-        	for(var i = 0; i < comparePaths.length; i++){
-        		if(path.indexOf(comparePaths[i]) != -1){
-        			return true;
-        		}
-        	}
-        	return false;
-        }
     });
 }
 

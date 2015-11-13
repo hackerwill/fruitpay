@@ -108,6 +108,11 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 		$rootScope.globals = {};
 		localStorage.fruitpayGlobals = null;
 		$http.defaults.headers.common.Authorization = 'Basic ';
+		
+		$http.post('loginCtrl/logout')
+			.then(function(result){
+				console.log(result);
+			});
 	}
 }
 

@@ -44,42 +44,42 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public ReturnData login(String email, String password) {
+	public ReturnData<Customer> login(String email, String password) {
 		Customer customer = customerDAO.getCustomerByEmail(email); 
 		if(customer == null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
 		}else if(!customerDAO.isEmailMatchPassword(email, Md5Util.getMd5(password))){
 			return ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage();
 		}else{
-			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+			return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),
 					customer);
 		}
 	}
 	
 	@Override
-	public ReturnData loginByCustomerId(Integer customerId, String password) {
+	public ReturnData<Customer> loginByCustomerId(Integer customerId, String password) {
 		Customer customer = customerDAO.findById(customerId);
 		if(customer == null){
 			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
 		}else if(!customerDAO.isCustomerIdMatchPassword(customerId, password)){
 			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
 		}else{
-			return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+			return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),
 					customer);
 		}
 	}
 
 	@Override
 	@Transactional
-	public ReturnData fbLogin(Customer customer) {
-		Customer checkcustomer = customerDAO.getCustomerByFbId(customer.getFbId()); 
+	public ReturnData<Customer> fbLogin(Customer customer) {
+		Customer checkcustomer = customerDAO.findByFbId(customer.getFbId()); 
 		if(checkcustomer == null){
 			customer.setPassword(FB_PASSWORD);
 			customer = getEncodedPasswordCustomer(customer);
 			customer = customerDAO.create(customer); 
 		}
 		
-		return new ReturnObject(ReturnMessageEnum.Common.Success.getReturnMessage(),
+		return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),
 				checkcustomer);
 	}
 	

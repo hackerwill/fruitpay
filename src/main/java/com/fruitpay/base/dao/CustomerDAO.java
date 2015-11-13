@@ -23,7 +23,7 @@ public interface CustomerDAO extends DAO<Customer> {
      * @return 顧客       
      *         
 	 * */
-	public Customer getCustomerByFbId(String fbId);
+	public Customer findByFbId(String fbId);
 	
 	/**
      * 驗證該信箱與密碼是否與資料庫資料吻合

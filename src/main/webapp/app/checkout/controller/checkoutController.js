@@ -3,10 +3,10 @@ angular.module('checkout')
 	.controller('checkoutController',
 			["$scope", "$document", "$window", "commService", '$q', "checkoutService", 
 		function($scope, $document, $window, commService, $q, checkoutService){
-		
+				
 		var slides = $scope.slides = [];
 		$scope.myInterval = false;
-		var imageNum = 18;
+		var imageNum = getImageNum();
 		$scope.imageNum = imageNum;
 		
 		var resizeAppend = '?resize=200%2C150';
@@ -75,6 +75,8 @@ angular.module('checkout')
 		$scope.receiverTowershipChange = receiverTowershipChange;
 		$scope.range = range;
 		$scope.getImageName = getImageName;
+		$scope.fruitLeft = fruitLeft;
+		$scope.fruitRight = fruitRight;
 		
 		(function(){
 			commService
@@ -89,6 +91,21 @@ angular.module('checkout')
 				.then(setReceiverTowershipsData)
 				.then(setReceiverVillagesData);
 		})();
+		
+		function fruitLeft(){
+			$scope.carouselIndex--;
+		}
+		
+		function fruitRight(){
+			$scope.carouselIndex++;
+		}
+		
+		function getImageNum(){
+			if(commService.getWindowSize().width > 991)
+				return 18;
+			else
+				return 12;
+		}
 		
 		function getImageName(n){
 			return "image" + n;

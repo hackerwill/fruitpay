@@ -1,6 +1,11 @@
 package com.fruitpay.comm.utils;
 
+import org.apache.log4j.Logger;
+
+
 public class AssertUtils {
+	
+	private static final Logger logger = Logger.getLogger(AssertUtils.class);
 	
 	public static boolean anyIsEmpty(String... strs){
 		for (int i = 0; i < strs.length; i++) {
@@ -18,12 +23,16 @@ public class AssertUtils {
 		return str == null || str.isEmpty();
 	}
 	
-	public static boolean isNotEmpty(Integer value){
+	public static boolean hasValue(Integer value){
 		return ! isEmpty(value);
 	}
 	
-	public static boolean isNotEmpty(String str){
+	public static boolean hasValue(String str){
 		return ! isEmpty(str);
+	}
+	
+	public static boolean isEmpty(Object object){
+		return object == null ;
 	}
 
 }
