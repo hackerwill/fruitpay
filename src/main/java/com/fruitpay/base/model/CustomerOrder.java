@@ -54,10 +54,8 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="tax_title")
 	private String taxTitle;
 
-	//bi-directional many-to-one association to Village
 	@ManyToOne
 	@JoinColumn(name="village_code")
-	@JsonBackReference("village")
 	private Village village;
 
 	//bi-directional many-to-one association to Customer
@@ -66,34 +64,24 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JsonBackReference("customer")
 	private Customer customer;
 
-	//bi-directional many-to-one association to OrderPlatform
 	@ManyToOne
 	@JoinColumn(name="platform_id")
-	@JsonBackReference("orderPlatform")
 	private OrderPlatform orderPlatform;
 
-	//bi-directional many-to-one association to OrderProgram
 	@ManyToOne
 	@JoinColumn(name="program_id")
-	@JsonBackReference("orderProgram")
 	private OrderProgram orderProgram;
 
-	//bi-directional many-to-one association to OrderStatus
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
-	@JsonBackReference("orderStatus")
 	private OrderStatus orderStatus;
 
-	//bi-directional many-to-one association to PaymentMode
 	@ManyToOne
 	@JoinColumn(name="payment_mode_id")
-	@JsonBackReference("paymentMode")
 	private PaymentMode paymentMode;
 
-	//bi-directional many-to-one association to ShipmentDay
 	@ManyToOne
 	@JoinColumn(name="shipment_days_id")
-	@JsonBackReference("shipmentDay")
 	private ShipmentDay shipmentDay;
 
 	//bi-directional many-to-one association to Shipment

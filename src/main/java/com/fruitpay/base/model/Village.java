@@ -39,21 +39,6 @@ public class Village extends AbstractDataBean implements Serializable {
 	@Column(name="village_name")
 	private String villageName;
 
-	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="village", fetch = FetchType.LAZY)
-	@JsonManagedReference("village")
-	private List<Customer> customers;
-
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="village",  fetch = FetchType.LAZY)
-	@JsonBackReference("village")
-	private List<CustomerOrder> customerOrders;
-
-	//bi-directional many-to-one association to Shipment
-	@OneToMany(mappedBy="village",  fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<Shipment> shipments;
-
 	public Village() {
 	}
 
@@ -105,71 +90,5 @@ public class Village extends AbstractDataBean implements Serializable {
 	public void setVillageName(String villageName) {
 		this.villageName = villageName;
 	}
-
-	public List<Customer> getCustomers() {
-		return this.customers;
-	}
-
-	public void setCustomers(List<Customer> customers) {
-		this.customers = customers;
-	}
-
-	public Customer addCustomer(Customer customer) {
-		getCustomers().add(customer);
-		customer.setVillage(this);
-
-		return customer;
-	}
-
-	public Customer removeCustomer(Customer customer) {
-		getCustomers().remove(customer);
-		customer.setVillage(null);
-
-		return customer;
-	}
-
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
-	}
-
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
-	}
-
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setVillage(this);
-
-		return customerOrder;
-	}
-
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setVillage(null);
-
-		return customerOrder;
-	}
-
-	public List<Shipment> getShipments() {
-		return this.shipments;
-	}
-
-	public void setShipments(List<Shipment> shipments) {
-		this.shipments = shipments;
-	}
-
-	public Shipment addShipment(Shipment shipment) {
-		getShipments().add(shipment);
-		shipment.setVillage(this);
-
-		return shipment;
-	}
-
-	public Shipment removeShipment(Shipment shipment) {
-		getShipments().remove(shipment);
-		shipment.setVillage(null);
-
-		return shipment;
-	}
-
+	
 }

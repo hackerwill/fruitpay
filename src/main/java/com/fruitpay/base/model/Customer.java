@@ -69,10 +69,8 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@JsonManagedReference
 	private List<Customer> customers;
 
-	//bi-directional many-to-one association to Village
 	@ManyToOne
 	@JoinColumn(name="village_code")
-	@JsonBackReference("village")
 	private Village village;
 
 	//bi-directional many-to-one association to CustomerOrder

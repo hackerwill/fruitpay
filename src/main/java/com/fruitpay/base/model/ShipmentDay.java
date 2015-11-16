@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -27,15 +28,6 @@ public class ShipmentDay extends AbstractDataBean implements Serializable {
 
 	@Column(name="shipment_days_name")
 	private String shipmentDaysName;
-
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="shipmentDay")
-	@JsonBackReference("shipmentDay")
-	private List<CustomerOrder> customerOrders;
-
-	//bi-directional many-to-one association to Shipment
-	@OneToMany(mappedBy="shipmentDay")
-	private List<Shipment> shipments;
 
 	public ShipmentDay() {
 	}
@@ -63,49 +55,4 @@ public class ShipmentDay extends AbstractDataBean implements Serializable {
 	public void setShipmentDaysName(String shipmentDaysName) {
 		this.shipmentDaysName = shipmentDaysName;
 	}
-
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
-	}
-
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
-	}
-
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setShipmentDay(this);
-
-		return customerOrder;
-	}
-
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setShipmentDay(null);
-
-		return customerOrder;
-	}
-
-	public List<Shipment> getShipments() {
-		return this.shipments;
-	}
-
-	public void setShipments(List<Shipment> shipments) {
-		this.shipments = shipments;
-	}
-
-	public Shipment addShipment(Shipment shipment) {
-		getShipments().add(shipment);
-		shipment.setShipmentDay(this);
-
-		return shipment;
-	}
-
-	public Shipment removeShipment(Shipment shipment) {
-		getShipments().remove(shipment);
-		shipment.setShipmentDay(null);
-
-		return shipment;
-	}
-
 }

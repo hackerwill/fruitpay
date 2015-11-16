@@ -3,7 +3,7 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -26,11 +26,6 @@ public class OrderStatus extends AbstractDataBean implements Serializable {
 
 	@Column(name="order_status_name")
 	private String orderStatusName;
-
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="orderStatus")
-	@JsonBackReference("orderStatus")
-	private List<CustomerOrder> customerOrders;
 
 	public OrderStatus() {
 	}
@@ -57,28 +52,6 @@ public class OrderStatus extends AbstractDataBean implements Serializable {
 
 	public void setOrderStatusName(String orderStatusName) {
 		this.orderStatusName = orderStatusName;
-	}
-
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
-	}
-
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
-	}
-
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setOrderStatus(this);
-
-		return customerOrder;
-	}
-
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setOrderStatus(null);
-
-		return customerOrder;
 	}
 
 }

@@ -45,7 +45,7 @@ public class LoginController {
 		ReturnData<Customer> returnData = loginService.login(customer.getEmail(), customer.getPassword());
 		if(returnData.getObject() != null)
 			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
-		return loginService.login(customer.getEmail(), customer.getPassword());
+		return returnData;
 	}
 	
 	@RequestMapping(value = "/loginById", method = RequestMethod.POST)

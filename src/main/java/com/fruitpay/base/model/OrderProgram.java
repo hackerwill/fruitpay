@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -29,11 +30,6 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 	
 	@Column(name="price")
 	private Integer price;
-
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="orderProgram")
-	@JsonBackReference("orderProgram")
-	private List<CustomerOrder> customerOrders;
 	
 	//bi-directional many-to-one association to ShipmentPeriod
 	@ManyToOne
@@ -65,28 +61,6 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 
 	public void setProgramName(String programName) {
 		this.programName = programName;
-	}
-
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
-	}
-
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
-	}
-
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setOrderProgram(this);
-
-		return customerOrder;
-	}
-
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setOrderProgram(null);
-
-		return customerOrder;
 	}
 
 	public ShipmentPeriod getShipmentPeriod() {

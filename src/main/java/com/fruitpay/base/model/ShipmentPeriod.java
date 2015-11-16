@@ -27,14 +27,6 @@ public class ShipmentPeriod extends AbstractDataBean implements Serializable {
 	@Column(name="duration")
 	private Integer duration;
 
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="shipmentPeriod")
-	private List<OrderProgram> orderPrograms;
-
-	//bi-directional many-to-one association to Shipment
-	@OneToMany(mappedBy="shipmentPeriod")
-	private List<Shipment> shipments;
-
 	public ShipmentPeriod() {
 	}
 
@@ -60,50 +52,6 @@ public class ShipmentPeriod extends AbstractDataBean implements Serializable {
 
 	public void setPeriodName(String periodName) {
 		this.periodName = periodName;
-	}
-
-	public List<OrderProgram> getOrderPrograms() {
-		return this.orderPrograms;
-	}
-
-	public void setOrderPrograms(List<OrderProgram> orderPrograms) {
-		this.orderPrograms = orderPrograms;
-	}
-
-	public OrderProgram addOrderProgram(OrderProgram orderProgram) {
-		getOrderPrograms().add(orderProgram);
-		orderProgram.setShipmentPeriod(this);
-
-		return orderProgram;
-	}
-
-	public OrderProgram removeOrderProgram(OrderProgram orderProgram) {
-		getOrderPrograms().remove(orderProgram);
-		orderProgram.setShipmentPeriod(null);
-
-		return orderProgram;
-	}
-
-	public List<Shipment> getShipments() {
-		return this.shipments;
-	}
-
-	public void setShipments(List<Shipment> shipments) {
-		this.shipments = shipments;
-	}
-
-	public Shipment addShipment(Shipment shipment) {
-		getShipments().add(shipment);
-		shipment.setShipmentPeriod(this);
-
-		return shipment;
-	}
-
-	public Shipment removeShipment(Shipment shipment) {
-		getShipments().remove(shipment);
-		shipment.setShipmentPeriod(null);
-
-		return shipment;
 	}
 
 	public Integer getDuration() {

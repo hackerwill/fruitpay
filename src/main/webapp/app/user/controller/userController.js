@@ -10,6 +10,7 @@ angular.module('user')
 			 function($scope, sharedProperties, $location, authenticationService, 
 					 flashService, orderService){
 		var user = sharedProperties.getUser(); 	
+		
 		//有登入資料
 		if(user){
 			setUserData(user);
@@ -19,6 +20,7 @@ angular.module('user')
 		        .then(function(result){
 		            if (result) {
 		            	user = result;
+		            	console.log(user);
 		            	sharedProperties.setUser(result);
 		            	setUserData(user);
 		            } else {

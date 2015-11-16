@@ -27,11 +27,6 @@ public class OrderPlatform extends AbstractDataBean implements Serializable {
 	@Column(name="platform_name")
 	private String platformName;
 
-	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="orderPlatform")
-	@JsonManagedReference("orderPlatform")
-	private List<CustomerOrder> customerOrders;
-
 	public OrderPlatform() {
 	}
 
@@ -57,28 +52,6 @@ public class OrderPlatform extends AbstractDataBean implements Serializable {
 
 	public void setPlatformName(String platformName) {
 		this.platformName = platformName;
-	}
-
-	public List<CustomerOrder> getCustomerOrders() {
-		return this.customerOrders;
-	}
-
-	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-		this.customerOrders = customerOrders;
-	}
-
-	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().add(customerOrder);
-		customerOrder.setOrderPlatform(this);
-
-		return customerOrder;
-	}
-
-	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrders().remove(customerOrder);
-		customerOrder.setOrderPlatform(null);
-
-		return customerOrder;
 	}
 
 }
