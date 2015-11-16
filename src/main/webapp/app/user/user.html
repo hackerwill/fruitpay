@@ -1,39 +1,7 @@
-﻿<div class="container" ng-controller="userController">	
-	<div class="container-fluid">
-		<div class="col-sm-12">
-			<th><h1>個人資訊</h1></th>
-			<form role="form">
-				<div class="form-inline">
-					<label for="email">姓</label>
-					<label for="email">名</label>
-					<input type="text" class="form-control" name="" ng-model="user.lastName">
-					<input type="text" class="form-control" name="" ng-model="user.firstName">
-					<input type="radio" class="form-control" name="sex"> 
-					<label for="sex"> 先生</label>
-					<input type="radio" class="form-control" name="sex"> 
-					<label for="sex"> 小姐</label>
-				</div>
-				<div class="form-inline">
-					<label for="email">信箱</label>
-					<input type="text" class="form-control" id="email">
-					<label for="email">手機</label>
-					<input type="text" class="form-control" id="email">
-				</div>
-				<div class="form-inline">
-					<label for="email">生日<label>
-					<input type="text" class="form-control" id="email">
-				</div>
-				<div class="form-inline">
-					<label for="email">鄉鎮市<label>
-					<select class="form-control" >
-						<option>台北市</option>
-					</select>
-					<label for="email">地址<label>
-					<input type="text" class="form-control" id="email">
-				</div>
-				<button ng-click="getOrder()">測試</button>
-			</form>
-		</div>
+﻿<div class="container" >	
+	<div class="container-fluid secondLayerStart">
+		<h1>會員專區</h1>
+		<hr/>
 		<section class="container" ui-view></section>
 	</div>
 <div>

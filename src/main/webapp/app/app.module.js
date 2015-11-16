@@ -1,7 +1,6 @@
 'use strict';
 var app = angular.module('app',[
 	'ui.router',
-	'ngCookies',
 	'ngDialog',
 	'ngAnimate',
 	'duScroll',
@@ -51,12 +50,12 @@ function appRouter($stateProvider, $urlRouterProvider){
         })
 }
 
-run.$inject = ['$rootScope', '$location', '$http', '$timeout'];
-function run( $rootScope, $location, $http, $timeout) {
+run.$inject = ['$rootScope', '$location', '$http', '$timeout', 'sharedProperties'];
+function run( $rootScope, $location, $http, $timeout, sharedProperties) {
     // keep user logged in after page refresh
 	$rootScope.globals = {};
-	if(localStorage.fruitpayGlobals){
-		$rootScope.globals = JSON.parse(localStorage.fruitpayGlobals) || {};
+	if(sharedProperties.getStorage().fruitpayGlobals){
+		$rootScope.globals = JSON.parse(sharedProperties.getStorage().fruitpayGlobals) || {};
 	}
 	
     if ($rootScope.globals.currentUser) {

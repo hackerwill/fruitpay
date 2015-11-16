@@ -39,6 +39,7 @@ public class AllpayCheckoutController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final String ORDER_RESULT_URL = "/allpayCtrl/callback";
 	private final String PERIOD_RETURN_URL = "/allpayCtrl/schduleCallback";
+	private final String SHOW_ORDER_URL = "#/index/user/orders";
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -174,7 +175,7 @@ public class AllpayCheckoutController {
 			enErrors.add(e.getMessage());
 		} finally { // 回覆成功訊息。
 			if (enErrors.size() == 0) {
-				response.setHeader("Location", getDomainURL(request));
+				response.setHeader("Location", getDomainURL(request) + SHOW_ORDER_URL);
 				out.println("1|OK"); // 回覆錯誤訊息。
 			} else {
 				response.setHeader("Location", getDomainURL(request));

@@ -3,8 +3,9 @@
 angular.module('app')
 	.factory('authenticationService', authenticationService);
 
-authenticationService.$inject = [ '$http', '$rootScope', '$timeout', 'userService' ];
-function authenticationService($http, $rootScope, $timeout, userService) {
+authenticationService.$inject = 
+	[ '$q', '$http', '$rootScope', '$timeout', 'userService', 'sharedProperties', 'flashService'];
+function authenticationService($q, $http, $rootScope, $timeout, userService, sharedProperties, flashService) {
 	var service = {};
 
 	service.fbLogin = fbLogin;
@@ -12,8 +13,34 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 	service.loginById = loginById;
 	service.clearCredentials = clearCredentials;
 	service.isCredentialsMatch = isCredentialsMatch;
+	service.getUser = getUser;
 	
 	return service;
+	
+	function getUser(){
+		var deferred = $q.defer();
+		var user = sharedProperties.getUser(); 	
+		
+		//有登入資料
+		if(user){
+			deferred.resolve(user);
+		//有驗證資料	
+		}else if(!user && isCredentialsMatch()){ 
+			 loginById()
+			 	.then(function(result){
+		            if (result) {
+		            	console.log(result);
+		            	user = result;
+		            	sharedProperties.setUser(result);
+		            	deferred.resolve(user);
+		            } else {
+		                flashService.error(result);
+		            }
+		        });
+		}
+		
+		return deferred.promise;
+	}
 	
 	function fbLogin(user, callback) {
 
@@ -100,13 +127,13 @@ function authenticationService($http, $rootScope, $timeout, userService) {
 			}
 		};
 		
-		localStorage.fruitpayGlobals =  JSON.stringify($rootScope.globals);
+		sharedProperties.getStorage().fruitpayGlobals =  JSON.stringify($rootScope.globals);
 		$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
 	}
 
 	function clearCredentials() {
 		$rootScope.globals = {};
-		localStorage.fruitpayGlobals = null;
+		sharedProperties.getStorage().fruitpayGlobals = null;
 		$http.defaults.headers.common.Authorization = 'Basic ';
 		
 		$http.post('loginCtrl/logout')

@@ -108,5 +108,9 @@ function loginController(
 	    $scope.FBlogout = function() {
 	    	facebookLoginService.FBlogout();
         }
+	    
+	    $scope.isSavePermanently = function(){
+	    	localStorage.savePermanently = $scope.user.remember;
+	    }
 	
 }

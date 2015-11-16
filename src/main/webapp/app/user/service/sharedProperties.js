@@ -11,6 +11,7 @@ function sharedProperties(){
 	var countyList = null;
 	var towershipMap = null;
 	var villageMap = null;
+	var storage = null;
 	
     return {
         getUser: function () {
@@ -44,6 +45,13 @@ function sharedProperties(){
         },
         setVillageList: function(key, list) {
         	that.villageMap[key] = list;
+        },
+        getStorage: function(){
+        	console.log(localStorage.savePermanently);
+        	if(localStorage.savePermanently == 'true')
+        		return localStorage;
+        	else 
+        		return sessionStorage;
         }
     };
 	

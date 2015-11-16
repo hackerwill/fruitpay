@@ -1,5 +1,5 @@
-	<div class="container" ng-controller="loginController">    
-        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2" ng-show="isLoginPage">                    
+	<div class="container" >    
+        <div id="loginbox" style="margin-top:90px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2" ng-show="isLoginPage">                    
             <div class="panel panel-info" >
             	<div class="panel-heading">
             		<div class="panel-title">登入</div>
@@ -27,7 +27,7 @@
                         <div class="input-group">
                         	<div class="checkbox">
                             	<label>
-                            		<input id="login-remember" type="checkbox" ng-model="user.remember" value="1"> 記住我
+                            		<input type="checkbox" ng-init="user.remember = true" ng-model="user.remember" ng-change='isSavePermanently()' checked /> 記住我
                            		</label>
                         	</div>
                         </div>
@@ -35,7 +35,7 @@
                         	<!-- Button -->
                             <div class="col-sm-12 controls">
                             	<Button type="submit" class="btn btn-success"/>登入</Button>
-<!--                             	<Button type="submit" class="btn btn-primary"/>Facebook登入</Button> -->
+                             	<Button type="button" class="btn btn-primary" ng-click="checkLoginState()"/>Facebook登入</Button>
 							</div>
                      	</div>
                         <div class="form-group">
@@ -53,7 +53,7 @@
         	</div>  
         </div>
 		
-        <div id="signupbox" style="margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2" ng-hide="isLoginPage">
+        <div id="signupbox" style="margin-top:90px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2" ng-hide="isLoginPage">
         	<div class="panel panel-info">
             	<div class="panel-heading">
                 	<div class="panel-title">註冊</div>
@@ -109,18 +109,14 @@
                       			</div>
                         	</div>
                   		</div>
-						<div>
+						<div class="row">
                     		<!-- Button -->                                        
                     		<div class="col-md-offset-3 col-md-9">
                         		<button id="btn-signup" type="submit" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp 註冊</button>
-<!--                             	<span style="margin-left:8px;">或</span>   -->
+								<span style="margin-left:8px;">或</span>
+								<button id="btn-fbsignup" type="button" class="btn btn-primary" ng-click="checkLoginState()"><i class="icon-facebook"></i>   Facebook註冊</button> 
                          	</div>
                      	</div>
-                      	<div style="border-top: 1px solid #999; padding-top:20px"  class="form-group">
- 	                 		<div class="col-md-offset-3 col-md-9">
-                        			<button id="btn-fbsignup" type="button" class="btn btn-primary" ng-click="checkLoginState()"><i class="icon-facebook"></i>   Facebook註冊</button> 
-                         	</div>                                           
-                    	 	</div>
 	             	</form>
         		</div>
         	</div>
