@@ -7,6 +7,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
 
@@ -37,5 +38,9 @@ public interface StaticDataService {
 	public List<PaymentMode> getAllPaymentMode();
 	
 	public PaymentMode getPaymentMode(Integer paymentModeId);
+	
+	public List<ShipmentPeriod> getAllShipmentPeriod();
+	
+	public ShipmentPeriod getShipmentPeriod(Integer periodId);
 
 }

@@ -6,55 +6,30 @@
 		<h1>選擇方案</h1>
 		<hr/>
 		<div class="row planDiv">
-			<div class="col-xs-12 col-sm-6 itemDiv" id="single" ng-click="itemClick('single');">
+			<div class="col-xs-12 col-sm-6 itemDiv" ng-repeat="orderProgram in orderPrograms" 
+				ng-click="itemClick(orderProgram.programId)" ng-class="{active:user.orderProgram.programId==orderProgram.programId}">
 				<table class="table">
 					<thead>
 						<tr>
-							<th><h1>單人活力水果箱</h1></th>
+							<th><h1>{{orderProgram.programName}}</h1></th>
 						</tr>
 						<tr>
-							<td><img class="img-responsive" src="images/singlePlan.png"/></td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>元氣果物箱(單人方案)</th>
-						</tr>
-						<tr>
-							<td>4-5種新鮮水果</td>
-						</tr>
-						<tr>
-							<td>客製化您的水果箱</td>
-						</tr>
-						<tr>
-							<td>適用:小資女、單身、學生</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-xs-12 col-sm-6 itemDiv" id="family" ng-click="itemClick('family');">
-				
-				<table class="table">
-					<thead>
-						<tr>
-							<th><h1>家庭元氣果物箱</h1></th>
-						</tr>
-						<tr>
-							<td><img class="img-responsive" src="images/familyPlan.png"/></td>
+							<td><img class="img-responsive" src="{{orderProgram.imgLink}}"/></td>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<th>元氣果物箱(家庭方案)</th>
+						<tr ng-bind-html="orderProgram.programDesc" style="text-align:center;">
 						</tr>
 						<tr>
-							<td>6-8種新鮮水果</td>
+							<th>
+								<span ng-repeat="shipmentPeriod in shipmentPeriods">
+									<input type="radio" ng-model="order.shipmentPeriod" ng-value="shipmentPeriod"/> 
+									{{shipmentPeriod.periodName}}
+								</span>
+							</th>
 						</tr>
 						<tr>
-							<td>客製化您的水果箱</td>
-						</tr>
-						<tr>
-							<td>適用:家庭主婦、上班族</td>
+							<th>NT {{orderProgram.price}}</th>
 						</tr>
 					</tbody>
 				</table>
@@ -324,43 +299,17 @@
 	<div id="section-3" class="container-fluid sectionDiv onepageElement secondLayerStart">
 		<h1>結帳方式</h1>
 		<hr/>
-			<div class="row">
-				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 form-inline">
-					<input type="radio" class="form-control" name="payment_mode_id" value="1" ng-click="slideToggle('slideToggle1');" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.payment_mode_id" required> 
-					<label for="checkoutMethod"> 家庭方案</label>
-					<img src="http://fruitpay.com.tw/wp-content/plugins/allpay1/icon/allpay.png" alt="家庭方案">
-				</div>
-				<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 form-inline">
-					<div class="slide-toggle payMethodDesc" ng-show="slideToggle1">
-						<h4>每週自動扣款，週付699元。一天只要99元，免綁約，隨時可以終止!<br>
-						   國內前三大線上刷卡付款，提供 256 bit 加密傳輸，3D 驗證，ssl 加密保障!</h4>
-					</div>
+		<div class="row" ng-repeat="paymentMode in paymentModes">
+			<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 form-inline">
+				<input type="radio" class="form-control" name="payment_mode_id" ng-value="paymentMode" ng-click="slideToggle('slideToggle{{$index+1}}');" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.paymentMode" required> 
+				<label for="checkoutMethod"> {{paymentMode.paymentModeName}}</label>
+			</div>
+			<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 form-inline">
+				<div class="slide-toggle payMethodDesc" ng-show="slideToggle{{$index+1}}">
+					<h4 ng-bind-html="paymentMode.paymentModeDesc"></h4>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 form-inline">
-					<input type="radio" class="form-control" name="payment_mode_id" value="2" ng-click="slideToggle('slideToggle2');" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.payment_mode_id" required> 
-					<label for="checkoutMethod"> 單人方案</label>
-					<img src="http://fruitpay.com.tw/wp-content/plugins/allpay1/icon/allpay.png" alt="單人方案">
-				</div>
-				<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 form-inline">
-					<div class="slide-toggle payMethodDesc" ng-show="slideToggle2">
-						<h4>每週自動扣款，週付499元。一天只要71元，免綁約，隨時可以終止!<br>
-							國內前三大線上刷卡付款，提供 256 bit 加密傳輸，3D 驗證，ssl 加密保障!</h4>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 form-inline">
-					<input type="radio" class="form-control" name="payment_mode_id" value="3" ng-click="slideToggle('slideToggle3');" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.payment_mode_id" required> 
-					<label for="checkoutMethod"> 每週貨到付款</label>
-				</div>
-				<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 form-inline">
-					<div class="slide-toggle payMethodDesc" ng-show="slideToggle3">
-						<h4>酌收30元手續費喔~!</h4>
-					</div>
-				</div>
-			</div>
+		</div>
 		<br>
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -381,7 +330,7 @@
 		</div>
 		</form>
 		<br>
-		<div>
+		<div style="display:none;">
 			<form id="allpayCheckoutForm" action="allpayCtrl/checkout" method="post">
 				<input type="text" id="orderId" name="orderId" value="" />
 				<input type="submit" value="送出">

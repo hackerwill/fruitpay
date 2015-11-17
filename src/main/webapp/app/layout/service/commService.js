@@ -12,6 +12,11 @@ function commService($http, logService, sharedProperties, $q) {
 	service.getTowerships = getTowerships;
 	service.getVillages = getVillages;
 	service.getAllProducts = getAllProducts;
+	service.getAllOrderPlatforms = getAllOrderPlatforms;
+	service.getAllOrderPrograms = getAllOrderPrograms;
+	service.getAllOrderStatuses = getAllOrderStatuses;
+	service.getAllPaymentModes = getAllPaymentModes;
+	service.getAllShipmentPeriods = getAllShipmentPeriods;
 	
 	return service;
 	
@@ -65,6 +70,31 @@ function commService($http, logService, sharedProperties, $q) {
 				return result;
 			});
 		}
+	}
+	
+	function getAllOrderPlatforms(){
+		return $http.get('staticDataCtrl/orderPlatforms')
+			.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getAllOrderPrograms(){
+		return $http.get('staticDataCtrl/orderPrograms')
+			.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getAllOrderStatuses(){
+		return $http.get('staticDataCtrl/orderStatuses')
+			.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getAllPaymentModes(){
+		return $http.get('staticDataCtrl/paymentModes')
+			.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getAllShipmentPeriods(){
+		return $http.get('staticDataCtrl/shipmentPeriods')
+			.then(logService.successCallback, logService.errorCallback);
 	}
 	
 	function getWindowSize(){

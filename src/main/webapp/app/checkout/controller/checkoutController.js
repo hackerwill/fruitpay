@@ -90,6 +90,33 @@ angular.module('checkout')
 				.then(setReceiverCountiesData)
 				.then(setReceiverTowershipsData)
 				.then(setReceiverVillagesData);
+			
+			commService.getAllOrderPlatforms()
+				.then(function(result){
+					console.log(result);
+				});
+			
+			commService.getAllOrderPrograms()
+				.then(function(result){
+					console.log(result);
+					$scope.orderPrograms = result;
+				});
+			
+			commService.getAllOrderStatuses()
+				.then(function(result){
+					console.log(result);
+				});
+			
+			commService.getAllPaymentModes()
+				.then(function(result){
+					$scope.paymentModes = result;
+				});
+			
+			commService.getAllShipmentPeriods()
+				.then(function(result){
+					console.log(result);
+					$scope.shipmentPeriods = result;
+				});
 		})();
 		
 		function fruitLeft(){
@@ -282,21 +309,13 @@ angular.module('checkout')
 				}else if('slideToggle3' == id){
 					$scope.slideToggle3 = true;
 				}
-				$scope.apply();
+				
 		}
 		
-		function itemClick(itemName){
-			var itemDivs = document.getElementsByClassName('itemDiv');
-			$scope.order.itemName = itemName;
-			document.getElementsByClassName('itemName');
-			for(var i = 0; i < itemDivs.length ; i++){
-				var itemDiv = itemDivs[i];
-				if(itemDiv.id == itemName){
-					if(itemDiv.className.indexOf(' selectedItem') == -1)
-						itemDiv.className = itemDiv.className + ' selectedItem';
-				}else{
-					itemDiv.className = itemDiv.className.replace(' selectedItem', '');
-				}
+		function itemClick(programId){
+			for (var i = 0; i < $scope.orderPrograms.length; i++) {
+				if($scope.orderPrograms[i].programId==programId)
+					$scope.user.orderProgram = $scope.orderPrograms[i];
 			}
 		}
 		

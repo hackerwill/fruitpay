@@ -17,6 +17,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
@@ -119,6 +120,18 @@ public class StaticDataController {
 	public @ResponseBody ReturnData getPaymentMode(@PathVariable Integer paymentModeId){
 		PaymentMode paymentMode = staticDataService.getPaymentMode(paymentModeId);
 		return new ReturnObject(paymentMode);
+	}
+	
+	@RequestMapping(value = "/shipmentPeriods", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getAllShipmentPeriod(){
+		List<ShipmentPeriod> shipmentPeriods = staticDataService.getAllShipmentPeriod();
+		return new ReturnObject(shipmentPeriods);
+	}
+	
+	@RequestMapping(value = "/shipmentPeriods/{periodId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getShipmentPeriod(@PathVariable Integer periodId){
+		ShipmentPeriod shipmentPeriod = staticDataService.getShipmentPeriod(periodId);
+		return new ReturnObject(shipmentPeriod);
 	}
 	
 	

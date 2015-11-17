@@ -31,10 +31,8 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 	@Column(name="price")
 	private Integer price;
 	
-	//bi-directional many-to-one association to ShipmentPeriod
-	@ManyToOne
-	@JoinColumn(name="period_id")
-	private ShipmentPeriod shipmentPeriod;
+	@Column(name="img_link")
+	private String imgLink;
 
 	public OrderProgram() {
 	}
@@ -63,20 +61,20 @@ public class OrderProgram extends AbstractDataBean implements Serializable {
 		this.programName = programName;
 	}
 
-	public ShipmentPeriod getShipmentPeriod() {
-		return this.shipmentPeriod;
-	}
-
-	public void setShipmentPeriod(ShipmentPeriod shipmentPeriod) {
-		this.shipmentPeriod = shipmentPeriod;
-	}
-
 	public Integer getPrice() {
 		return price;
 	}
 
 	public void setPrice(Integer price) {
 		this.price = price;
+	}
+
+	public String getImgLink() {
+		return imgLink;
+	}
+
+	public void setImgLink(String imgLink) {
+		this.imgLink = imgLink;
 	}
 	
 }

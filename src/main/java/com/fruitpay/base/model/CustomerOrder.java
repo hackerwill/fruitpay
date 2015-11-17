@@ -79,6 +79,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="payment_mode_id")
 	private PaymentMode paymentMode;
+	
+	//bi-directional many-to-one association to ShipmentPeriod
+	@ManyToOne
+	@JoinColumn(name="period_id")
+	private ShipmentPeriod shipmentPeriod;
 
 	@ManyToOne
 	@JoinColumn(name="shipment_days_id")
@@ -249,5 +254,12 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 		return shipment;
 	}
+	
+	public ShipmentPeriod getShipmentPeriod() {
+		return this.shipmentPeriod;
+	}
 
+	public void setShipmentPeriod(ShipmentPeriod shipmentPeriod) {
+		this.shipmentPeriod = shipmentPeriod;
+	}
 }

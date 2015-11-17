@@ -83,7 +83,7 @@ function loginController(
 						user.firstName = response.first_name ? response.first_name : response.name;
 						user.email = response.email;
 						user.fbId = response.id;
-						user.lastName = response.lastName;
+						user.lastName = response.last_name;
 						if(response.gender == 'male'){
 							user.gender = 'M';
 						}else if (response.gender == 'female'){

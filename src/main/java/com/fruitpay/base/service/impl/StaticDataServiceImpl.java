@@ -18,12 +18,14 @@ import com.fruitpay.base.dao.OrderProgramDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
 import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.ProductDAO;
+import com.fruitpay.base.dao.ShipmentPeriodDAO;
 import com.fruitpay.base.dao.VillageDAO;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
 
@@ -42,6 +44,8 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	OrderStatusDAO orderStatusDAO;
 	@Autowired
 	PaymentModeDAO paymentModeDAO;
+	@Autowired
+	ShipmentPeriodDAO shipmentPeriodDAO;
 	
 	List<Village> allVillages = null;
 	List<SelectOption> countList = null;
@@ -184,6 +188,16 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public PaymentMode getPaymentMode(Integer paymentModeId) {
 		return paymentModeDAO.findById(paymentModeId);
+	}
+
+	@Override
+	public List<ShipmentPeriod> getAllShipmentPeriod() {
+		return shipmentPeriodDAO.listAll();
+	}
+
+	@Override
+	public ShipmentPeriod getShipmentPeriod(Integer periodId) {
+		return shipmentPeriodDAO.findById(periodId);
 	}
 	
 }

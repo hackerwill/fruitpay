@@ -255,7 +255,7 @@ public class AllpayCheckoutController {
 			/* Credit 定期定額延伸參數 */
 			oPayment.SendExtend.PeriodAmount = new Decimal(String.valueOf(customerOrder.getOrderProgram().getPrice()));
 			oPayment.SendExtend.PeriodType = PeriodType.Day;
-			oPayment.SendExtend.Frequency = customerOrder.getOrderProgram().getShipmentPeriod().getDuration();// "<<執行頻率>>";
+			oPayment.SendExtend.Frequency = customerOrder.getShipmentPeriod().getDuration();// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = MAX_EXCUTE_TIME;// "<<執行次數>>";
 			oPayment.SendExtend.PeriodReturnURL = index + PERIOD_RETURN_URL;
 			/* 產生訂單 */

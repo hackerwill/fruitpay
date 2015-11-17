@@ -3,6 +3,7 @@ var app = angular.module('app',[
 	'ui.router',
 	'ngDialog',
 	'ngAnimate',
+	'ngSanitize',
 	'duScroll',
 	'shell',
 	'checkout',
