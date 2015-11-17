@@ -7,14 +7,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.OrderPlatform;
+import com.fruitpay.base.model.OrderProgram;
+import com.fruitpay.base.model.OrderStatus;
+import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
-import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
@@ -29,10 +31,6 @@ public class StaticDataController {
 	StaticDataService staticDataService;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
-	
-
-	
-	
 	
 	@RequestMapping(value = "/getAllCounties", method = RequestMethod.GET)
 	public @ResponseBody ReturnData getAllCounties(){
@@ -75,7 +73,53 @@ public class StaticDataController {
 		return new ReturnObject(products);
 	}
 	
+	@RequestMapping(value = "/orderPlatforms", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getAllOrderPlatforms(){
+		List<OrderPlatform> orderPlatforms = staticDataService.getAllOrderPlatform();
+		return new ReturnObject(orderPlatforms);
+	}
 	
+	@RequestMapping(value = "/orderPlatforms/{platformId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getOrderPlatform(@PathVariable Integer platformId){
+		OrderPlatform orderPlatforms = staticDataService.getOrderPlatform(platformId);
+		return new ReturnObject(orderPlatforms);
+	}
+	
+	@RequestMapping(value = "/orderPrograms", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getAllOrderPrograms(){
+		List<OrderProgram> orderPrograms = staticDataService.getAllOrderProgram();
+		return new ReturnObject(orderPrograms);
+	}
+	
+	@RequestMapping(value = "/orderPrograms/{programId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getOrderProgram(@PathVariable Integer programId){
+		OrderProgram orderProgram = staticDataService.getOrderProgram(programId);
+		return new ReturnObject(orderProgram);
+	}
+	
+	@RequestMapping(value = "/orderStatuses", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getAllOrderStatuss(){
+		List<OrderStatus> orderStatuses = staticDataService.getAllOrderStatus();
+		return new ReturnObject(orderStatuses);
+	}
+	
+	@RequestMapping(value = "/orderStatuses/{orderStatusId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getOrderStatus(@PathVariable Integer orderStatusId){
+		OrderStatus orderStatus = staticDataService.getOrderStatus(orderStatusId);
+		return new ReturnObject(orderStatus);
+	}
+	
+	@RequestMapping(value = "/paymentModes", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getAllPaymentMode(){
+		List<PaymentMode> paymentModes = staticDataService.getAllPaymentMode();
+		return new ReturnObject(paymentModes);
+	}
+	
+	@RequestMapping(value = "/paymentModes/{paymentModeId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData getPaymentMode(@PathVariable Integer paymentModeId){
+		PaymentMode paymentMode = staticDataService.getPaymentMode(paymentModeId);
+		return new ReturnObject(paymentMode);
+	}
 	
 	
 }

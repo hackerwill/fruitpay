@@ -13,8 +13,16 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fruitpay.base.dao.OrderPlatformDAO;
+import com.fruitpay.base.dao.OrderProgramDAO;
+import com.fruitpay.base.dao.OrderStatusDAO;
+import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.ProductDAO;
 import com.fruitpay.base.dao.VillageDAO;
+import com.fruitpay.base.model.OrderPlatform;
+import com.fruitpay.base.model.OrderProgram;
+import com.fruitpay.base.model.OrderStatus;
+import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
@@ -26,6 +34,14 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	VillageDAO villageDAO;
 	@Autowired
 	ProductDAO productDAO;
+	@Autowired
+	OrderPlatformDAO orderPlatformDAO;
+	@Autowired
+	OrderProgramDAO orderProgramDAO;
+	@Autowired
+	OrderStatusDAO orderStatusDAO;
+	@Autowired
+	PaymentModeDAO paymentModeDAO;
 	
 	List<Village> allVillages = null;
 	List<SelectOption> countList = null;
@@ -128,6 +144,46 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public List<Product> getAllProducts() {
 		return productDAO.listAll();
+	}
+
+	@Override
+	public List<OrderPlatform> getAllOrderPlatform() {
+		return orderPlatformDAO.listAll();
+	}
+
+	@Override
+	public OrderPlatform getOrderPlatform(Integer platformId) {
+		return orderPlatformDAO.findById(platformId);
+	}
+
+	@Override
+	public List<OrderProgram> getAllOrderProgram() {
+		return orderProgramDAO.listAll();
+	}
+
+	@Override
+	public OrderProgram getOrderProgram(Integer programId) {
+		return orderProgramDAO.findById(programId);
+	}
+
+	@Override
+	public List<OrderStatus> getAllOrderStatus() {
+		return orderStatusDAO.listAll();
+	}
+
+	@Override
+	public OrderStatus getOrderStatus(Integer orderStatusId) {
+		return orderStatusDAO.findById(orderStatusId);
+	}
+
+	@Override
+	public List<PaymentMode> getAllPaymentMode() {
+		return paymentModeDAO.listAll();
+	}
+
+	@Override
+	public PaymentMode getPaymentMode(Integer paymentModeId) {
+		return paymentModeDAO.findById(paymentModeId);
 	}
 	
 }
