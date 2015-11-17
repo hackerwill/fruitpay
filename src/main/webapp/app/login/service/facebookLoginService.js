@@ -77,12 +77,12 @@ function facebookLoginService($q) {
 		FB.login(function(response) {
 			if (response.authResponse) {
 				console.log('Welcome!  Fetching your information.... ');
-				FB.api('/me', function(response) {
+				FB.api('/me?fields=id,first_name,last_name,name,email', function(response) {
 					console.log('Good to see you, ' + response.name + '.');
 					console.log(response.email);
 					console.log(response);
 					var access = FB.getAuthResponse();
-					console.log(access);
+					//console.log(access);
 					deferred.resolve(response);
 				});
 			} else {
@@ -90,8 +90,6 @@ function facebookLoginService($q) {
 					deferred.reject;
 			}
 
-			}, {
-				scope : 'public_profile,email'
 			});
 	}
 
