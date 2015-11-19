@@ -12,10 +12,8 @@ public class OrderPreferencePK extends AbstractDataBean implements Serializable 
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="order_id", insertable=false, updatable=false)
 	private int orderId;
 
-	@Column(name="product_id", insertable=false, updatable=false)
 	private int productId;
 
 	public OrderPreferencePK() {

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.Date;
 import java.util.List;
@@ -93,6 +94,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@OneToMany(mappedBy="customerOrder")
 	@JsonIgnore
 	private List<Shipment> shipments;
+	
+	//bi-directional many-to-one association to Shipment
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private List<OrderPreference> orderPreferences;
 
 	public CustomerOrder() {
 	}
@@ -253,6 +259,28 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		shipment.setCustomerOrder(null);
 
 		return shipment;
+	}
+	
+	public List<OrderPreference> getOrderPreferences() {
+		return this.orderPreferences;
+	}
+
+	public void setOrderPreferences(List<OrderPreference> orderPreferences) {
+		this.orderPreferences = orderPreferences;
+	}
+
+	public OrderPreference addOrderPreference(OrderPreference orderPreference) {
+		getOrderPreferences().add(orderPreference);
+		orderPreference.setCustomerOrder(this);
+
+		return orderPreference;
+	}
+
+	public OrderPreference removeShipment(OrderPreference orderPreference) {
+		getOrderPreferences().remove(orderPreference);
+		orderPreference.setCustomerOrder(null);
+
+		return orderPreference;
 	}
 	
 	public ShipmentPeriod getShipmentPeriod() {

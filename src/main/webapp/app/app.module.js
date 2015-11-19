@@ -49,6 +49,12 @@ function appRouter($stateProvider, $urlRouterProvider){
             controller:'orderController',
             authenticate: true
         })
+         .state('index.user.info', {
+            url: "/info",
+            templateUrl: 'user/info.html',
+            controller:'infoController',
+            authenticate: true
+        })
 }
 
 run.$inject = ['$rootScope', '$location', '$http', '$timeout', 'sharedProperties'];

@@ -1,11 +1,13 @@
 package com.fruitpay.base.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class CheckoutPostBean implements Serializable {
 	
 	private Customer customer;
 	private CustomerOrder customerOrder;
+	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -18,4 +20,5 @@ public class CheckoutPostBean implements Serializable {
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
 	}
+	
 }

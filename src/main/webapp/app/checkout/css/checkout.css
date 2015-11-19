@@ -48,6 +48,10 @@
     cursor: pointer;
 }
 
+#productsDiv .row>div>.glyphicon-heart{
+	cursor: pointer;
+}
+
 #productsDiv .row>div>img.active{
     border: 2px solid #9ED720;
 }

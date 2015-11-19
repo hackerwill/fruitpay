@@ -34,7 +34,6 @@ public class Product extends AbstractDataBean implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name="unit_id")
-	@JsonBackReference
 	private Unit unit;
 
 	public Product() {

@@ -24,7 +24,7 @@
 					  "lastName": "徐",
 					  "firstName": "瑋志",
 					  "gender": "M",
-					  "email": "u9734017@gmail.com",
+					  "email": "tiger_6_40@yahoo.com.tw",
 					  "password": "123456",
 					  "confirmPassword": "123456",
 					  "cellphone": "0933370691",
@@ -45,8 +45,7 @@
 						    "programId": 1,
 						    "programName": "小農箱-家庭",
 						    "programDesc": "含進口水果",
-						    "price": 699,
-						    "periodId": 1
+						    "price": 699
 						  },
 						  "receiverFirstName": "瑋志",
 						  "receiverLastName": "徐",
@@ -73,11 +72,21 @@
 						  },
 						  "orderStatus" : {
 						    "orderStatusId": 1
-						  }
+						  },
+						  "shipmentPeriod" : {
+							  "duration": 7,
+							  "periodDesc": "每周配送一次",
+							  "periodId": 1,
+							  "periodName": "單周配送"
+						  },
+						  "orderPreferences" : 
+							  [{"likeDegree":5,"id":{"productId":41}},{"likeDegree":5,"id":{"productId":42}},{"likeDegree":5,"id":{"productId":43}},{"likeDegree":5,"id":{"productId":44}},{"likeDegree":5,"id":{"productId":45}},{"likeDegree":5,"id":{"productId":46}},{"likeDegree":5,"id":{"productId":47}},{"likeDegree":5,"id":{"productId":48}},{"likeDegree":5,"id":{"productId":49}},{"likeDegree":5,"id":{"productId":50}},{"likeDegree":5,"id":{"productId":51}},{"likeDegree":5,"id":{"productId":52}},{"likeDegree":5,"id":{"productId":53}},{"likeDegree":5,"id":{"productId":54}},{"likeDegree":5,"id":{"productId":55}},{"likeDegree":5,"id":{"productId":56}},{"likeDegree":5,"id":{"productId":57}},{"likeDegree":5,"id":{"productId":58}},{"likeDegree":5,"id":{"productId":59}},{"likeDegree":5,"id":{"productId":60}},{"likeDegree":5,"id":{"productId":61}},{"likeDegree":5,"id":{"productId":62}},{"likeDegree":5,"id":{"productId":63}},{"likeDegree":5,"id":{"productId":64}},{"likeDegree":5,"id":{"productId":65}},{"likeDegree":5,"id":{"productId":66}},{"likeDegree":5,"id":{"productId":67}},{"likeDegree":5,"id":{"productId":68}},{"likeDegree":5,"id":{"productId":69}},{"likeDegree":5,"id":{"productId":70}},{"likeDegree":5,"id":{"productId":71}},{"likeDegree":5,"id":{"productId":72}},{"likeDegree":5,"id":{"productId":73}},{"likeDegree":5,"id":{"productId":74}},{"likeDegree":5,"id":{"productId":75}},{"likeDegree":5,"id":{"productId":76}},{"likeDegree":5,"id":{"productId":77}}]
 						};
+				
 			
 			sendObj.customer = user;
 			sendObj.customerOrder = order;
+			console.log(sendObj);
 			return $http.post('checkoutCtrl/checkout', sendObj)
 			.then(logService.successCallback, logService.errorCallback);
 		}

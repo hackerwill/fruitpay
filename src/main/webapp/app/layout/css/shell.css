@@ -64,6 +64,10 @@ input.submitted.ng-invalid
 		right: 10px;
 		display:inline; 
 	}
+	
+	.radioDiv{
+		text-align:center;
+	}
 }
 
 .input-xs {
@@ -78,4 +82,9 @@ input.submitted.ng-invalid
 
 .secondLayerStart{
 	padding-top:70px;  
+}
+
+.container{
+	padding-right: 0px; 
+    padding-left: 0px; 
 }

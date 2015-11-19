@@ -15,21 +15,25 @@ angular.module('checkout')
 			.then(function(result){
 				//check null elements and set resize parameter
 				for (var i = 0; i< result.length; i++) {
-					if(result[i].imageLink != null 
-							&& result[i].imageLink.length > 0 
-							&& result[i].productName.length > 0){
-						result[i].imageLink = result[i].imageLink + resizeAppend;
-						result[i].checked = true;
-					}else{
+					if(result[i].imageLink == null || result[i].imageLink.length == 0 || result[i].productName.length == 0)
 						delete result[i];
+				}
+				
+				var orderPreferences = [];
+				for (var i = 0; i< result.length; i++) {
+					if(result[i]){
+						result[i].imageLink = result[i].imageLink + resizeAppend;
+						
+						var obj = {};
+						obj.likeDegree = 5; 
+						obj.product = result[i];
+						obj.id = {};
+						obj.id.productId = result[i].productId;
+						orderPreferences.push(obj);
 					}
 				}
 				
-				var resultAfterRemove = [];
-				for (var i = 0; i< result.length; i++) {
-					if(result[i])
-						resultAfterRemove.push(result[i]);
-				}
+				console.log(orderPreferences);
 				
 				/**
 				 * 
@@ -43,14 +47,15 @@ angular.module('checkout')
 				 * slides[1]['image3'] = result[5]; 5/3, 5%3 + 1
 				 * 
 				 * */
-				for (var i = 0; i< resultAfterRemove.length; i++) {
+				for (var i = 0; i< orderPreferences.length; i++) {
 					var index = Math.floor(i/imageNum);
 					var num = i%imageNum + 1;
 					if(!slides[index])
 						slides[index] = {};
-					slides[index]['image' + num] = resultAfterRemove[i];
+					slides[index]['image' + num] = orderPreferences[i];
 				}
-				$scope.totalImageAmount = resultAfterRemove.length;
+				$scope.totalImageAmount = orderPreferences.length;
+				$scope.order.orderPreferences = orderPreferences;
 			});
 		
 		$scope.order = {};
@@ -77,6 +82,7 @@ angular.module('checkout')
 		$scope.getImageName = getImageName;
 		$scope.fruitLeft = fruitLeft;
 		$scope.fruitRight = fruitRight;
+		$scope.setLikeDegree = setLikeDegree;
 		
 		(function(){
 			commService
@@ -118,6 +124,15 @@ angular.module('checkout')
 					$scope.shipmentPeriods = result;
 				});
 		})();
+		
+		function setLikeDegree(orderPreference){
+			if(orderPreference.likeDegree == 5){
+				orderPreference.likeDegree = 0;
+			}else{
+				orderPreference.likeDegree = 5;
+			}
+				
+		}
 		
 		function fruitLeft(){
 			$scope.carouselIndex--;
@@ -241,9 +256,9 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
-			document.getElementById("orderId").value = 11;
-			document.getElementById("allpayCheckoutForm").submit();
-			return;
+			//document.getElementById("orderId").value = 11;
+			//document.getElementById("allpayCheckoutForm").submit();
+			//return;
 			//test
 			checkoutService.checkoutTest()
 				.then(function(result){
