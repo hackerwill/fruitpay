@@ -3,10 +3,6 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import java.util.List;
-
 
 /**
  * The persistent class for the Unit database table.
@@ -26,11 +22,6 @@ public class Unit extends AbstractDataBean implements Serializable {
 
 	@Column(name="unit_name")
 	private String unitName;
-
-	//bi-directional many-to-one association to Product
-	@OneToMany(mappedBy="unit")
-	@JsonManagedReference
-	private List<Product> products;
 
 	public Unit() {
 	}
@@ -57,28 +48,6 @@ public class Unit extends AbstractDataBean implements Serializable {
 
 	public void setUnitName(String unitName) {
 		this.unitName = unitName;
-	}
-
-	public List<Product> getProducts() {
-		return this.products;
-	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
-
-	public Product addProduct(Product product) {
-		getProducts().add(product);
-		product.setUnit(this);
-
-		return product;
-	}
-
-	public Product removeProduct(Product product) {
-		getProducts().remove(product);
-		product.setUnit(null);
-
-		return product;
 	}
 
 }

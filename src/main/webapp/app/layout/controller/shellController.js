@@ -11,19 +11,23 @@ angular.module('shell')
 		if($scope.loggedIn){
 			$scope.dropdown = [
 			                   {
-			                	 "text": "訂單",
-			                	 "href": "#/index/user/orders"
+			                	   "text": "個人資料",
+			                	   "href": "#/index/user/info"
+							   },
+			                   {
+			                		"text": "訂單",
+			                		"href": "#/index/user/orders"
 			                   },
         	                   {
-        	                     "text": "登出",
-        	                     "href": "#/index/logout"
+        	                    	"text": "登出",
+        	                    	"href": "#/index/logout"
         	                   }
         	               ];
 		}else{
 			$scope.dropdown = [
         	                   {
-        	                     "text": "登入",
-        	                     "href": "#/index/login"
+        	                    	"text": "登入",
+        	                    	"href": "#/index/login"
         	                   }
         	               ];
 			

@@ -22,7 +22,6 @@ public class LoginServiceImpl implements LoginService {
 	CustomerDAO customerDAO;
 
 	@Override
-	@Transactional
 	public ReturnData<Customer> signup(Customer customer) {
 
 		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
