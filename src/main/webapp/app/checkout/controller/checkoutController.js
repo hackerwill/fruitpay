@@ -31,6 +31,8 @@ angular.module('checkout')
 						resultAfterRemove.push(result[i]);
 				}
 				
+				$scope.order.orderPreferences = resultAfterRemove;
+				
 				/**
 				 * 
 				 * 計算方法範例
