@@ -1,6 +1,7 @@
 package com.fruitpay.base.service;
 
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.Pwd;
 import com.fruitpay.comm.model.ReturnData;
 
 public interface LoginService {
@@ -39,6 +40,11 @@ public interface LoginService {
 	 */
 	public ReturnData fbLogin(Customer customer);
 	
+	/**
+	 * 修改密碼
+	 * 
+	 * */
+	public ReturnData<Customer> changePassword(Pwd pwd);
 	
 	
 	

@@ -1,20 +1,22 @@
 package com.fruitpay.base.controller;
 
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum.Status;
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.Pwd;
+import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.controller.MessageSendController;
 import com.fruitpay.comm.model.ReturnData;
@@ -31,7 +33,6 @@ public class LoginController {
 	
 	@Autowired
 	LoginService loginService;
-	
 	@Autowired
 	MessageSendController messageSendController;
 	
@@ -87,7 +88,7 @@ public class LoginController {
 		
 		ReturnData lrm = loginService.signup(customer);
 		
-		if("0".equals(lrm.getErrorCode())){
+		if(Status.Success.getStatus().equals(lrm.getErrorCode())){
 			messageSendController.sendTo(MailType.NEW_MEMBER, customer.getEmail(), customer);	
 		}
 		
@@ -102,4 +103,23 @@ public class LoginController {
 		AuthenticationUtil.setSessionCustomer(request, null);
 		return ReturnMessageEnum.Common.Success.getReturnMessage();
 	}
+	
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<Customer> changePassword(@RequestBody Pwd pwd,
+			HttpServletRequest request, HttpServletResponse response){
+		
+		if(AssertUtils.anyIsEmpty(
+				String.valueOf(pwd.getCustomerId()), pwd.getOldPassword(), pwd.getNewPassword())){
+			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+		}
+		
+		ReturnData<Customer> returnData = loginService.changePassword(pwd);
+		if(Status.Success.getStatus().equals(returnData.getErrorCode())
+				&& returnData.getObject() != null){
+			AuthenticationUtil.setSessionCustomer(request, returnData.getObject());
+		}
+		
+		return returnData;
+	}
+
 }

@@ -14,8 +14,33 @@ function authenticationService($q, $http, $rootScope, $timeout, userService, sha
 	service.clearCredentials = clearCredentials;
 	service.isCredentialsMatch = isCredentialsMatch;
 	service.getUser = getUser;
+	service.updateUser = updateUser;
+	service.changePassword = changePassword;
 	
 	return service;
+	
+	function changePassword(pwd){
+		return userService.changePassword(pwd)
+			.then(function(result){
+				console.log(result);
+				if(result){
+					sharedProperties.setUser(result);
+					setCredentials(result);
+					return result;
+				}
+			});
+	}
+	
+	function updateUser(user){
+		return userService.update(user)
+			.then(function(result){
+				if(result){
+					sharedProperties.setUser(result);
+					setCredentials(result);
+				}
+				return result;
+			});
+	}
 	
 	function getUser(){
 		var deferred = $q.defer();

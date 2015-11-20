@@ -33,12 +33,6 @@ angular.module('checkout')
 					}
 				}
 				
-<<<<<<< HEAD
-				$scope.order.orderPreferences = resultAfterRemove;
-=======
-				console.log(orderPreferences);
->>>>>>> 6119be5f7ccba8dd361757b7f6e628fac31af8ea
-				
 				/**
 				 * 
 				 * 計算方法範例

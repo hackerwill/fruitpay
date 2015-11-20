@@ -13,7 +13,7 @@ public interface DAO<T extends AbstractDataBean> {
 
 	List<T> listAll();
 
-	void update(T t);
+	T update(T t);
 
 	void deleteById(Serializable id);
 

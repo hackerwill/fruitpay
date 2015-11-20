@@ -49,9 +49,12 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	}
 	
 	@Override
-	public void update(T t) {
+	public T update(T t) {
 		logger.debug("enter update method");
 		this.setUpdateInfo(t);
+		em.merge(t);
+		em.flush();
+		return t;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
@@ -82,5 +83,19 @@ public class LoginServiceImpl implements LoginService {
 				checkcustomer);
 	}
 	
-	
+	@Override
+	@Transactional
+	public ReturnData<Customer> changePassword(Pwd pwd) {
+		Boolean matched = customerDAO.isCustomerIdMatchPassword(
+				pwd.getCustomerId(), Md5Util.getMd5(pwd.getOldPassword()));
+		Customer customer = null;
+		if(matched){
+			customer = customerDAO.findById(pwd.getCustomerId());
+			customer.setPassword(Md5Util.getMd5(pwd.getNewPassword()));
+		}else{
+			return ReturnMessageEnum.Login.PasswordNotMatched.getReturnMessage();
+		}
+			
+		return new ReturnObject<Customer>(customer);
+	}
 }
