@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fruitpay.base.dao.ConstantDAO;
 import com.fruitpay.base.dao.OrderPlatformDAO;
 import com.fruitpay.base.dao.OrderProgramDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
@@ -20,6 +21,7 @@ import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.ProductDAO;
 import com.fruitpay.base.dao.ShipmentPeriodDAO;
 import com.fruitpay.base.dao.VillageDAO;
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
@@ -46,7 +48,10 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	PaymentModeDAO paymentModeDAO;
 	@Autowired
 	ShipmentPeriodDAO shipmentPeriodDAO;
+	@Autowired
+	ConstantDAO constantDAO;
 	
+	List<Constant> consantList = null;
 	List<Village> allVillages = null;
 	List<SelectOption> countList = null;
 	Map<String, List<SelectOption>> towershipMap = null;
@@ -198,6 +203,19 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public ShipmentPeriod getShipmentPeriod(Integer periodId) {
 		return shipmentPeriodDAO.findById(periodId);
+	}
+
+	@Override
+	public List<Constant> getAllConstants() {
+		if(consantList == null){
+			consantList = getAllConstants();
+		}
+		return constantDAO.listAll();
+	}
+
+	@Override
+	public Constant getConstant(Integer constId) {
+		return constantDAO.findById(constId);
 	}
 	
 }

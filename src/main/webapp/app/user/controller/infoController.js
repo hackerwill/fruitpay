@@ -20,6 +20,8 @@ angular.module('user')
 				.then(function(user){
 					if(user){
 						$scope.user = user;
+						if(user.fbId)
+							$scope.fbId = user.fbId;
 					}else{
 						$location.path('/index');
 					}
@@ -62,15 +64,14 @@ angular.module('user')
 		
 		function MyModalController($scope) {
 			authenticationService.getUser()
-			.then(function(user){
-				if(user){
-					$scope.pwd = {};
-					$scope.pwd.customerId = user.customerId;
-					console.log($scope.pwd);
-				}else{
-					$location.path('/index');
-				}
-			});
+				.then(function(user){
+					if(user){
+						$scope.pwd = {};
+						$scope.pwd.customerId = user.customerId;
+					}else{
+						$location.path('/index');
+					}
+				});
     		
 		    $scope.title = '變更密碼';
 		    $scope.pwdChange = function(){

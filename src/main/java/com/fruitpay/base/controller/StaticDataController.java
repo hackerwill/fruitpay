@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
@@ -134,5 +135,16 @@ public class StaticDataController {
 		return new ReturnObject(shipmentPeriod);
 	}
 	
+	@RequestMapping(value = "/constants", method = RequestMethod.GET)
+	public @ResponseBody ReturnData<List<Constant>> getAllConstants(){
+		List<Constant> constants = staticDataService.getAllConstants();
+		return new ReturnObject(constants);
+	}
+	
+	@RequestMapping(value = "/constants/{constId}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData<Constant> getAllConstants(@PathVariable Integer constId){
+		Constant constant = staticDataService.getConstant(constId);
+		return new ReturnObject(constant);
+	}
 	
 }

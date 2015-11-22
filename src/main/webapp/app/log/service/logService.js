@@ -11,8 +11,19 @@ function logService($alert){
 	service.errorCallback = errorCallback;
 	service.showSuccess = showSuccess;
 	service.showDanger = showDanger;
+	service.showInfo = showInfo;
 		
 	return service;
+	
+	function showInfo(message){
+		$alert({
+			title: message,
+			placement: 'top',
+			type: 'info',
+			duration: '3',
+			animation: 'am-fade-and-scale'
+		});
+	}
 	
 	function showDanger(message){
 		$alert({

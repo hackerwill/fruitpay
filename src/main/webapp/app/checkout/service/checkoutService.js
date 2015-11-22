@@ -14,7 +14,12 @@
 		return service;
 		
 		function checkout(user, order){
-			
+			var sendObj = {};
+			sendObj.customer = user;
+			sendObj.customerOrder = order;
+			console.log(sendObj);
+			return $http.post('checkoutCtrl/checkout', sendObj)
+				.then(logService.successCallback, logService.errorCallback);
 		}
 		
 		function checkoutTest(){

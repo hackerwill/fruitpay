@@ -27,6 +27,9 @@ public class PaymentMode extends AbstractDataBean implements Serializable {
 
 	@Column(name="payment_mode_name")
 	private String paymentModeName;
+	
+	@Column(name="payment_extra_price")
+	private int paymentExtraPrice;
 
 	public PaymentMode() {
 	}
@@ -53,6 +56,14 @@ public class PaymentMode extends AbstractDataBean implements Serializable {
 
 	public void setPaymentModeName(String paymentModeName) {
 		this.paymentModeName = paymentModeName;
+	}
+
+	public int getPaymentExtraPrice() {
+		return paymentExtraPrice;
+	}
+
+	public void setPaymentExtraPrice(int paymentExtraPrice) {
+		this.paymentExtraPrice = paymentExtraPrice;
 	}
 
 }

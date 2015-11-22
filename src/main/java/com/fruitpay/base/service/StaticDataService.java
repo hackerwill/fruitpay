@@ -2,6 +2,7 @@ package com.fruitpay.base.service;
 
 import java.util.List;
 
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
@@ -42,5 +43,9 @@ public interface StaticDataService {
 	public List<ShipmentPeriod> getAllShipmentPeriod();
 	
 	public ShipmentPeriod getShipmentPeriod(Integer periodId);
+	
+	public List<Constant> getAllConstants();
+	
+	public Constant getConstant(Integer constId);
 
 }

@@ -13,7 +13,7 @@
 			<li ng-class="{ active: isActive('/page-third')}" data-match-route="/page-third"><a href="#/page-third">部落格</a></li>
 			<li ng-class="{ active: isActive('/page-forth')}" data-match-route="/page-forth"><a href="#/page-forth">聯絡我們</a></li>
 			<li ng-class="{ active: isActive('/index/user')}" data-match-route="/page-five" bs-dropdown="dropdown" data-container="self" data-trigger="hover" >
-				<a ui-sref="index.user">
+				<a ui-sref="index.user.info">
 					<span ng-hide="loggedIn"><span class="glyphicon glyphicon-log-in"></span> 會員中心</span>
 					<span ng-show="loggedIn"><img ng-show="loggedIn.fbId" id="profileImg" src="//graph.facebook.com/{{loggedIn.fbId}}/picture"> {{loggedIn.firstName}}</span>
 				</a>

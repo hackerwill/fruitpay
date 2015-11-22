@@ -47,11 +47,17 @@ function sharedProperties(){
         	that.villageMap[key] = list;
         },
         getStorage: function(){
-        	console.log(localStorage.savePermanently);
         	if(localStorage.savePermanently == 'true')
         		return localStorage;
         	else 
         		return sessionStorage;
+        },
+        isFBLogin: function(){
+        	var flag = false;
+        	if(that.user && that.user.fbId){
+        		flag = true;
+        	}
+        	return flag;
         }
     };
 	
