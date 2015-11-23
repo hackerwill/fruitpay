@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fruitpay.comm.model.SelectOption;
 
 import java.util.List;
 
@@ -38,6 +39,18 @@ public class Village extends AbstractDataBean implements Serializable {
 
 	@Column(name="village_name")
 	private String villageName;
+	
+	@Transient
+	private String id;
+	@Transient
+	private String name;
+	@Transient
+	@JsonProperty("county")
+	private SelectOption county;
+	@Transient
+	@JsonProperty("towership")
+	private SelectOption towership;
+	
 
 	public Village() {
 	}
@@ -89,6 +102,38 @@ public class Village extends AbstractDataBean implements Serializable {
 
 	public void setVillageName(String villageName) {
 		this.villageName = villageName;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public SelectOption getCounty() {
+		return county;
+	}
+
+	public void setCounty(SelectOption county) {
+		this.county = county;
+	}
+
+	public SelectOption getTowership() {
+		return towership;
+	}
+
+	public void setTowership(SelectOption towership) {
+		this.towership = towership;
 	}
 	
 }

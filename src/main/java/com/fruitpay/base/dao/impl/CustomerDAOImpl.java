@@ -1,5 +1,7 @@
 package com.fruitpay.base.dao.impl;
 
+import java.io.Serializable;
+
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -8,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.Village;
+import com.fruitpay.comm.model.SelectOption;
+import com.fruitpay.comm.utils.AssertUtils;
 
 @Repository("CustomerDAOImpl")
 public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements CustomerDAO {
@@ -15,16 +20,25 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Override
+	public Customer findById(Serializable id) {
+		Customer customer = super.findById(id);
+		return setVillageRelatedData(customer);
+	}
+	
+	@Override
 	public Customer getCustomerByEmail(String email){
 		
 		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.email = ?1");
 		q.setParameter(1, email);
+		
+		Customer customer = null;
 		try{
-			return (Customer)q.getSingleResult();
+			customer = (Customer)q.getSingleResult();
+			customer = setVillageRelatedData(customer);
 		}catch(NoResultException e){
 			logger.debug("the customer of email : " + email + " is not found.");;
 		}
-		return null;
+		return customer;
 	}
 	
 	
@@ -32,12 +46,15 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	public Customer findByFbId(String fbId) {
 		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
 		q.setParameter(1, fbId);
+		
+		Customer customer = null;
 		try{
-			return (Customer)q.getSingleResult();
+			customer = (Customer)q.getSingleResult();
+			customer = setVillageRelatedData(customer);
 		}catch(NoResultException e){
 			logger.debug("the customer of fbId : " + fbId + " is not found.");;
 		}
-		return null;
+		return customer;
 	}
 
 	@Override
@@ -78,6 +95,30 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 		}else{
 			return false;
 		}
+	}
+	
+	private Customer setVillageRelatedData(Customer customer) {
+		if(!AssertUtils.isEmpty(customer.getVillage())){
+			Village village = customer.getVillage();
+			village.setCounty(new SelectOption(village.getCountyCode(), village.getCountyName()));
+			village.setTowership(new SelectOption(village.getTowershipCode(), village.getTowershipName()));
+			village.setId(village.getVillageCode());
+			village.setName(village.getVillageName());
+		}
+		return customer;
+	}
+
+	@Override
+	public boolean isEmailExisted(String email) {
+		
+		Query q = getEntityManager().createQuery("SELECT count(1) FROM Customer c WHERE c.email = ?1 ");
+		q.setParameter(1, email);
+		
+		long count = (long)q.getSingleResult();
+		if(count == 0)
+			return false;
+		else
+			return true;
 	}
 
 }

@@ -4,8 +4,8 @@
         .module('app')
 		.factory('userService', userService);
 	
-	userService.$inject = ['$http','logService'];
-	function userService($http, logService){
+	userService.$inject = ['$http','logService', '$rootScope'];
+	function userService($http, logService, $rootScope){
 		var service = {};
 		
 		service.signup = signup;
@@ -14,8 +14,14 @@
 		service.loginById = loginById;
 		service.update = update;
 		service.changePassword = changePassword;
+		service.isLoggedIn = isLoggedIn;
+		service.isEmailExisted = isEmailExisted;
 		
 		return service;
+		
+		function isLoggedIn(){
+			return $rootScope.globals != null && $rootScope.globals.currentUser != null;
+		}
 		
 		function changePassword(pwd){
 			return $http.post('loginCtrl/changePassword', pwd)
@@ -46,6 +52,10 @@
 			return $http.post('customerDataCtrl/update', user)
 			.then(logService.successCallback, logService.errorCallback);
 		}
-		
+
+		function isEmailExisted(email){
+			return $http.get('customerDataCtrl/isEmailExisted/'+ email)
+			.then(logService.successCallback, logService.errorCallback);
+		}
 		
 	}

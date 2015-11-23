@@ -35,8 +35,11 @@ public class Shipment extends AbstractDataBean implements Serializable {
 	@Column(name="receiver_last_name")
 	private String receiverLastName;
 
-	@Column(name="receiver_phone")
-	private String receiverPhone;
+	@Column(name="receiver_cellphone")
+	private String receiverCellphone;
+	
+	@Column(name="receiver_house_phone")
+	private String receiverHousePhone;
 
 	@Column(name="record_created_date")
 	private Timestamp recordCreatedDate;
@@ -132,12 +135,20 @@ public class Shipment extends AbstractDataBean implements Serializable {
 		this.receiverLastName = receiverLastName;
 	}
 
-	public String getReceiverPhone() {
-		return this.receiverPhone;
+	public String getReceiverCellphone() {
+		return receiverCellphone;
 	}
 
-	public void setReceiverPhone(String receiverPhone) {
-		this.receiverPhone = receiverPhone;
+	public void setReceiverCellphone(String receiverCellphone) {
+		this.receiverCellphone = receiverCellphone;
+	}
+
+	public String getReceiverHousePhone() {
+		return receiverHousePhone;
+	}
+
+	public void setReceiverHousePhone(String receiverHousePhone) {
+		this.receiverHousePhone = receiverHousePhone;
 	}
 
 	public Timestamp getRecordCreatedDate() {

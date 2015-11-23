@@ -2,11 +2,13 @@
 angular.module('checkout')
 	.controller('checkoutController',
 			["$scope", "$document", "$window", "commService", '$q', "checkoutService",
-			 "logService", "savedSessionService",
+			 "logService", "savedSessionService", "authenticationService","userService",
 		function(
-				$scope, $document, $window, commService, 
-				$q, checkoutService, logService, savedSessionService){
-		
+				$scope, $document, $window, commService,
+				$q, checkoutService, logService, savedSessionService, authenticationService, userService){
+				
+
+		$scope.isLoggedIn = userService.isLoggedIn();
 		$scope.myInterval = false;
 		$scope.imageNum = getImageNum();
 		$scope.maxUnlikeCount = 10;
@@ -36,6 +38,7 @@ angular.module('checkout')
 		$scope.setLikeDegree = setLikeDegree;
 		$scope.periodChoose = periodChoose;
 		$scope.unselectAllRemoveProdcut = unselectAllRemoveProdcut;
+		$scope.isEmailExisted =isEmailExisted;
 		
 		(function(){
 			
@@ -151,33 +154,57 @@ angular.module('checkout')
 					$scope.comingFrom = result;
 				});
 			
+			var twelveChain = commService
+				.getConstant(4)
+				.then(function(result){
+					$scope.order.receiptWay = result.constOptions[0];
+					$scope.receiptWay = result;
+				});
+			
 			$q.all([oneChain, twoChain, threeChain, fourChain, fiveChain,
 			        sixChain, sevenChain, eightChain, nineChain, tenChain,
-			        elevenChain])
+			        elevenChain, twelveChain])
 			        .then(function(){
 			        	if(savedSessionService.getObject("checkout.order")){
 			    			$scope.order = savedSessionService.getObject("checkout.order");
-			    			console.log($scope.order);
-			    			setVillageLoop($scope.order.receiverCountyBackup, 
-			    					$scope.order.receiverTowershipBackup, 
-			    					$scope.order.receiverVillageBackup,
+			    			setVillageLoopByVillage($scope.order.village,
 			    					"receiverCounty", "receiverTowershipList", "receiverTowership",
 			    					"receiverVillageList", "receiverVillage");
 			        	}
 			    		
+			        	//若session已有存著上次填過的紀錄
 			    		if(savedSessionService.getObject("checkout.user")){
 			    			$scope.user = savedSessionService.getObject("checkout.user");
-			    			console.log($scope.user);
-			    			setVillageLoop(
-			    					$scope.user.countyBackup, 
-			    					$scope.user.towershipBackup, 
-			    					$scope.user.villageBackup,
+			    			setVillageLoopByVillage(
+			    					$scope.user.village,
 			    					"county", "towershipList", "towership",
 			    					"villageList", "village");
+			    		//舊的使用者資訊
+			    		}else{
+			    			authenticationService.getUser()
+			    			.then(function(user){
+			    				if(user){
+			    					user = removeUnnecessaryFields(user);
+			    					$scope.user = user;
+			    					setVillageLoopByVillage(
+			    							user.village,
+					    					"county", "towershipList", "towership",
+					    					"villageList", "village");
+			    				}
+			    			});
 			    		}
 			        });
 			
-		})();			
+		})();
+		
+		function isEmailExisted(){
+			console.log(11);
+			userService.isEmailExisted($scope.user.email)
+				.then(function(result){
+					if(result)
+						console.log("帳號已存在");
+				});
+		}
 		
 		function unselectAllRemoveProdcut(){
 			if($scope.isAllChosen){
@@ -355,10 +382,11 @@ angular.module('checkout')
 				setSubmitData();
 				savedSessionService.setObject("checkout.order", $scope.order);
 				savedSessionService.setObject("checkout.user", $scope.user);
-				return ;
+				return;
 				checkoutService.checkout($scope.user, $scope.order)
 					.then(function(result){
 						console.log(result);
+						return ;
 						if(!isNaN(result)){
 							document.getElementById("orderId").value = result;
 							document.getElementById("allpayCheckoutForm").submit();
@@ -377,18 +405,15 @@ angular.module('checkout')
 		}
 		
 		function setSubmitVillages(){
-			$scope.user.village = {};
-			$scope.user.villageBack
+			$scope.user.village = $scope.village;
+			$scope.user.village.county = $scope.county;
+			$scope.user.village.towership = $scope.towership;
 			$scope.user.village.villageCode = $scope.village.id;
-			$scope.user.countyBackup = $scope.county;
-			$scope.user.towershipBackup = $scope.towership;
-			$scope.user.villageBackup = $scope.village;
 			
-			$scope.order.village = {};
+			$scope.order.village = $scope.receiverVillage;
+			$scope.order.village.county = $scope.receiverCounty;
+			$scope.order.village.towership = $scope.receiverTowership;
 			$scope.order.village.villageCode = $scope.receiverVillage.id;
-			$scope.order.receiverCountyBackup = $scope.receiverCounty;
-			$scope.order.receiverTowershipBackup = $scope.receiverTowership;
-			$scope.order.receiverVillageBackup = $scope.receiverVillage;
 		}
 		
 		function change(){
@@ -396,7 +421,8 @@ angular.module('checkout')
 				if($scope.checkoutForm.$valid){
 					$scope.order.receiverFirstName = $scope.user.firstName;
 					$scope.order.receiverLastName = $scope.user.lastName;
-					$scope.order.receiverPhone = $scope.user.cellphone;
+					$scope.order.receiverCellphone = $scope.user.cellphone;
+					$scope.order.receiverHousePhone = $scope.user.housePhone;
 					$scope.order.receiverAddress = $scope.user.address;
 					$scope.order.receiverGender = $scope.user.gender;
 					$scope.order.receiverGender = $scope.user.gender;
@@ -412,6 +438,14 @@ angular.module('checkout')
 			setVillageLoop($scope.county, $scope.towership, $scope.village,
 					"receiverCounty", "receiverTowershipList", "receiverTowership",
 					"receiverVillageList", "receiverVillage");
+		}
+		
+		function setVillageLoopByVillage(village, 
+				$scopeToCountyName, $scopeToTowershipListName, $scopeToTowershipName,
+				$scopeToVillageListName, $scopeToVillageName){
+			setVillageLoop(village.county, village.towership, village,
+					$scopeToCountyName, $scopeToTowershipListName, $scopeToTowershipName,
+					$scopeToVillageListName, $scopeToVillageName)
 		}
 		
 		function setVillageLoop($scopeCounty, $scopeTowership, $scopeVillage,
@@ -440,6 +474,11 @@ angular.module('checkout')
 				if($scope.orderPrograms[i].programId==programId)
 					$scope.order.orderProgram = $scope.orderPrograms[i];
 			}
+		}
+		
+		function removeUnnecessaryFields(user){
+			user.customerOrders = null;
+			return user;
 		}
 		
 		function scrollElement($document, $scope, $window, commService){

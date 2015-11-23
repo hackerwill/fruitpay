@@ -19,6 +19,7 @@ angular.module('user')
 			authenticationService.getUser()
 				.then(function(user){
 					if(user){
+						console.log(user);
 						$scope.user = user;
 						if(user.fbId)
 							$scope.fbId = user.fbId;

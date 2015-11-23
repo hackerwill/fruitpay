@@ -9,9 +9,12 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
+import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
+import com.fruitpay.comm.model.SelectOption;
+import com.fruitpay.comm.utils.AssertUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -27,6 +30,11 @@ public class CustomerServiceImpl implements CustomerService {
 			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
 		}
 		return new ReturnObject<Customer>(origin);
+	}
+
+	@Override
+	public ReturnData<Boolean> isEmailExisted(String email) {
+		return new ReturnObject<Boolean>(customerDAO.isEmailExisted(email));
 	}
 
 }

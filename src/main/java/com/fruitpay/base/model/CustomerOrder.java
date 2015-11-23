@@ -6,6 +6,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -42,8 +43,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="receiver_last_name")
 	private String receiverLastName;
 
-	@Column(name="receiver_phone")
-	private String receiverPhone;
+	@Column(name="receiver_cellphone")
+	private String receiverCellphone;
+	
+	@Column(name="receiver_house_phone")
+	private String receiverHousePhone;
 
 	@Lob
 	private String remark;
@@ -100,8 +104,24 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private List<OrderPreference> orderPreferences;
 	
 	@ManyToOne
-	@JoinColumn(name="receive_way", referencedColumnName="option_id")
+	@JoinColumn(name="receive_way")
+	@JsonProperty("receiveWay")
 	private ConstantOption receiveWay;
+	
+	@ManyToOne
+	@JoinColumn(name="shipment_time")
+	@JsonProperty("shipmentTime")
+	private ConstantOption shipmentTime;
+	
+	@ManyToOne
+	@JoinColumn(name="coming_from")
+	@JsonProperty("comingFrom")
+	private ConstantOption comingFrom;
+	
+	@ManyToOne
+	@JoinColumn(name="receipt_way")
+	@JsonProperty("receiptWay")
+	private ConstantOption receiptWay;
 
 	public CustomerOrder() {
 	}
@@ -154,12 +174,20 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.receiverLastName = receiverLastName;
 	}
 
-	public String getReceiverPhone() {
-		return this.receiverPhone;
+	public String getReceiverCellphone() {
+		return receiverCellphone;
 	}
 
-	public void setReceiverPhone(String receiverPhone) {
-		this.receiverPhone = receiverPhone;
+	public void setReceiverCellphone(String receiverCellphone) {
+		this.receiverCellphone = receiverCellphone;
+	}
+
+	public String getReceiverHousePhone() {
+		return receiverHousePhone;
+	}
+
+	public void setReceiverHousePhone(String receiverHousePhone) {
+		this.receiverHousePhone = receiverHousePhone;
 	}
 
 	public String getRemark() {
@@ -292,5 +320,37 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setShipmentPeriod(ShipmentPeriod shipmentPeriod) {
 		this.shipmentPeriod = shipmentPeriod;
+	}
+
+	public ConstantOption getReceiveWay() {
+		return receiveWay;
+	}
+
+	public void setReceiveWay(ConstantOption receiveWay) {
+		this.receiveWay = receiveWay;
+	}
+
+	public ConstantOption getShipmentTime() {
+		return shipmentTime;
+	}
+
+	public void setShipmentTime(ConstantOption shipmentTime) {
+		this.shipmentTime = shipmentTime;
+	}
+
+	public ConstantOption getComingFrom() {
+		return comingFrom;
+	}
+
+	public void setComingFrom(ConstantOption comingFrom) {
+		this.comingFrom = comingFrom;
+	}
+
+	public ConstantOption getReceiptWay() {
+		return receiptWay;
+	}
+
+	public void setReceiptWay(ConstantOption receiptWay) {
+		this.receiptWay = receiptWay;
 	}
 }

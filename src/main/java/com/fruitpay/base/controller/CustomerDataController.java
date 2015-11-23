@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -60,6 +61,14 @@ public class CustomerDataController {
 				customerOrderService.getCustomerOrdersByCustomerId(customerId);
 		
 		return customerOrders;
+	}
+	
+	@RequestMapping(value = "/isEmailExisted/{email}", method = RequestMethod.GET)
+	public @ResponseBody ReturnData<Boolean> isEmailExisted(@PathVariable String email){
+		if(AssertUtils.anyIsEmpty(email))
+			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+		
+		return customerService.isEmailExisted(email.trim());
 	}
 	
 }

@@ -49,4 +49,10 @@ public interface CustomerDAO extends DAO<Customer> {
      */
 	public boolean isCustomerIdMatchPassword(Integer custmerId, String password);
 	
+	/**
+	 * 驗證信箱是否存在
+	 * 
+	 * */
+	public boolean isEmailExisted(String email);
+	
 }
