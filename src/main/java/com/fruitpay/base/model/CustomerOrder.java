@@ -98,6 +98,10 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@OneToMany(mappedBy="customerOrder", fetch = FetchType.EAGER)
 	@JsonManagedReference
 	private List<OrderPreference> orderPreferences;
+	
+	@ManyToOne
+	@JoinColumn(name="receive_way", referencedColumnName="option_id")
+	private ConstantOption receiveWay;
 
 	public CustomerOrder() {
 	}
