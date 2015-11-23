@@ -7,7 +7,7 @@
 		<hr/>
 		<div class="row planDiv">
 			<div class="col-xs-12 col-sm-6 itemDiv" ng-repeat="orderProgram in orderPrograms" 
-				ng-click="itemClick(orderProgram.programId)" ng-class="{active:user.orderProgram.programId==orderProgram.programId}">
+				ng-click="itemClick(orderProgram.programId)" ng-class="{active:order.orderProgram.programId==orderProgram.programId}">
 				<table class="table">
 					<thead>
 						<tr>
@@ -16,20 +16,21 @@
 						<tr>
 							<td><img class="img-responsive" src="{{orderProgram.imgLink}}"/></td>
 						</tr>
+						<tr>
+							<th >$ <span class="productPriceSpan">{{orderProgram.price}}</span> 元/週</th>
+						</tr>
 					</thead>
 					<tbody>
 						<tr ng-bind-html="orderProgram.programDesc" style="text-align:center;">
 						</tr>
 						<tr>
-							<th>
-								<span ng-repeat="shipmentPeriod in shipmentPeriods">
-									<input type="radio" ng-model="order.shipmentPeriod" ng-value="shipmentPeriod"/> 
+							<td>
+								<span ng-repeat="shipmentPeriod in shipmentPeriods" class="periodChooseSpan" ng-click="periodChoose(shipmentPeriod.periodId)" 
+										ng-class="{active:order.shipmentPeriod.periodId==shipmentPeriod.periodId && order.orderProgram.programId==orderProgram.programId}">
+									<input style="display:none;" type="radio" ng-model="order.shipmentPeriod" ng-value="shipmentPeriod"/> 
 									{{shipmentPeriod.periodName}}
 								</span>
-							</th>
-						</tr>
-						<tr>
-							<th>NT {{orderProgram.price}}</th>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -37,18 +38,28 @@
 		</div>
 	</div>
 	<div class="container-fluid sectionDiv onepageElement secondLayerStart" id="productsDiv">
-		<h1>水果喜好</h1>
+		<div class="row">
+			<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
+				<h1>水果喜好</h1>
+			</div>
+			<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10">
+				<h1 align="left">
+					<font size="3px;">可以選擇您不希望收到的水果，最多{{maxUnlikeCount}}種&nbsp;</font>
+					<font size="3px;">&nbsp;<input type="checkbox" ng-model="isAllChosen" ng-click="unselectAllRemoveProdcut()">我不挑食喔</font>
+				</h1>
+			</div>
+		</div>
 		<hr/>
 			<ul rn-carousel rn-carousel-index="carouselIndex">
-				<li ng-repeat="slide in slides">
+				<li ng-repeat="slide in order.slides">
 					<div class="row productRow">
-						<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2" ng-repeat="n in range(1,imageNum, $index, totalImageAmount)">
-							<img ng-src="{{slide[getImageName(n)].product.imageLink}}" class="img-rounded" ng-class="{active:slide[getImageName(n)].likeDegree == 5}"
+						<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2" ng-repeat="n in range(1,imageNum, $index, order.totalImageAmount)">
+							<img ng-src="{{slide[getImageName(n)].product.imageLink}}" class="img-rounded" ng-class="{active:slide[getImageName(n)].likeDegree == 0}"
 								ng-click="setLikeDegree(slide[getImageName(n)])"/>
 							<div class="desc">
             					<p class="desc_content">{{slide[getImageName(n)].product.productName}}</p>
         					</div>
-							<span class="glyphicon glyphicon-heart" ng-class="{active:slide[getImageName(n)].likeDegree == 5}" ng-click="setLikeDegree(slide[getImageName(n)])"></span>
+							<span class="glyphicon glyphicon-remove" ng-class="{active:slide[getImageName(n)].likeDegree == 0}" ng-click="setLikeDegree(slide[getImageName(n)])"></span>
 						</div>
 					</div>
 				</li>
@@ -56,7 +67,7 @@
 				<span class="glyphicon glyphicon-chevron-right fruitpayArray" id="fruitpayArrayRight" ng-click="fruitRight()"></span>
 			</ul>
 			<div id="indicatorDiv">
-				<div rn-carousel-indicators ng-if="slides.length > 1" slides="slides" rn-carousel-index="carouselIndex"></div>
+				<div rn-carousel-indicators ng-if="order.slides.length > 1" slides="order.slides" rn-carousel-index="carouselIndex"></div>
 			</div>
 	</div>
 	<div class="container-fluid sectionDiv onepageElement secondLayerStart">
@@ -157,65 +168,62 @@
 				<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10">
 					<input type="text" class="form-control input-xs" placeholder="地址" id="address" ng-class="{submitted:checkoutForm.submitted}" ng-model="user.address" required>
 				</div>
-			</div class="row">
+			</div>
 			<div class="row">
 				<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
-					<label for="address">收件方式:</label>
+					<label for="receiveWay">{{receiveWay.constName}}:</label>
 				</div>
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-					<select name="billing_address_type" id="billing_address_type" class="select " placeholder="收件方式">
-						<option value="家裡(本人親收)" selected="selected">家裡(本人親收)</option>
-						<option value="家裡(管理室代收)">家裡(管理室代收)</option>
-						<option value="家裡(親友代收)">家裡(親友代收)</option>
-						<option value="公司">公司</option>
+					<select name="receiveWay" ng-options="option.optionName for option in receiveWay.constOptions track by option.optionId" ng-model="order.receiveWay">
 					</select>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
-					<label for="address">配送時段:</label>
+					<label for="shipmentTime">{{shipmentTime.constName}}:</label>
 				</div>
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-					<select name="billing_delivery_time" id="billing_delivery_time" class="select " placeholder="配送時段">
-						<option value="上午(9-12)">上午(9-12)</option>
-						<option value="下午(12-17)">下午(12-17)</option>
-						<option value="晚上(17-20)" selected="selected">晚上(17-20)</option>
+					<select name="shipmentTime" ng-options="option.optionName for option in shipmentTime.constOptions track by option.optionId" ng-model="order.shipmentTime">
 					</select>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
-					<label for="address">配送頻率:</label>
+					<label for="comingFrom">{{comingFrom.constName}}:</label>
 				</div>
 				<div  class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-					<select name="billing_address_type" id="billing_address_type" class="select " placeholder="配送頻率:">
-						<option value="每週配送" selected="selected">每週配送</option>
-						<option value="雙週配送">雙週配送</option>
+					<select name="comingFrom" ng-options="option.optionName for option in comingFrom.constOptions track by option.optionId" ng-model="order.comingFrom">
 					</select>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
-					<label for="address">得知我們:</label>
+					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
+						<label for="note">備註:</label>
+					</div>
+					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
+						<input type="text" class="form-control" id="note" placeholder="運送時的特殊需求，或是三聯式發票的統編及抬頭">
+					</div>
 				</div>
-				<div  class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-					<select name="billing_delivery_time" id="billing_delivery_time" class="select " placeholder="配送時段">
-						<option value="Facebook" selected="selected">Facebook</option>
-						<option value="Google搜尋">Google搜尋</option>
-						<option value="line">line</option>
-						<option value="報章媒體">報章媒體</option>
-					</select>
+				<br>
+				<div class="row">
+					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
+						<label for="note">溫馨提醒:</label>
+					</div>
+					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
+						<label>您的第一次配送時間:8/19(三)(固定週三配達，禮拜一12點以前訂購可以當週三送達，之後便是隔周三送達。)</label>
+					</div>	
 				</div>
-			</div>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 			<div class="row">
 				<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
 					<h1>收貨資訊</h1>
 				</div>
-				<div class="col-xs-8 col-sm-6 col-md-6 col-lg-6 form-inline" style="margin-top:25px;">
-					<label for="note">同上請打勾:</label> 
-					<input type="checkbox" class="form-control" id="note" ng-model="confirmed" ng-change="change()">
+				<div class="col-xs-8 col-sm-6 col-md-6 col-lg-6 form-inline">
+					<h1 align="left">
+						<font size="3px">同上請打勾:</font> 
+						<input type="checkbox" class="form-control" ng-model="confirmed" ng-change="change()">
+					</h1>
 				</div>
 			</div>
 			<div class="row">
@@ -265,7 +273,7 @@
 						</select>
 						<select ng-options="option.name for option in receiverTowershipList track by option.id" ng-model="receiverTowership" ng-click="receiverTowershipChange()">
 						</select>
-						<select ng-options="option.name for option in receiverVillageList track by option.id" ng-model="receiverVillage" >
+						<select ng-options="option.name for option in receiverVillageList track by option.id" ng-model="receiverVillage">
 						</select>
 						</div>
 				</div>
@@ -276,36 +284,52 @@
 						<input type="text" class="form-control input-xs" placeholder="地址" id="address" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.receiverAddress" required>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
-						<label for="note">備註:</label>
-					</div>
-					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
-						<input type="text" class="form-control" id="note" placeholder="運送時的特殊需求，或是三聯式發票的統編及抬頭">
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
-						<label for="note">溫馨提醒:</label>
-					</div>
-					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
-						<label>您的第一次配送時間:8/19(三)(固定週三配達，禮拜一12點以前訂購可以當週三送達，之後便是隔周三送達。)</label>
-					</div>	
-				</div>
 			<br>
 	</div>
 	</div>
 	<div id="section-3" class="container-fluid sectionDiv onepageElement secondLayerStart">
 		<h1>結帳方式</h1>
 		<hr/>
+		<div class="row" ng-show="order.orderProgram">
+			<div class="col-xs-8 col-sm-8 col-md-10 col-lg-10">
+				<h4>項目</h4>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+				<h4 align="right">價格</h4>
+			</div>
+		</div>
+		<div class="row" ng-show="order.orderProgram">
+			<div class="col-xs-8 col-sm-8 col-md-10 col-lg-10">
+				<h4>{{order.orderProgram.programName}}</h4>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+				<h4 align="right">{{order.orderProgram.price}}</h4>
+			</div>
+		</div>
+		<div class="row" ng-show="order.orderProgram && order.paymentMode==2">
+			<div class="col-xs-8 col-sm-8 col-md-10 col-lg-10">
+				<h4>{{order.paymentMode.paymentModeName}}</h4>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+				<h4 align="right">{{order.paymentMode.paymentExtraPrice}}</h4>
+			</div>
+		</div>
+		<hr>
+		<div class="row" ng-show="order.orderProgram">
+			<div class="col-xs-8 col-sm-8 col-md-10 col-lg-10">
+				<h4>合計</h4>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+				<h4 align="right">{{order.orderProgram.price + order.paymentMode.paymentExtraPrice}}</h4>
+			</div>
+		</div>
 		<div class="row" ng-repeat="paymentMode in paymentModes">
 			<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 form-inline radioDiv">
-				<input type="radio" class="form-control" name="payment_mode_id" ng-value="paymentMode" ng-click="slideToggle('slideToggle{{$index+1}}');" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.paymentMode" required> 
+				<input type="radio" class="form-control" name="paymentMode" ng-value="paymentMode" ng-checked="order.paymentMode.paymentModeId==paymentMode.paymentModeId" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.paymentMode" required> 
 				<label for="checkoutMethod"> {{paymentMode.paymentModeName}}</label>
 			</div>
 			<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 form-inline">
-				<div class="slide-toggle payMethodDesc" ng-show="slideToggle{{$index+1}}">
+				<div class="slide-toggle payMethodDesc" ng-show="order.paymentMode.paymentModeId==paymentMode.paymentModeId">
 					<h4 ng-bind-html="paymentMode.paymentModeDesc"></h4>
 				</div>
 			</div>
@@ -323,10 +347,6 @@
 			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
 				下單代表您已閱讀並接受我們的<a href="http://fruitpay.com.tw/rules/" target="_blank">使用條款</a>
 			</div>
-			<pre>
-				{{order | json}}
-				{{user | json}}
-			</pre>
 		</div>
 		</form>
 		<br>

@@ -54,7 +54,6 @@ function authenticationService($q, $http, $rootScope, $timeout, userService, sha
 			 loginById()
 			 	.then(function(result){
 		            if (result) {
-		            	console.log(result);
 		            	user = result;
 		            	sharedProperties.setUser(result);
 		            	deferred.resolve(user);
@@ -142,7 +141,6 @@ function authenticationService($q, $http, $rootScope, $timeout, userService, sha
 		var password = user.password;
 		
 		var authdata = Base64.encode(username + ':' + password);
-
 		$rootScope.globals = {
 			currentUser : {
 				fbId : fbId,

@@ -17,6 +17,8 @@ function commService($http, logService, sharedProperties, $q) {
 	service.getAllOrderStatuses = getAllOrderStatuses;
 	service.getAllPaymentModes = getAllPaymentModes;
 	service.getAllShipmentPeriods = getAllShipmentPeriods;
+	service.getAllConstants = getAllConstants;
+	service.getConstant = getConstant;
 	
 	return service;
 	
@@ -95,6 +97,16 @@ function commService($http, logService, sharedProperties, $q) {
 	function getAllShipmentPeriods(){
 		return $http.get('staticDataCtrl/shipmentPeriods')
 			.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getAllConstants(){
+		return $http.get('staticDataCtrl/constants')
+		.then(logService.successCallback, logService.errorCallback);
+	}
+	
+	function getConstant(constantId){
+		return $http.get('staticDataCtrl/constants/' + constantId)
+		.then(logService.successCallback, logService.errorCallback);
 	}
 	
 	function getWindowSize(){
