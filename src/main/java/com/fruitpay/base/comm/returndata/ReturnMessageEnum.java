@@ -51,7 +51,8 @@ public class ReturnMessageEnum{
 	}
 	
 	public enum Order{
-		OrderNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個訂單號碼"));
+		OrderNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個訂單號碼")),
+		AddCustomerFailed(new ReturnMessage(Status.Failed.getStatus(), "新增顧客失敗"));
 		
 		private ReturnMessage rm;
 		Order(ReturnMessage rm){

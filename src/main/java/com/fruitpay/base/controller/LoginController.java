@@ -2,11 +2,11 @@ package com.fruitpay.base.controller;
 
 
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +16,9 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum.Status;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
-import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.LoginService;
-import com.fruitpay.comm.controller.MessageSendController;
 import com.fruitpay.comm.model.ReturnData;
-import com.fruitpay.comm.model.ReturnObject;
+import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.AuthenticationUtil;
@@ -31,10 +29,10 @@ public class LoginController {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	@Autowired
+	@Inject
 	LoginService loginService;
-	@Autowired
-	MessageSendController messageSendController;
+	@Inject
+	EmailSendService emailSendService;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody ReturnData<Customer> loginAsOneCustomer(@RequestBody Customer customer,
@@ -89,7 +87,7 @@ public class LoginController {
 		ReturnData lrm = loginService.signup(customer);
 		
 		if(Status.Success.getStatus().equals(lrm.getErrorCode())){
-			messageSendController.sendTo(MailType.NEW_MEMBER, customer.getEmail(), customer);	
+			emailSendService.sendTo(MailType.NEW_MEMBER, customer.getEmail(), customer);	
 		}
 		
 		return lrm;

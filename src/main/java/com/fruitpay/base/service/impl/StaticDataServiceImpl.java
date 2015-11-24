@@ -19,6 +19,7 @@ import com.fruitpay.base.dao.OrderProgramDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
 import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.ProductDAO;
+import com.fruitpay.base.dao.ShipmentDayDAO;
 import com.fruitpay.base.dao.ShipmentPeriodDAO;
 import com.fruitpay.base.dao.VillageDAO;
 import com.fruitpay.base.model.Constant;
@@ -27,6 +28,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
@@ -50,6 +52,8 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	ShipmentPeriodDAO shipmentPeriodDAO;
 	@Autowired
 	ConstantDAO constantDAO;
+	@Autowired
+	ShipmentDayDAO shipmentDayDAO;
 	
 	List<Constant> consantList = null;
 	List<Village> allVillages = null;
@@ -216,6 +220,16 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public Constant getConstant(Integer constId) {
 		return constantDAO.findById(constId);
+	}
+
+	@Override
+	public List<ShipmentDay> getAllShipmentDays() {
+		return shipmentDayDAO.listAll();
+	}
+
+	@Override
+	public ShipmentDay getShipmentDay(Integer shipmentDaysId) {
+		return shipmentDayDAO.findById(shipmentDaysId);
 	}
 	
 }

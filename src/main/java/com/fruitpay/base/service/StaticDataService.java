@@ -8,6 +8,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
@@ -47,5 +48,9 @@ public interface StaticDataService {
 	public List<Constant> getAllConstants();
 	
 	public Constant getConstant(Integer constId);
+	
+	public List<ShipmentDay> getAllShipmentDays();
+	
+	public ShipmentDay getShipmentDay(Integer shipmentDaysId);
 
 }

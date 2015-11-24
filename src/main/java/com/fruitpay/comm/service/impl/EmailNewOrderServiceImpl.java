@@ -14,8 +14,8 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 
 	@Override
 	protected EmailComponent getEmailComponet() {
-		EmailComponent topComponent = new EmailComponent("BODY_TEMPLATE", "template/email/");
-		EmailComponent secondContentComponent = new EmailComponent("CONTENT_TEMPLATE", "template/email/content/");
+		EmailComponent topComponent = new EmailComponent("BODY_TEMPLATE", "template/email/BODY_TEMPLATE");
+		EmailComponent secondContentComponent = new EmailComponent("CONTENT_TEMPLATE", "template/email/content/NEW_ORDER_TEMPLATE");
 		topComponent.addChild(secondContentComponent);
 		return topComponent;
 	}
@@ -23,7 +23,25 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 	@Override
 	protected Map<String, String> getConditionMap(CustomerOrder order) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("MESSAGE_TITLE", "測試抬頭");
+		map.put("MESSAGE_TITLE", "您的訂單內容");
+		map.put("FIRST_NAME", order.getCustomer().getLastName());
+		map.put("ORDER_ID", String.valueOf(order.getOrderId()));
+		map.put("ORDER_DATE", order.getOrderDate().toString());
+		map.put("ORDER_PROGRAM_NAME", order.getOrderProgram().getProgramName());
+		map.put("TOTAL_PRICE", String.valueOf(order.getOrderProgram().getPrice() + order.getPaymentMode().getPaymentExtraPrice()));
+		map.put("PRICE", String.valueOf(order.getOrderProgram().getPrice()));
+		map.put("PAYMENT_MODE_NAME", order.getPaymentMode().getPaymentModeName());
+		map.put("PAYMENT_EXTRA_PRICE", String.valueOf(order.getPaymentMode().getPaymentExtraPrice()));
+		map.put("EMAIL", order.getCustomer().getEmail());
+		map.put("CELLPHONE", order.getCustomer().getCellphone());
+		map.put("HOUSE_PHONE", order.getCustomer().getHousePhone());
+		map.put("LAST_NAME", order.getCustomer().getLastName());
+		map.put("FIRST_NAME", order.getCustomer().getFirstName());
+		map.put("ADDRESS", order.getCustomer().getVillage().getCountyName() + order.getCustomer().getVillage().getTowershipName() + order.getCustomer().getVillage().getVillageName() + order.getCustomer().getAddress());
+		map.put("RECEIVER_LAST_NAME", order.getReceiverLastName());
+		map.put("RECEIVER_FIRST_NAME", order.getReceiverFirstName());
+		map.put("RECEIVER_ADDRESS", order.getVillage().getCountyName() + order.getVillage().getTowershipName() + order.getVillage().getVillageName() + order.getReceiverAddress());
+		
 		return map;
 	}
 

@@ -3,6 +3,7 @@ package com.fruitpay.base.service;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.comm.model.ReturnData;
 
 public interface CheckoutService {
 	
@@ -23,4 +24,11 @@ public interface CheckoutService {
 	 * 
 	 * */
 	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus);
+	
+	/**
+	 * 增加顧客，並且增加訂單
+	 * 
+	 * */
+	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder);
+	
 }

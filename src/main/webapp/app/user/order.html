@@ -15,7 +15,7 @@
 				<tr ng-repeat="order in userOrders">
 					<td>{{order.orderId}}</td>
 					<td>{{order.orderProgram.programName}}</td>
-					<td>{{order.orderProgram.shipmentPeriod.periodName}}</td>
+					<td>{{order.shipmentPeriod.periodName}}</td>
 					<td>{{order.orderDate}}</td>
 					<td>{{order.orderStatus.orderStatusName}}</td>
 				</tr>

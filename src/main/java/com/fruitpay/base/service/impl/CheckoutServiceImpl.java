@@ -9,16 +9,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
-import com.fruitpay.base.dao.OrderProgramDAO;
 import com.fruitpay.base.dao.ProductDAO;
+import com.fruitpay.base.dao.VillageDAO;
+import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderPreferencePK;
-import com.fruitpay.base.model.OrderProgram;
-import com.fruitpay.base.model.Product;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.LoginService;
+import com.fruitpay.comm.model.ReturnData;
+import com.fruitpay.comm.model.ReturnObject;
+import com.fruitpay.comm.service.EmailSendService;
+import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
@@ -28,11 +33,15 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Inject
 	private CustomerOrderDAO customerOrderDAO;
 	@Inject
-	private OrderProgramDAO orderProgramDAO;
-	@Inject
 	private OrderPreferenceDAO orderPreferenceDAO;
 	@Inject
 	private ProductDAO productDAO;
+	@Inject
+	private LoginService loginService;
+	@Inject
+	private VillageDAO villageDAO;
+	@Inject
+	private EmailSendService emailSendService;
 	
 	@Override
 	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
@@ -51,7 +60,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 			orderPreferenceDAO.create(orderPreference);
 		}
 		
-		
 		//OrderProgram orderProgram = orderProgramDAO.findById(customerOrder.getOrderProgram().getProgramId());
 		//customerOrder.setOrderProgram(orderProgram);
 		
@@ -67,6 +75,30 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Transactional
 	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus) {
 		return customerOrderDAO.updateOrderStatus(orderId, orderStatus);
+	}
+
+	@Override
+	@Transactional
+	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder) {
+		
+		logger.debug("add a customer, email is " + customer.getEmail());
+		ReturnData<Customer> returnData = loginService.signup(customer);
+		if(!"0".equals(returnData.getErrorCode()))
+			return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
+		
+		customer = returnData.getObject();
+		logger.debug("customer Id : " + customer.getCustomerId());
+		customerOrder.setCustomer(customer);
+		customerOrder = this.checkoutOrder(customerOrder);
+		customerOrder.setVillage(villageDAO.findById(customerOrder.getVillage().getVillageCode()));
+		customer.setVillage(villageDAO.findById(customer.getVillage().getVillageCode()));
+		
+		if(customerOrder!= null){
+			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
+			emailSendService.sendTo(MailType.NEW_ORDER_NOTICE, customer.getEmail(), customerOrder);	
+		}
+		
+		return new ReturnObject<CustomerOrder>(customerOrder);
 	}
 
 }
