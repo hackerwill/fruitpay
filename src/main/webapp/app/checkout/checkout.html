@@ -98,12 +98,21 @@
 					<label for="sex">先生</label>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" ng-show="checkoutForm.$error.email">
 				<div class="col-xs-0 col-sm-3 col-md-2 col-lg-2">
 				</div>
 				<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10">
-					<span style="color:red" ng-show="checkoutForm.email.$invalid && checkoutForm.submitted">
+					<span style="color:red">
 						<span>信箱格式錯誤</span>           
+					</span>  
+				</div>
+			</div>
+			<div class="row" ng-show="checkoutForm.$error.alreadyExisted">
+				<div class="col-xs-0 col-sm-3 col-md-2 col-lg-2">
+				</div>
+				<div class="col-xs-12 col-sm-9 col-md-10 col-lg-10">
+					<span style="color:red">
+						<span>信箱已被註冊</span>           
 					</span>  
 				</div>
 			</div>

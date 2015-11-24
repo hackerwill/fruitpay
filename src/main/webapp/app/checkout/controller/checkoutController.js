@@ -7,7 +7,7 @@ angular.module('checkout')
 				$scope, $document, $window, commService,
 				$q, checkoutService, logService, savedSessionService, authenticationService, userService){
 				
-
+		var ctrl = this;
 		$scope.isLoggedIn = userService.isLoggedIn();
 		$scope.myInterval = false;
 		$scope.imageNum = getImageNum();
@@ -198,11 +198,13 @@ angular.module('checkout')
 		})();
 		
 		function isEmailExisted(){
-			console.log(11);
 			userService.isEmailExisted($scope.user.email)
 				.then(function(result){
-					if(result)
-						console.log("帳號已存在");
+					if(result){
+						$scope.checkoutForm.email.$setValidity("alreadyExisted", false);
+					}else{
+						$scope.checkoutForm.email.$setValidity("alreadyExisted", true);
+					}
 				});
 		}
 		
@@ -382,10 +384,8 @@ angular.module('checkout')
 				setSubmitData();
 				savedSessionService.setObject("checkout.order", $scope.order);
 				savedSessionService.setObject("checkout.user", $scope.user);
-				return;
 				checkoutService.checkout($scope.user, $scope.order)
 					.then(function(result){
-						console.log(result);
 						return ;
 						if(!isNaN(result)){
 							document.getElementById("orderId").value = result;

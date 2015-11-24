@@ -54,8 +54,8 @@
 		}
 
 		function isEmailExisted(email){
-			return $http.get('customerDataCtrl/isEmailExisted/'+ email)
-			.then(logService.successCallback, logService.errorCallback);
+			return $http.get('customerDataCtrl/isEmailExisted/'+ email + '/')
+				.then(logService.successCallback, logService.errorCallback);
 		}
 		
 	}
