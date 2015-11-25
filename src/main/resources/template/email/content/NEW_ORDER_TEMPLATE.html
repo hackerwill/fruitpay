@@ -1,14 +1,13 @@
-﻿<div style="color: #737373; font-size: 14px; line-height: 150%; text-align: left;">
-	<pre style="">
+﻿<div style="color: #737373; font-size: 14px; line-height: 150%; text-align: left; padding:15px;">
+	<p>
 	親愛的${FIRST_NAME}, 您好: <br>
-		感謝您的訂購，您的訂單內容如下
-	</pre>
-	<h2
-		style="color: #557da1; display: block; font-size: 18px; font-weight: bold; line-height: 130%; text-align: left;">
-		<a
+		感謝您的訂購，您的<a
 			href="#"
 			style="color: #557da1; font-weight: normal; text-decoration: underline;"
-			target="_blank" rel="noreferrer">訂單 #${ORDER_ID}</a> (<u></u>${ORDER_DATE}<u></u>)
+			target="_blank" rel="noreferrer">訂單 #${ORDER_ID}</a> 內容如下
+	<p/>
+	<h2 style="color: #557da1; display: block; font-size: 18px; font-weight: bold; line-height: 130%; text-align: left;">
+		購買資訊
 	</h2>
 	<table cellspacing="0" cellpadding="6"
 		style="width: 100%; border: 1px solid #eee;" border="1">
@@ -17,7 +16,9 @@
 				<th scope="col"
 					style="text-align: left; border: 1px solid #eee; padding: 12px;">商品</th>
 				<th scope="col"
-					style="text-align: left; border: 1px solid #eee; padding: 12px;">價格</th>
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">付款方式</th>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">合計</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -25,67 +26,94 @@
 				<td
 					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
 					${ORDER_PROGRAM_NAME}
+				</td>		
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; padding: 12px;">
+					<span>${PAYMENT_MODE_NAME}</span>
 				</td>
 				<td
 					style="text-align: left; vertical-align: middle; border: 1px solid #eee; padding: 12px;">
-					<span>NT ${TOTAL_PRICE}</span>
+					<span>NT ${TOTAL_PRICE} = ${PRICE}(價格) + ${PAYMENT_EXTRA_PRICE}(運費)</span>
 				</td>
 			</tr>
 		</tbody>
-		<tfoot>
-			<tr>
-				<th scope="row"
-					style="text-align: left; border: 1px solid #eee; border-top-width: 4px; padding: 12px;">小計</th>
-				<td
-					style="text-align: left; border: 1px solid #eee; border-top-width: 4px; padding: 12px;"><span>NT ${PRICE}</span></td>
-			</tr>
-			<tr>
-				<th scope="row"
-					style="text-align: left; border: 1px solid #eee; padding: 12px;">付款方式：</th>
-				<td style="text-align: left; border: 1px solid #eee; padding: 12px;">${PAYMENT_MODE_NAME}</td>
-			</tr>
-			<tr>
-				<th scope="row"
-					style="text-align: left; border: 1px solid #eee; padding: 12px;">運費：</th>
-				<td style="text-align: left; border: 1px solid #eee; padding: 12px;">${PAYMENT_EXTRA_PRICE}</td>
-			</tr>
-			<tr>
-				<th scope="row"
-					style="text-align: left; border: 1px solid #eee; padding: 12px;">總計：</th>
-				<td style="text-align: left; border: 1px solid #eee; padding: 12px;"><span>NT ${TOTAL_PRICE}</span></td>
-			</tr>
-		</tfoot>
 	</table>
 	<h2
-		style="color: #557da1; display: block; font-size: 18px; font-weight: bold; line-height: 130%; text-align: left;">顧客資訊</h2>
-	<p style="">
-		<strong>電子郵件:</strong> ${EMAIL}
-	</p>
-	<p style="">
-		<strong>聯絡電話:</strong> ${CELLPHONE}
-	</p>
-	<p style="">
-		<strong>家裡電話:</strong> ${HOUSE_PHONE}
-	</p>
-	<table cellspacing="0" cellpadding="0"
-		style="width: 100%; vertical-align: top;" border="0">
+		style="color: #557da1; display: block; font-size: 18px; font-weight: bold; line-height: 130%; text-align: left;">
+		訂單資訊
+	</h2>
+	<table cellspacing="0" cellpadding="6"
+		style="width: 100%; border: 1px solid #eee;" border="1">
+		<thead>
+			<tr>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">收貨人</th>
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
+					${RECEIVER_LAST_NAME}${RECEIVER_FIRST_NAME}
+				</td>
+			</tr>
+		</thead>
 		<tbody>
 			<tr>
-				<td valign="top" width="50%" style="padding: 12px;">
-					<h3
-						style="color: #557da1; display: block; font-size: 16px; font-weight: bold; line-height: 130%; text-align: left;">帳單地址</h3>
-					<p style="">
-						${LAST_NAME}${FIRST_NAME}<br>${ADDRESS}
-					</p>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">電子郵件:</th>
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
+					${EMAIL}
 				</td>
-				<td valign="top" width="50%" style="padding: 12px;">
-					<h3
-						style="color: #557da1; display: block; font-size: 16px; font-weight: bold; line-height: 130%; text-align: left;">運送地址</h3>
-					<p style="">
-						${RECEIVER_LAST_NAME}${RECEIVER_FIRST_NAME}<br>${RECEIVER_ADDRESS}
-					</p>
+			</tr>
+			<tr>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">聯絡電話:</th>
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
+					${RECEIVER_CELLPHONE}
+				</td>
+			</tr>
+			<tr>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">家裡電話:</th>
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
+					${RECEIVER_HOUSE_PHONE}
+				</td>
+			</tr>
+			<tr>
+				<th scope="col"
+					style="text-align: left; border: 1px solid #eee; padding: 12px;">收貨地址:</th>
+				<td
+					style="text-align: left; vertical-align: middle; border: 1px solid #eee; word-wrap: break-word; padding: 12px;">
+					${RECEIVER_ADDRESS}
 				</td>
 			</tr>
 		</tbody>
 	</table>
+	<h2 style="color: #557da1; display: block; font-size: 18px; font-weight: bold; line-height: 130%; text-align: left;">注意事項</h2>
+<pre>
+謝謝您選擇果物配！為了能提供您更好的水果箱體驗，以下幾點注意事項請您務必留意：
+1.收到水果箱後，請您第一時間拆開包裝，檢查每樣水果，並讓水果保持通風
+ （避免包裝將水果悶住）。
+2.若水果有果肉潰爛、發霉、嚴重撞傷等情形，請您務必拍下照片，
+  並寄信至 info@fruitpay.com.tw，經確認後，
+  我們將會於下週補償一份新的水果給您。
+3.果物配為了更方便客人每週食用水果，水果箱採自動續約機制，若您希望取消訂購，
+  請您在配送當週星期一中午12點之前來電02-2338-0958，
+  或來信info@fruitpay.com.tw告知。
+  若超過時間通知，水果箱將照常送出，恕不退貨。
+4.當您收到水果箱後，每樣水果上都會有一張數字貼紙，其所代表的意義如下：
+	
+<img src="http://fruitpay.com.tw/wp-content/uploads/2015/11/numberMeaning.png" style="min-height:122px;width:539px" >
+	
+*溫馨提醒：成熟程度會因為當天溫度與濕度，而有早熟或晚熟的現象。
+若發生此現象，煩請您自行做食用順序上的調整。
+	
+我們會持續關注您的健康以及小農的種植狀況，謝謝您對我們的支持。
+果物配全體人員祝您有美好的一天！
+	
+Sincerely,
+	
+盧胤勳 Jason Lu
+Business Development Specialist		
+</pre>
 </div>

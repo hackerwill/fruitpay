@@ -15,7 +15,7 @@ public class EmailContentFactory {
 	
 	public enum MailType{
 		NEW_ORDER,
-		NEW_ORDER_NOTICE,
+		NEW_MEMBER_FROM_ORDER,
 		NEW_MEMBER;
 	}
 	
@@ -25,15 +25,15 @@ public class EmailContentFactory {
 	@Inject
 	EmailNewOrderServiceImpl emailNewOrderServiceImpl;
 	@Inject
-	EmailNewOrderNoticeServiceImpl emailNewOrderNoticeServiceImpl;
+	EmailNewMemberFromOrderServiceImpl emailNewMemberFromOrderServiceImpl;
 	
 	
 	@PostConstruct
 	public void init(){
 		map = new HashMap<MailType, EmailContentService>();
 		map.put(MailType.NEW_MEMBER, emailNewMemberServiceImpl);
+		map.put(MailType.NEW_MEMBER_FROM_ORDER, emailNewMemberFromOrderServiceImpl);
 		map.put(MailType.NEW_ORDER, emailNewOrderServiceImpl);
-		map.put(MailType.NEW_ORDER_NOTICE, emailNewOrderNoticeServiceImpl);
 	}
 	
 	public <T> EmailContentService<T> getEmailContentServiceImpl(MailType mailType, T t){

@@ -10,12 +10,12 @@ import com.fruitpay.comm.model.EmailComponent;
 import com.fruitpay.comm.service.EmailContentService;
 
 @Component
-public class EmailNewOrderNoticeServiceImpl extends EmailContentService<CustomerOrder> {
+public class EmailNewMemberFromOrderServiceImpl extends EmailContentService<CustomerOrder> {
 
 	@Override
 	protected EmailComponent getEmailComponet() {
 		EmailComponent topComponent = new EmailComponent("BODY_TEMPLATE", "template/email/BODY_TEMPLATE");
-		EmailComponent secondContentComponent = new EmailComponent("CONTENT_TEMPLATE", "template/email/content/NEW_ORDER_NOTICE_TEMPLATE");
+		EmailComponent secondContentComponent = new EmailComponent("CONTENT_TEMPLATE", "template/email/content/NEW_MEMBER_FROM_ORDER_TEMPLATE");
 		topComponent.addChild(secondContentComponent);
 		return topComponent;
 	}
@@ -23,14 +23,17 @@ public class EmailNewOrderNoticeServiceImpl extends EmailContentService<Customer
 	@Override
 	protected Map<String, String> getConditionMap(CustomerOrder order) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("MESSAGE_TITLE", "注意事項");
+		map.put("MESSAGE_TITLE", "歡迎您加入果物配");
 		map.put("FIRST_NAME", order.getCustomer().getFirstName());
+		map.put("LAST_NAME", order.getCustomer().getLastName());
+		map.put("EMAIL", order.getCustomer().getFirstName());
+		map.put("PASSWORD", order.getCustomer().getPassword());
 		return map;
 	}
 
 	@Override
 	protected String getEmailSubject() {
-		return "果物配訂單注意事項";
+		return "果物配新會員通知";
 	}
 
 }

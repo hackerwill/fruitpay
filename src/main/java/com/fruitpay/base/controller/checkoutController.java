@@ -44,7 +44,6 @@ public class checkoutController {
 		Customer customer = checkoutPostBean.getCustomer();
 		CustomerOrder customerOrder = checkoutPostBean.getCustomerOrder();
 		
-		customer.setPassword(RadomValueUtil.getRandomPassword());
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(ShipmentDay.Tuesday.getDay()));

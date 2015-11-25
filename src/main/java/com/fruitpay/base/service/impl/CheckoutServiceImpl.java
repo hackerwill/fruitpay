@@ -24,6 +24,7 @@ import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
+import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
@@ -82,6 +83,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder) {
 		
 		logger.debug("add a customer, email is " + customer.getEmail());
+		String randomPassword = RadomValueUtil.getRandomPassword();
+		customer.setPassword(randomPassword);
+		
 		ReturnData<Customer> returnData = loginService.signup(customer);
 		if(!"0".equals(returnData.getErrorCode()))
 			return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
@@ -93,9 +97,10 @@ public class CheckoutServiceImpl implements CheckoutService {
 		customerOrder.setVillage(villageDAO.findById(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(villageDAO.findById(customer.getVillage().getVillageCode()));
 		
+		customer.setPassword(randomPassword);
 		if(customerOrder!= null){
+			emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, customer.getEmail(), customerOrder);
 			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
-			emailSendService.sendTo(MailType.NEW_ORDER_NOTICE, customer.getEmail(), customerOrder);	
 		}
 		
 		return new ReturnObject<CustomerOrder>(customerOrder);
