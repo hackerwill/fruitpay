@@ -1,12 +1,25 @@
 package com.fruitpay.base.controller;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +37,7 @@ import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
+import com.fruitpay.comm.utils.HttpUtil;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Controller
@@ -55,9 +69,41 @@ public class checkoutController {
 		if(returnData.getErrorCode().equals(ReturnMessageEnum.Status.Failed.getStatus()))
 			return returnData;
 		
-		logger.debug("order Id : " + customerOrder.getOrderId());
 		return new ReturnObject<Integer>(ReturnMessageEnum.Common.Success.getReturnMessage(), 
 				customerOrder.getOrderId());
+	}
+	
+	public void sendReq(HttpServletRequest request, HttpServletResponse hrp, String orderId) {
+		
+		try {
+			CloseableHttpClient client = HttpClients.createDefault();
+			HttpPost httpPost = new HttpPost(HttpUtil.getDomainURL(request) + "/allpayCtrl/checkout");
+
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("orderId", orderId));
+
+			httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+			CloseableHttpResponse response = client.execute(httpPost);
+			if (response.getStatusLine().getStatusCode() == 200){
+				InputStream input = response.getEntity().getContent();
+				hrp.getWriter().print(input);
+				client.close();
+			}
+				
+			
+			
+			
+			
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

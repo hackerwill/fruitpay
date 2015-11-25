@@ -376,22 +376,22 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
-			//document.getElementById("orderId").value = 11;
-			//document.getElementById("allpayCheckoutForm").submit();
-			//return;
-			//test
 			if ($scope.checkoutForm.$valid) {   
+				//document.getElementById("orderId").value = 88;
+				//document.getElementById("allpayCheckoutForm").submit();
+				//return;
 				setSubmitData();
 				savedSessionService.setObject("checkout.order", $scope.order);
 				savedSessionService.setObject("checkout.user", $scope.user);
 				checkoutService.checkout($scope.user, $scope.order)
 					.then(function(result){
-						return ;
 						if(!isNaN(result)){
+							console.log(result);
 							document.getElementById("orderId").value = result;
 							document.getElementById("allpayCheckoutForm").submit();
+							//savedSessionService.removeObject("checkout.order");
+							//savedSessionService.removeObject("checkout.user");
 						}
-							
 					});
 			
 			}else {

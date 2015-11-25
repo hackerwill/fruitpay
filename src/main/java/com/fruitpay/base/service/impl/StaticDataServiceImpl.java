@@ -75,6 +75,16 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	}
 	
 	@Override
+	public Village getVillage(String villageCode) {
+		List<Village> thisVillages = null;
+		if(!allVillages.isEmpty()){
+			thisVillages = allVillages.stream().filter(u -> u.getVillageCode().equals(villageCode)).collect(Collectors.toList());
+			return thisVillages.get(0);
+		}			
+		return villageDAO.findById(villageCode);
+	}
+	
+	@Override
 	public List<SelectOption> getAllCounties() {
 		if(countList == null){
 			countList = new ArrayList<SelectOption>();

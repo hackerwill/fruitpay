@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.comm.utils.HttpUtil;
 
 import AllPay.Payment.Integration.AllInOne;
 import AllPay.Payment.Integration.Decimal;
@@ -175,10 +176,10 @@ public class AllpayCheckoutController {
 			enErrors.add(e.getMessage());
 		} finally { // 回覆成功訊息。
 			if (enErrors.size() == 0) {
-				response.setHeader("Location", getDomainURL(request) + SHOW_ORDER_URL);
+				response.setHeader("Location", HttpUtil.getDomainURL(request) + SHOW_ORDER_URL);
 				out.println("1|OK"); // 回覆錯誤訊息。
 			} else {
-				response.setHeader("Location", getDomainURL(request));
+				response.setHeader("Location", HttpUtil.getDomainURL(request));
 				out.println("0|" + enErrors);
 			}
 
@@ -199,7 +200,7 @@ public class AllpayCheckoutController {
 			@RequestParam("orderId") Integer orderId,
 			HttpServletRequest request, HttpServletResponse response){
 		
-		String index = getDomainURL(request);
+		String index = HttpUtil.getDomainURL(request);
 		
 		if(orderId == null){
 			logger.error("OrderId not found");
@@ -271,14 +272,5 @@ public class AllpayCheckoutController {
 			if (enErrors.size() > 0)
 				out.print(enErrors);
 		}
-	}
-	
-	private String getDomainURL(HttpServletRequest request){
-		String scheme = request.getScheme();
-		String serverName = request.getServerName();
-		int serverPort = request.getServerPort();
-		String contextPath = request.getContextPath();  // includes leading forward slash
-		String resultPath = scheme + "://" + serverName + ":" + serverPort + contextPath;
-		return resultPath;
 	}
 }

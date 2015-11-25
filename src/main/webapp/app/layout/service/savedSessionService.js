@@ -8,6 +8,7 @@ function savedSessionService($http, logService, sharedProperties, $q) {
 	
 	service.getObject = getObject;
 	service.setObject = setObject;
+	service.removeObject = removeObject;
 	
 	return service;
 	
@@ -17,7 +18,8 @@ function savedSessionService($http, logService, sharedProperties, $q) {
 			return null;
 		var obj = null;
 		try{
-			obj = JSON.parse(sessionStorage.getItem(name));
+			if(sessionStorage.getItem(name))
+				obj = JSON.parse(sessionStorage.getItem(name));
 		}catch(error){
 			console.log(error);
 		}
@@ -29,6 +31,10 @@ function savedSessionService($http, logService, sharedProperties, $q) {
 		if(!name)
 			return null;
 		sessionStorage.setItem(name, JSON.stringify(object));
+	}
+	
+	function removeObject(name){
+		sessionStorage.setItem(name, null);
 	}
 	
 }

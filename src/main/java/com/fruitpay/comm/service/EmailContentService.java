@@ -1,11 +1,13 @@
 package com.fruitpay.comm.service;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import com.fruitpay.comm.model.EmailComponent;
 import com.fruitpay.comm.model.MessageBean;
+import com.fruitpay.comm.utils.AssertUtils;
 
 public abstract class EmailContentService<T> {
 	
@@ -49,8 +51,18 @@ public abstract class EmailContentService<T> {
 	 * 將字串合併為單一份文件
 	 * */
 	private String replace(String content, Map<String,String> map){
+		replaceNullWithEmptyStr(map);
 		StrSubstitutor sub = new StrSubstitutor(map, PREFIX, SUFFIX);
 		return sub.replace(content);
 	};
+	
+	private Map<String,String> replaceNullWithEmptyStr(Map<String,String> map){
+		for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
+			String key = map.get(iterator.next());
+			if(AssertUtils.isEmpty(key))
+				map.put(key, "");
+		}
+		return map;
+	}
 
 }

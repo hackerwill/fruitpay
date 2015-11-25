@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.dao.ProductDAO;
@@ -20,6 +21,7 @@ import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderPreferencePK;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.LoginService;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.service.EmailSendService;
@@ -40,9 +42,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Inject
 	private LoginService loginService;
 	@Inject
-	private VillageDAO villageDAO;
+	private StaticDataService staticDataService;
 	@Inject
 	private EmailSendService emailSendService;
+	@Inject
+	private CustomerDAO customerDAO;
 	
 	@Override
 	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
@@ -86,20 +90,32 @@ public class CheckoutServiceImpl implements CheckoutService {
 		String randomPassword = RadomValueUtil.getRandomPassword();
 		customer.setPassword(randomPassword);
 		
-		ReturnData<Customer> returnData = loginService.signup(customer);
-		if(!"0".equals(returnData.getErrorCode()))
-			return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
+		if(!customerDAO.isEmailExisted(customer.getEmail())){
+			ReturnData<Customer> returnData = loginService.signup(customer);
+			if(!"0".equals(returnData.getErrorCode()))
+				return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
+			
+			customer = returnData.getObject();
+			logger.debug("customer Id : " + customer.getCustomerId());
+			if(customer!= null){
+				Customer sendCustomer = new Customer();;
+				sendCustomer.setPassword(randomPassword);
+				sendCustomer.setFirstName(customer.getFirstName());
+				sendCustomer.setLastName(customer.getLastName());
+				sendCustomer.setEmail(customer.getEmail());
+				emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, customer.getEmail(), sendCustomer);
+			}
+			
+		}else{
+			customer = customerDAO.getCustomerByEmail(customer.getEmail());
+		}
 		
-		customer = returnData.getObject();
-		logger.debug("customer Id : " + customer.getCustomerId());
 		customerOrder.setCustomer(customer);
 		customerOrder = this.checkoutOrder(customerOrder);
-		customerOrder.setVillage(villageDAO.findById(customerOrder.getVillage().getVillageCode()));
-		customer.setVillage(villageDAO.findById(customer.getVillage().getVillageCode()));
+		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
+		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		
-		customer.setPassword(randomPassword);
 		if(customerOrder!= null){
-			emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, customer.getEmail(), customerOrder);
 			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
 		}
 		

@@ -21,7 +21,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	@Override
 	public Customer findById(Serializable id) {
-		Customer customer = super.findById(id);
+		Customer customer = this.findById(id);
 		return setVillageRelatedData(customer);
 	}
 	

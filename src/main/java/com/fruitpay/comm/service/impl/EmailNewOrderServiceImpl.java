@@ -33,7 +33,7 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 		map.put("PAYMENT_MODE_NAME", order.getPaymentMode().getPaymentModeName());
 		map.put("PAYMENT_EXTRA_PRICE", String.valueOf(order.getPaymentMode().getPaymentExtraPrice()));
 		map.put("EMAIL", order.getCustomer().getEmail());
-		map.put("RECEIVER_CELLPHONE", order.getCustomer().getCellphone());
+		map.put("RECEIVER_CELLPHONE", order.getCustomer().getCellphone() );
 		map.put("RECEIVER_HOUSE_PHONE", order.getCustomer().getHousePhone());
 		map.put("RECEIVER_LAST_NAME", order.getReceiverLastName());
 		map.put("RECEIVER_FIRST_NAME", order.getReceiverFirstName());

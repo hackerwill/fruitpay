@@ -17,6 +17,8 @@ public interface StaticDataService {
 	
 	public List<Village> getAllVillages();
 	
+	public Village getVillage(String villageCode);
+	
 	public List<SelectOption> getAllCounties();
 	
 	public List<SelectOption> getTowerships(String countyCode);
