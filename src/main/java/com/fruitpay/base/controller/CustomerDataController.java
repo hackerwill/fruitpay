@@ -31,6 +31,8 @@ public class CustomerDataController {
 	CustomerOrderService customerOrderService;
 	@Inject
 	CustomerService customerService;
+	@Inject
+	AuthenticationUtil authenticationUtil;
 	
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -41,8 +43,8 @@ public class CustomerDataController {
 				AssertUtils.isEmpty(customer.getCustomerId()))
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		ReturnData<Customer> returnData = customerService.update(customer);
-		if(returnData.getObject() != null)
-			AuthenticationUtil.setSessionCustomer(request, returnData.getObject());
+		//if(returnData.getObject() != null)
+		//	authenticationUtil.setSessionCustomer(request, returnData.getObject().getCustomerId());
 		return returnData;
 	}
 	
@@ -52,10 +54,6 @@ public class CustomerDataController {
 			HttpServletRequest request, HttpServletResponse response){
 		if(AssertUtils.isEmpty(customerId))
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
-		
-		Customer customer = AuthenticationUtil.getSessionCustomer(request, customerId);
-		if(customer == null)
-			return ReturnMessageEnum.Common.AuthenticationFailed.getReturnMessage();
 		
 		ReturnData<List<CustomerOrder>> customerOrders = 
 				customerOrderService.getCustomerOrdersByCustomerId(customerId);

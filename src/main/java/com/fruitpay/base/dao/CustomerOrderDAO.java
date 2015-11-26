@@ -15,4 +15,6 @@ public interface CustomerOrderDAO extends DAO<CustomerOrder> {
 	
 	public List<CustomerOrder> findByCustomerId(Integer customerId);
 	
+	public CustomerOrder findByOrderId(Integer customerId);
+	
 }

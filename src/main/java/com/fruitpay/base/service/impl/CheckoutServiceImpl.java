@@ -1,8 +1,12 @@
 package com.fruitpay.base.service.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
+	@PersistenceContext
+	private EntityManager em;
 	@Inject
 	private CustomerOrderDAO customerOrderDAO;
 	@Inject
@@ -52,7 +58,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 
-		customerOrder = customerOrderDAO.create(customerOrder);
+		customerOrderDAO.createAndFlush(customerOrder);
 		
 		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
 			OrderPreference orderPreference = iterator.next();
@@ -67,13 +73,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		//OrderProgram orderProgram = orderProgramDAO.findById(customerOrder.getOrderProgram().getProgramId());
 		//customerOrder.setOrderProgram(orderProgram);
-		
 		return customerOrder;
 	}
 
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
-		return customerOrderDAO.findById(orderId);
+		return customerOrderDAO.findByOrderId(orderId);
 	}
 
 	@Override
@@ -122,14 +127,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		customerOrder.setCustomer(customer);
 		customerOrder = this.checkoutOrder(customerOrder);
-		CustomerOrder newCustomerOrder = customerOrderDAO.findById(customerOrder.getOrderId());
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		
 		if(customerOrder!= null){
 			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
 		}
-		
 		return new ReturnObject<CustomerOrder>(customerOrder);
 	}
 

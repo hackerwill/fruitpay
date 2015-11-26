@@ -3,6 +3,8 @@ package com.fruitpay.base.controller;
 
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,9 +32,12 @@ public class LoginController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Inject
-	LoginService loginService;
+	private AuthenticationUtil authenticationUtil;
+	
 	@Inject
-	EmailSendService emailSendService;
+	private LoginService loginService;
+	@Inject
+	private EmailSendService emailSendService;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody ReturnData<Customer> loginAsOneCustomer(@RequestBody Customer customer,
@@ -42,8 +47,6 @@ public class LoginController {
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
 		ReturnData<Customer> returnData = loginService.login(customer.getEmail(), customer.getPassword());
-		if(returnData.getObject() != null)
-			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
 		return returnData;
 	}
 	
@@ -56,8 +59,6 @@ public class LoginController {
 		}
 		ReturnData<Customer> returnData = 
 				loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());
-		if(returnData.getObject() != null)
-			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
 		return returnData;
 	}
 	
@@ -70,8 +71,6 @@ public class LoginController {
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		}
 		ReturnData<Customer> returnData = loginService.fbLogin(customer);
-		if(returnData.getObject() != null)
-			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
 		return returnData;
 	}
 	
@@ -98,7 +97,6 @@ public class LoginController {
 	public @ResponseBody ReturnData logout(
 			HttpServletRequest request, HttpServletResponse response){
 		
-		AuthenticationUtil.setSessionCustomer(request, null);
 		return ReturnMessageEnum.Common.Success.getReturnMessage();
 	}
 	
@@ -112,10 +110,6 @@ public class LoginController {
 		}
 		
 		ReturnData<Customer> returnData = loginService.changePassword(pwd);
-		if(Status.Success.getStatus().equals(returnData.getErrorCode())
-				&& returnData.getObject() != null){
-			AuthenticationUtil.setSessionCustomer(request, returnData.getObject());
-		}
 		
 		return returnData;
 	}

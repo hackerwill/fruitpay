@@ -1,5 +1,8 @@
 package com.fruitpay.base.service.impl;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ public class LoginServiceImpl implements LoginService {
 	@Autowired
 	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
+	
 
 	@Override
 	public ReturnData<Customer> signup(Customer customer) {
@@ -76,7 +80,7 @@ public class LoginServiceImpl implements LoginService {
 		if(checkcustomer == null){
 			customer.setPassword(FB_PASSWORD);
 			customer = getEncodedPasswordCustomer(customer);
-			customer = customerDAO.create(customer); 
+			customer = customerDAO.createAndRefresh(customer); 
 			checkcustomer = customer;
 		}
 		

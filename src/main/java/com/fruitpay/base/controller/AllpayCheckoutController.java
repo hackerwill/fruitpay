@@ -77,6 +77,7 @@ public class AllpayCheckoutController {
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 
 		List<String> enErrors = new ArrayList<String>();
+		String szMerchantTradeNo = "";
 		try {
 			out = response.getWriter();
 			AllInOne oPayment = new AllInOne();
@@ -90,7 +91,6 @@ public class AllpayCheckoutController {
 			String name[] = key.toArray(new String[key.size()]);
 			/* 支付後的回傳的基本參數 */
 			String szMerchantID = "";
-			String szMerchantTradeNo = "";
 			String szPaymentDate = "";
 			String szPaymentType = "";
 			String szPaymentTypeChargeFee = "";
@@ -175,11 +175,15 @@ public class AllpayCheckoutController {
 			out.println("");
 		} catch (Exception e) {
 			enErrors.add(e.getMessage());
-		} finally { // 回覆成功訊息。
+		} finally { 
+			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful);
 				response.setHeader("Location", HttpUtil.getDomainURL(request) + SHOW_ORDER_SUCCESS_URL);
-				out.println("1|OK"); // 回覆錯誤訊息。
+				out.println("1|OK"); 
+			// 回覆錯誤訊息。
 			} else {
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed);
 				response.setHeader("Location", HttpUtil.getDomainURL(request));
 				out.println("0|" + enErrors);
 			}
@@ -208,7 +212,6 @@ public class AllpayCheckoutController {
 			return;
 		}
 		logger.debug(orderId);
-		
 		CustomerOrder customerOrder = checkoutService.getCustomerOrder(orderId);
 		
 		if(customerOrder == null){

@@ -3,12 +3,15 @@ package com.fruitpay.base.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.CacheRetrieveMode;
+import javax.persistence.CacheStoreMode;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import com.fruitpay.base.comm.OrderStatus;
@@ -41,6 +44,21 @@ public class CustomerOrderDAOImpl extends AbstractJPADAO<CustomerOrder> implemen
 			return (List<CustomerOrder>)q.getResultList();
 		}catch(NoResultException e){
 			logger.debug("the customerOrder of customerId : " + customerId + " is not found.");;
+		}
+		return null;
+	}
+
+	@Override
+	public CustomerOrder findByOrderId(Integer orderId) {
+		Query q = getEntityManager().createQuery(
+				"SELECT c FROM CustomerOrder c WHERE c.orderId = ?1");
+		q.setHint("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
+		q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.BYPASS);
+		q.setParameter(1, orderId);
+		try{
+			return (CustomerOrder)q.getResultList().get(0);
+		}catch(NoResultException e){
+			logger.debug("the customerOrder of orderId : " + orderId + " is not found.");;
 		}
 		return null;
 	}	

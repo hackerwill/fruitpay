@@ -382,10 +382,15 @@ angular.module('checkout')
 		}
 		
 		function onCheckoutSubmit(){
+			$scope.checkoutForm.$setValidity("checked", true);
 			if ($scope.checkoutForm.$valid) {   
-				//document.getElementById("orderId").value = 88;
-				//document.getElementById("allpayCheckoutForm").submit();
-				//return;
+				if(!$scope.confirmContract){
+					console.log($scope.checkoutForm.confirmContract);
+					$scope.checkoutForm.$setValidity("checked", false);
+					logService.showDanger("請同意我們的使用條款");
+					return;
+				}
+				
 				setSubmitData();
 				savedSessionService.setObject("checkout.order", $scope.order);
 				savedSessionService.setObject("checkout.user", $scope.user);
@@ -393,8 +398,8 @@ angular.module('checkout')
 					.then(function(result){
 						if(!isNaN(result)){
 							console.log(result);
-							//savedSessionService.removeObject("checkout.order");
-							//savedSessionService.removeObject("checkout.user");
+							savedSessionService.removeObject("checkout.order");
+							savedSessionService.removeObject("checkout.user");
 							document.getElementById("orderId").value = result;
 							document.getElementById("allpayCheckoutForm").submit();
 						}else{

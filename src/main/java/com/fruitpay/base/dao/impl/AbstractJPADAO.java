@@ -42,9 +42,23 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	@Override
 	public T create(T t) {
 		logger.debug("enter create method");
-		EntityManager em = getEntityManager();
-		em.persist(t);
-		//em.flush();
+		getEntityManager().persist(t);
+		return t;
+	}
+	
+	@Override
+	public T createAndRefresh(T t) {
+		logger.debug("enter create method");
+		t = create(t);
+		refresh(t);
+		return t;
+	}
+	
+	@Override
+	public T createAndFlush(T t) {
+		logger.debug("enter create method");
+		getEntityManager().persist(t);
+		getEntityManager().flush();
 		return t;
 	}
 	
@@ -52,15 +66,15 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	public T update(T t) {
 		logger.debug("enter update method");
 		this.setUpdateInfo(t);
-		em.merge(t);
-		em.flush();
+		getEntityManager().merge(t);
 		return t;
 	}
 
 	@Override
 	public T findById(Serializable id) {
 		logger.debug("enter findById method");
-		return (T) getEntityManager().find(getModelClass(), id);
+		T t = (T) getEntityManager().find(getModelClass(), id);
+		return t;
 	}
 
 	@Override
@@ -90,5 +104,13 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	public boolean isIdExist(Serializable id) {
 		logger.debug("enter isIdExist method");
 		return (findById(id) != null);
+	}
+	
+	@Override
+	public T refresh(T t){
+		logger.debug("enter flush method");
+		getEntityManager().flush();
+		getEntityManager().refresh(t);
+		return t;
 	}
 }

@@ -8,6 +8,10 @@ import com.fruitpay.base.model.AbstractDataBean;
 public interface DAO<T extends AbstractDataBean> {
 
 	T create(T t);
+	
+	T createAndRefresh(T t);
+	
+	T createAndFlush(T t);
 
 	T findById(Serializable id);
 
@@ -20,5 +24,7 @@ public interface DAO<T extends AbstractDataBean> {
 	long count();
 
 	boolean isIdExist(Serializable id);
+	
+	T refresh(T t);
 
 }
