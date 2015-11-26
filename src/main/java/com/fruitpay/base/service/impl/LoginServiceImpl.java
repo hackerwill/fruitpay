@@ -77,6 +77,7 @@ public class LoginServiceImpl implements LoginService {
 			customer.setPassword(FB_PASSWORD);
 			customer = getEncodedPasswordCustomer(customer);
 			customer = customerDAO.create(customer); 
+			checkcustomer = customer;
 		}
 		
 		return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),

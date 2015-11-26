@@ -55,6 +55,10 @@ function appRouter($stateProvider, $urlRouterProvider){
             controller:'infoController',
             authenticate: true
         })
+         .state('index.checkoutCreditCardSuccess', {
+            url: "/checkoutCreditCardSuccess",
+            templateUrl: 'checkout/checkoutCreditCardSuccess.html'
+        })
 }
 
 run.$inject = ['$rootScope', '$location', '$http', '$timeout', 'sharedProperties'];

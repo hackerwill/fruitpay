@@ -9,9 +9,6 @@
 		</div>
 		<ul id="wideMenu"  class="nav navbar-nav navbar-right" ng-show="isShowMenu">
 			<li ng-class="{ active: isActive('/index/checkout')}" data-match-route="/page-one"><a ui-sref="index.checkout">果物箱</a></li>
-			<li ng-class="{ active: isActive('/page-two')}" data-match-route="/page-two"><a>常見問題</a></li>
-			<li ng-class="{ active: isActive('/page-third')}" data-match-route="/page-third"><a href="#/page-third">部落格</a></li>
-			<li ng-class="{ active: isActive('/page-forth')}" data-match-route="/page-forth"><a href="#/page-forth">聯絡我們</a></li>
 			<li ng-class="{ active: isActive('/index/user')}" data-match-route="/page-five" bs-dropdown="dropdown" data-container="self" data-trigger="hover" >
 				<a ui-sref="index.user.info">
 					<span ng-hide="loggedIn"><span class="glyphicon glyphicon-log-in"></span> 會員中心</span>

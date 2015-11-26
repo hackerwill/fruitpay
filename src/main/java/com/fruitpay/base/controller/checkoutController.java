@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -90,11 +91,6 @@ public class checkoutController {
 				hrp.getWriter().print(input);
 				client.close();
 			}
-				
-			
-			
-			
-			
 			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -105,5 +101,13 @@ public class checkoutController {
 		}
 
 	}
+	
+	/*public static void main(String[] args){
+		Integer ShipmentDayOfWeek = 2;
+		Integer ToDestinationDay = 2 + 1;
+		Date currentDate = Calendar.getInstance().getTime();
+		Integer currentDayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		System.out.println(currentDayOfWeek);
+	}*/
 
 }

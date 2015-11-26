@@ -21,7 +21,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	@Override
 	public Customer findById(Serializable id) {
-		Customer customer = this.findById(id);
+		Customer customer = super.findById(id);
 		return setVillageRelatedData(customer);
 	}
 	
@@ -98,7 +98,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	}
 	
 	private Customer setVillageRelatedData(Customer customer) {
-		if(!AssertUtils.isEmpty(customer.getVillage())){
+		if(customer != null && !AssertUtils.isEmpty(customer.getVillage())){
 			Village village = customer.getVillage();
 			village.setCounty(new SelectOption(village.getCountyCode(), village.getCountyName()));
 			village.setTowership(new SelectOption(village.getTowershipCode(), village.getTowershipName()));

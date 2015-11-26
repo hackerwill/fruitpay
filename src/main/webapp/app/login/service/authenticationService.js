@@ -77,6 +77,7 @@ function authenticationService($q, $http, $rootScope, $timeout, userService, sha
 	
 	function loginById(callback) {
 		var user = getDecodedUser();
+		console.log(user);
 		return userService.loginById(user).then(function(result) {
 			if(result)
 				setCredentials(result);

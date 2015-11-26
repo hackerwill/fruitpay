@@ -107,11 +107,22 @@ public class CheckoutServiceImpl implements CheckoutService {
 			}
 			
 		}else{
-			customer = customerDAO.getCustomerByEmail(customer.getEmail());
+			
+			Customer persistCustomer = customerDAO.getCustomerByEmail(customer.getEmail());
+			persistCustomer.setBirthday(customer.getBirthday());
+			persistCustomer.setCellphone(customer.getCellphone());
+			persistCustomer.setEmail(customer.getEmail());
+			persistCustomer.setFirstName(customer.getFirstName());
+			persistCustomer.setGender(customer.getGender());
+			persistCustomer.setHousePhone(customer.getHousePhone());
+			persistCustomer.setLastName(customer.getLastName());
+			persistCustomer.setVillage(customer.getVillage());
+			
 		}
 		
 		customerOrder.setCustomer(customer);
 		customerOrder = this.checkoutOrder(customerOrder);
+		CustomerOrder newCustomerOrder = customerOrderDAO.findById(customerOrder.getOrderId());
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		

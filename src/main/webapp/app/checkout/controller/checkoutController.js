@@ -3,9 +3,12 @@ angular.module('checkout')
 	.controller('checkoutController',
 			["$scope", "$document", "$window", "commService", '$q', "checkoutService",
 			 "logService", "savedSessionService", "authenticationService","userService",
+			 "facebookLoginService","$location",
 		function(
 				$scope, $document, $window, commService,
-				$q, checkoutService, logService, savedSessionService, authenticationService, userService){
+				$q, checkoutService, logService, savedSessionService, 
+				authenticationService, userService, facebookLoginService,
+				$location){
 				
 		var ctrl = this;
 		$scope.isLoggedIn = userService.isLoggedIn();
@@ -13,6 +16,7 @@ angular.module('checkout')
 		$scope.imageNum = getImageNum();
 		$scope.maxUnlikeCount = 10;
 		$scope.order = {};
+		$scope.order.allowForeignFruits = 'Y';
 		$scope.user = {};
 		$scope.countyList = {};
 		$scope.towershipList = {};
@@ -39,6 +43,8 @@ angular.module('checkout')
 		$scope.periodChoose = periodChoose;
 		$scope.unselectAllRemoveProdcut = unselectAllRemoveProdcut;
 		$scope.isEmailExisted =isEmailExisted;
+		$scope.changeForeignFruit = changeForeignFruit;
+		$scope.checkLoginState = checkLoginState;
 		
 		(function(){
 			
@@ -387,10 +393,12 @@ angular.module('checkout')
 					.then(function(result){
 						if(!isNaN(result)){
 							console.log(result);
-							document.getElementById("orderId").value = result;
-							document.getElementById("allpayCheckoutForm").submit();
 							//savedSessionService.removeObject("checkout.order");
 							//savedSessionService.removeObject("checkout.user");
+							document.getElementById("orderId").value = result;
+							document.getElementById("allpayCheckoutForm").submit();
+						}else{
+							logService.showDanger("無預期錯誤發生");
 						}
 					});
 			
@@ -414,6 +422,46 @@ angular.module('checkout')
 			$scope.order.village.county = $scope.receiverCounty;
 			$scope.order.village.towership = $scope.receiverTowership;
 			$scope.order.village.villageCode = $scope.receiverVillage.id;
+		}
+		
+		function checkLoginState(){
+	    	facebookLoginService.login()
+	    		.then(function(response){
+					if(response){
+						var user = {};
+						user.firstName = response.first_name ? response.first_name : response.name;
+						user.email = response.email;
+						user.fbId = response.id;
+						user.lastName = response.last_name;
+						if(response.gender == 'male'){
+							user.gender = 'M';
+						}else if (response.gender == 'female'){
+							user.gender = 'F';
+						}
+						authenticationService.fbLogin(user)
+							.then(function(result){
+								console.log(result);
+								if(result){
+									$location.path('/index/checkout');
+						            location.reload();
+								}
+							});
+						
+					} else {
+		                flashService.error(result);
+		                user.dataLoading = false;
+		            }
+					
+				});
+        }
+		
+		function changeForeignFruit(){
+			if($scope.order.allowForeignFruits == 'Y'){
+				$scope.order.allowForeignFruits = 'N';
+			}else{
+				$scope.order.allowForeignFruits = 'Y';
+			}
+			console.log($scope.order.allowForeignFruits);
 		}
 		
 		function change(){

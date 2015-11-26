@@ -80,6 +80,14 @@
 		<hr/>
 		<form role="form" name="checkoutForm" novalidate >
 			<div class="row">
+				<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
+				
+				</div>
+				<div class="col-xs-8 col-sm-9 col-md-4 col-lg-5">
+					<Button type="button" class="btn btn-primary" ng-click="checkLoginState()"/>Facebook登入</Button>
+				</div>
+			</div>
+			<div class="row">
 				<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
 					<label for="fisrtName">姓名:</label>
 				</div>
@@ -201,10 +209,13 @@
 				<br>
 				<div class="row">
 					<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
-						<label for="note">溫馨提醒:</label>
+						<label for="note">進口水果:</label>
 					</div>
-					<div class="col-xs-9 col-sm-9 col-md-10 col-lg-10">
-						<label>您的第一次配送時間:8/19(三)(固定週三配達，禮拜一12點以前訂購可以當週三送達，之後便是隔周三送達。)</label>
+					<div class="col-xs-12 col-sm-7 col-md-9 col-lg-9">
+						<span>因為營養均衡的考量，我們會搭配台灣較少種植的進口水果如:蘋果、奇異果。如您不希望收到進口水果請打勾</span>
+						</div>	
+					<div class="col-xs-12 col-sm-2 col-md-1 col-lg-1">
+						<span><input type="checkbox" class="form-control" ng-model="order.allowForeignFruit" ng-change="changeForeignFruit()"></span>
 					</div>	
 				</div>
 		</div>
@@ -233,7 +244,7 @@
 			<form role="form">
 				<div class="row">
 					<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2">
-						<label for="fisrtName">姓名:</label>
+						<label for="password">姓名:</label>
 					</div>
 					<div class="col-xs-5 col-sm-3 col-md-3 col-lg-2">
 						<input type="text" class="form-control input-xs" placeholder="姓氏" ng-class="{submitted:checkoutForm.submitted}" ng-model="order.receiverLastName" required>
@@ -356,6 +367,14 @@
 						<label for="receiptway"> {{option.optionName}}</label>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-2 col-md-2 col-lg-1">
+				<label for="paymentMode">溫馨提醒:</label>
+			</div>
+			<div class="col-xs-12 col-sm-10 col-md-10 col-lg-11" align="left">
+				您的第一次配送時間:8/19(三)(固定週三配達，禮拜一12點以前訂購可以當週三送達，之後便是隔周三送達)
 			</div>
 		</div>
 		<br>

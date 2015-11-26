@@ -72,7 +72,7 @@ public class LoginController {
 		ReturnData<Customer> returnData = loginService.fbLogin(customer);
 		if(returnData.getObject() != null)
 			AuthenticationUtil.setSessionCustomer(request, (Customer)returnData.getObject());
-		return loginService.fbLogin(customer);
+		return returnData;
 	}
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST )

@@ -58,6 +58,9 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	@Column(name="tax_title")
 	private String taxTitle;
+	
+	@Column(name="allow_foreign_fruits")
+	private String allowForeignFruits;
 
 	@ManyToOne
 	@JoinColumn(name="village_code")
@@ -353,5 +356,13 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setReceiptWay(ConstantOption receiptWay) {
 		this.receiptWay = receiptWay;
+	}
+
+	public String getAllowForeignFruits() {
+		return allowForeignFruits;
+	}
+
+	public void setAllowForeignFruits(String allowForeignFruits) {
+		this.allowForeignFruits = allowForeignFruits;
 	}
 }
