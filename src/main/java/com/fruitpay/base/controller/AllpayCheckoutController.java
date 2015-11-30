@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.HttpUtil;
 
 import AllPay.Payment.Integration.AllInOne;
@@ -59,6 +61,8 @@ public class AllpayCheckoutController {
 	
 	@Inject
 	private CheckoutService checkoutService;
+	@Inject
+	private StaticDataService staticDataService;
 	
 	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
 	public void callbackTest( 
@@ -203,22 +207,20 @@ public class AllpayCheckoutController {
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public void allpayCheckout(
 			@RequestParam("orderId") Integer orderId,
+			@RequestParam("price") Decimal price,
+			@RequestParam("programId") Integer programId,
+			@RequestParam("duration") Integer duration,
 			HttpServletRequest request, HttpServletResponse response){
 		
 		String index = HttpUtil.getDomainURL(request);
 		
-		if(orderId == null){
+		if(AssertUtils.anyIsEmpty(String.valueOf(orderId), String.valueOf(price), 
+				String.valueOf(programId), String.valueOf(duration))){
 			logger.error("OrderId not found");
 			return;
-		}
-		logger.debug(orderId);
-		CustomerOrder customerOrder = checkoutService.getCustomerOrder(orderId);
+		}	
 		
-		if(customerOrder == null){
-			logger.error("Cannot find customerOrder by OrderId " + orderId);
-			return;
-		}
-			
+		String programName = staticDataService.getOrderProgram(programId).getProgramName();
 		
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
@@ -240,9 +242,9 @@ public class AllpayCheckoutController {
 			oPayment.Send.ReturnURL = index;
 			oPayment.Send.ClientBackURL = index + ORDER_RESULT_URL;
 			oPayment.Send.OrderResultURL = index + ORDER_RESULT_URL;
-			oPayment.Send.MerchantTradeNo = String.valueOf((int)(Math.random() * 1000000));
+			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
-			oPayment.Send.TotalAmount = new Decimal(String.valueOf(customerOrder.getOrderProgram().getPrice()));
+			oPayment.Send.TotalAmount = price;
 			oPayment.Send.TradeDesc = "no";
 			oPayment.Send.ChoosePayment = PaymentMethod.Credit;
 			oPayment.Send.Remark = "";
@@ -251,16 +253,16 @@ public class AllpayCheckoutController {
 			oPayment.Send.DeviceSource = DeviceType.PC;
 			// 加入選購商品資料。
 			Item a1 = new Item();
-			a1.Name = customerOrder.getOrderProgram().getProgramName();
-			a1.Price = new Decimal(String.valueOf(customerOrder.getOrderProgram().getPrice()));
+			a1.Name = programName;
+			a1.Price = price;
 			a1.Currency = "NTD";
 			a1.Quantity = 1;// <<數量>>
 			a1.URL = "";
 			oPayment.Send.Items.add(a1);
 			/* Credit 定期定額延伸參數 */
-			oPayment.SendExtend.PeriodAmount = new Decimal(String.valueOf(customerOrder.getOrderProgram().getPrice()));
+			oPayment.SendExtend.PeriodAmount = price;
 			oPayment.SendExtend.PeriodType = PeriodType.Day;
-			oPayment.SendExtend.Frequency = customerOrder.getShipmentPeriod().getDuration();// "<<執行頻率>>";
+			oPayment.SendExtend.Frequency = duration;// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = MAX_EXCUTE_TIME;// "<<執行次數>>";
 			oPayment.SendExtend.PeriodReturnURL = index + PERIOD_RETURN_URL;
 			/* 產生訂單 */

@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,9 +56,10 @@ public class CheckoutServiceImpl implements CheckoutService {
 	private CustomerDAO customerDAO;
 	
 	@Override
+	@Transactional
 	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
-
+	
 		customerOrderDAO.createAndFlush(customerOrder);
 		
 		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
@@ -71,14 +73,16 @@ public class CheckoutServiceImpl implements CheckoutService {
 			orderPreferenceDAO.create(orderPreference);
 		}
 		
-		//OrderProgram orderProgram = orderProgramDAO.findById(customerOrder.getOrderProgram().getProgramId());
-		//customerOrder.setOrderProgram(orderProgram);
+		Customer newe = customerDAO.getCustomerByEmail(customerOrder.getCustomer().getEmail());
+		customerOrderDAO.refresh(customerOrder);
+		customerDAO.refresh(newe);
 		return customerOrder;
 	}
 
 	@Override
-	public CustomerOrder getCustomerOrder(Integer orderId) {
-		return customerOrderDAO.findByOrderId(orderId);
+	@Transactional
+	public CustomerOrder getCustomerOrder(Integer customerId, Integer orderId) {
+		return customerOrderDAO.findById(orderId);
 	}
 
 	@Override
@@ -92,28 +96,31 @@ public class CheckoutServiceImpl implements CheckoutService {
 	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder) {
 		
 		logger.debug("add a customer, email is " + customer.getEmail());
-		String randomPassword = RadomValueUtil.getRandomPassword();
-		customer.setPassword(randomPassword);
 		
 		if(!customerDAO.isEmailExisted(customer.getEmail())){
+
+			String randomPassword = RadomValueUtil.getRandomPassword();
+			customer.setPassword(randomPassword);
+			
 			ReturnData<Customer> returnData = loginService.signup(customer);
 			if(!"0".equals(returnData.getErrorCode()))
 				return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
 			
 			customer = returnData.getObject();
-			logger.debug("customer Id : " + customer.getCustomerId());
 			if(customer!= null){
 				Customer sendCustomer = new Customer();;
 				sendCustomer.setPassword(randomPassword);
 				sendCustomer.setFirstName(customer.getFirstName());
 				sendCustomer.setLastName(customer.getLastName());
 				sendCustomer.setEmail(customer.getEmail());
-				emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, customer.getEmail(), sendCustomer);
+				emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, sendCustomer.getEmail(), sendCustomer);
 			}
-			
+
+			customerOrder.setCustomer(customer);
 		}else{
 			
-			Customer persistCustomer = customerDAO.getCustomerByEmail(customer.getEmail());
+			Customer persistCustomer = customerDAO.findById(customer.getCustomerId());
+			
 			persistCustomer.setBirthday(customer.getBirthday());
 			persistCustomer.setCellphone(customer.getCellphone());
 			persistCustomer.setEmail(customer.getEmail());
@@ -122,16 +129,19 @@ public class CheckoutServiceImpl implements CheckoutService {
 			persistCustomer.setHousePhone(customer.getHousePhone());
 			persistCustomer.setLastName(customer.getLastName());
 			persistCustomer.setVillage(customer.getVillage());
+			persistCustomer.addCustomerOrder(customerOrder);
 			
+			customerOrder.setCustomer(persistCustomer);
 		}
 		
-		customerOrder.setCustomer(customer);
-		customerOrder = this.checkoutOrder(customerOrder);
+		customerOrder = checkoutOrder(customerOrder);
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		
 		if(customerOrder!= null){
-			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
+			CustomerOrder sendCustomerOrder = new CustomerOrder();
+			BeanUtils.copyProperties(customerOrder, sendCustomerOrder);
+			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), sendCustomerOrder);	
 		}
 		return new ReturnObject<CustomerOrder>(customerOrder);
 	}

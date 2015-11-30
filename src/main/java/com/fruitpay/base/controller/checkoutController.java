@@ -67,11 +67,8 @@ public class checkoutController {
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		
 		ReturnData<CustomerOrder> returnData = checkoutService.checkoutOrder(customer, customerOrder);
-		if(returnData.getErrorCode().equals(ReturnMessageEnum.Status.Failed.getStatus()))
-			return returnData;
 		
-		return new ReturnObject<Integer>(ReturnMessageEnum.Common.Success.getReturnMessage(), 
-				customerOrder.getOrderId());
+		return returnData;
 	}
 	
 	public void sendReq(HttpServletRequest request, HttpServletResponse hrp, String orderId) {

@@ -396,11 +396,20 @@ angular.module('checkout')
 				savedSessionService.setObject("checkout.user", $scope.user);
 				checkoutService.checkout($scope.user, $scope.order)
 					.then(function(result){
-						if(!isNaN(result)){
-							console.log(result);
+						console.log(result);
+						//貨到付款
+						if(result && result.paymentMode.paymentModeId == 2){
+							logService.showSuccess("訂單完成結帳");
+							$location.path('/index/checkoutCreditCardSuccess');
+						//刷卡成功
+						}else if(result){
+							 
 							savedSessionService.removeObject("checkout.order");
 							savedSessionService.removeObject("checkout.user");
-							document.getElementById("orderId").value = result;
+							document.getElementById("orderId").value = result.orderId;
+							document.getElementById("price").value = result.orderProgram.price;
+							document.getElementById("programId").value = result.orderProgram.programId;
+							document.getElementById("duration").value = result.shipmentPeriod.duration;
 							document.getElementById("allpayCheckoutForm").submit();
 						}else{
 							logService.showDanger("無預期錯誤發生");

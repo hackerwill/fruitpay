@@ -27,7 +27,7 @@ public class EmailNewMemberFromOrderServiceImpl extends EmailContentService<Cust
 		map.put("MESSAGE_TITLE", "歡迎您加入果物配");
 		map.put("FIRST_NAME", customer.getFirstName());
 		map.put("LAST_NAME", customer.getLastName());
-		map.put("EMAIL", customer.getFirstName());
+		map.put("EMAIL", customer.getEmail());
 		map.put("PASSWORD", customer.getPassword());
 		return map;
 	}

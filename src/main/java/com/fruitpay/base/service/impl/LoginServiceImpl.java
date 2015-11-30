@@ -27,13 +27,15 @@ public class LoginServiceImpl implements LoginService {
 	
 
 	@Override
+	@Transactional
 	public ReturnData<Customer> signup(Customer customer) {
 
 		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
 			customer = getEncodedPasswordCustomer(customer);
-			customer = customerDAO.create(customer); 
+			customer = customerDAO.create(customer);
+			customerDAO.refresh(customer);
 			
 			return new ReturnObject<Customer>(
 					ReturnMessageEnum.Common.Success.getReturnMessage(),

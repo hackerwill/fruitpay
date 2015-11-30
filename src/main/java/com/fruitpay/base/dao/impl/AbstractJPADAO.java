@@ -2,8 +2,13 @@ package com.fruitpay.base.dao.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Cache;
+import javax.persistence.CacheRetrieveMode;
+import javax.persistence.CacheStoreMode;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
@@ -108,7 +113,7 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	
 	@Override
 	public T refresh(T t){
-		logger.debug("enter flush method");
+		logger.debug("enter refresh method");
 		getEntityManager().flush();
 		getEntityManager().refresh(t);
 		return t;
