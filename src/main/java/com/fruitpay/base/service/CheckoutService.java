@@ -8,12 +8,6 @@ import com.fruitpay.comm.model.ReturnData;
 public interface CheckoutService {
 	
 	/**
-	 * 新增訂單
-	 * 
-	 * */
-	public CustomerOrder checkoutOrder(CustomerOrder customerOrder);
-	
-	/**
 	 * 由訂單ID得到顧客訂單
 	 * 
 	 * */

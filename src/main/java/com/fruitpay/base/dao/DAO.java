@@ -26,5 +26,7 @@ public interface DAO<T extends AbstractDataBean> {
 	boolean isIdExist(Serializable id);
 	
 	T refresh(T t);
+	
+	T detach(T t);
 
 }

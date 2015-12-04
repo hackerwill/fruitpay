@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import com.fruitpay.base.dao.DAO;
 import com.fruitpay.base.model.AbstractDataBean;
+import com.fruitpay.base.model.Customer;
 
 public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<T> {
 	
@@ -116,6 +117,12 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 		logger.debug("enter refresh method");
 		getEntityManager().flush();
 		getEntityManager().refresh(t);
+		return t;
+	}
+	
+	@Override
+	public T detach(T t) {
+		getEntityManager().detach(t);
 		return t;
 	}
 }
