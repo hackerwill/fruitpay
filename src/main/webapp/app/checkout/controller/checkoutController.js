@@ -66,8 +66,6 @@ angular.module('checkout')
 							var obj = {};
 							obj.likeDegree = 5; 
 							obj.product = result[i];
-							obj.id = {};
-							obj.id.productId = result[i].productId;
 							orderPreferences.push(obj);
 						}
 					}

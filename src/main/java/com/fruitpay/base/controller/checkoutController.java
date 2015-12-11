@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,6 +36,8 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderPreference;
+import com.fruitpay.base.model.Product;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.StaticDataService;
@@ -85,6 +88,11 @@ public class checkoutController {
 			sendCustomer.setFirstName(customer.getFirstName());
 			sendCustomer.setLastName(customer.getLastName());
 			sendCustomer.setEmail(customer.getEmail());
+		}
+		
+		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
+			OrderPreference orderPreference = iterator.next();
+			orderPreference.setCustomerOrder(customerOrder);
 		}
 		
 		ReturnData<CustomerOrder> returnData = checkoutService.checkoutOrder(customer, customerOrder);

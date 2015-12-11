@@ -28,7 +28,6 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	}
 	
 	@Override
-	@Transactional
 	public Customer getCustomerByEmail(String email){
 		
 		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.email = ?1");

@@ -19,7 +19,6 @@ import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderPreference;
-import com.fruitpay.base.model.OrderPreferencePK;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
@@ -36,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -125,10 +123,8 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 			Product product = iterator.next();
 			OrderPreference orderPreference = new OrderPreference();
 			orderPreference.setProduct(product);
-			OrderPreferencePK id = new OrderPreferencePK();
-			id.setProductId(product.getProductId());
-			orderPreference.setId(id);
 			orderPreference.setLikeDegree(Byte.parseByte("5"));
+			orderPreference.setCustomerOrder(customerOrder);
 			orderPreferences.add(orderPreference);
 		}
 

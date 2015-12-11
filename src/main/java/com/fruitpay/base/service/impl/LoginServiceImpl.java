@@ -6,6 +6,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -50,6 +51,7 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
+	@Transactional
 	public ReturnData<Customer> login(String email, String password) {
 		Customer customer = customerDAO.getCustomerByEmail(email); 
 		if(customer == null){

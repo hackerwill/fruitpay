@@ -2,19 +2,15 @@ package com.fruitpay.base.dao.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.Cache;
-import javax.persistence.CacheRetrieveMode;
-import javax.persistence.CacheStoreMode;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Pageable;
+
 import com.fruitpay.base.dao.DAO;
 import com.fruitpay.base.model.AbstractDataBean;
-import com.fruitpay.base.model.Customer;
 
 public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<T> {
 	
@@ -86,6 +82,12 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	@Override
 	public List<T> listAll() {
 		logger.debug("enter listAll method");
+		return getEntityManager().createQuery("select a from " + getDomainClassName() + " a", getModelClass()).getResultList();
+	}
+	
+	@Override
+	public List<T> listAll(Pageable pageable) {
+		logger.debug("enter listAll method with Pageable");
 		return getEntityManager().createQuery("select a from " + getDomainClassName() + " a", getModelClass()).getResultList();
 	}
 

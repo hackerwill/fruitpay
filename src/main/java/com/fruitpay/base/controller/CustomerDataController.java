@@ -61,12 +61,10 @@ public class CustomerDataController {
 		return customerOrders;
 	}
 	
-	@RequestMapping(value = "/isEmailExisted/{email}/", method = RequestMethod.GET)
-	public @ResponseBody ReturnData<Boolean> isEmailExisted(@PathVariable String email){
-		if(AssertUtils.anyIsEmpty(email))
-			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+	@RequestMapping(value = "/getCustomer", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<Boolean> getAllCustomer(){
 		
-		return customerService.isEmailExisted(email.trim());
+		return customerService
 	}
 	
 }

@@ -19,7 +19,6 @@ import com.fruitpay.base.dao.ProductDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
-import com.fruitpay.base.model.OrderPreferencePK;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
@@ -95,16 +94,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
 		customerOrderDAO.createAndFlush(customerOrder);
-		
-		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
-			OrderPreference orderPreference = iterator.next();
-			OrderPreferencePK id = new OrderPreferencePK();
-			orderPreference.setProduct(productDAO.findById(orderPreference.getId().getProductId()));
-			orderPreference.setCustomerOrder(customerOrder);
-			id.setOrderId(orderPreference.getCustomerOrder().getOrderId());
-			orderPreference.setId(id);
-			orderPreferenceDAO.create(orderPreference);
-		}
 		
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
