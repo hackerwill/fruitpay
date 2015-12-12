@@ -40,7 +40,8 @@
 
 	 <bean id="entityManagerFactory"
  		 class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"
- 		 p:persistenceUnitName="fruitpay" />
+ 		 p:persistenceUnitName="fruitpay" >
+ 	</bean>
 
  	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
  

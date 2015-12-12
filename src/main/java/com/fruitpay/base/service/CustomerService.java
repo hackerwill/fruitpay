@@ -8,5 +8,9 @@ public interface CustomerService {
 	public ReturnData<Customer> update(Customer customer);
 	
 	public ReturnData<Boolean> isEmailExisted(String email);
+	
+	public ReturnData<Customer> findAllCustomer();
+	
+	public ReturnData<Customer> findCustomer(String customerId);
 
 }

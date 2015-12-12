@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +36,15 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderPreference;
+import com.fruitpay.base.model.Product;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
+import com.fruitpay.comm.service.EmailSendService;
+import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.HttpUtil;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
@@ -51,6 +58,10 @@ public class checkoutController {
 	private CheckoutService checkoutService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	private CustomerService customerService;
+	@Inject
+	private EmailSendService emailSendService;
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public @ResponseBody ReturnData<CustomerOrder> checkout(
@@ -65,13 +76,37 @@ public class checkoutController {
 		
 		if(customer == null || customerOrder == null)
 			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+
+		String randomPassword = RadomValueUtil.getRandomPassword();
+		customer.setPassword(randomPassword);
+		
+		ReturnData<Boolean> isEmailExisted = customerService.isEmailExisted(customer.getEmail());
+		Customer sendCustomer = null;
+		if(isEmailExisted != null && !isEmailExisted.getObject()){
+			sendCustomer = new Customer();
+			sendCustomer.setPassword(randomPassword);
+			sendCustomer.setFirstName(customer.getFirstName());
+			sendCustomer.setLastName(customer.getLastName());
+			sendCustomer.setEmail(customer.getEmail());
+		}
+		
+		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
+			OrderPreference orderPreference = iterator.next();
+			orderPreference.setCustomerOrder(customerOrder);
+		}
 		
 		ReturnData<CustomerOrder> returnData = checkoutService.checkoutOrder(customer, customerOrder);
-		if(returnData.getErrorCode().equals(ReturnMessageEnum.Status.Failed.getStatus()))
-			return returnData;
 		
-		return new ReturnObject<Integer>(ReturnMessageEnum.Common.Success.getReturnMessage(), 
-				customerOrder.getOrderId());
+		if(sendCustomer!= null){
+			emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, sendCustomer.getEmail(), sendCustomer);
+		}
+		if(returnData!= null && returnData.getObject() != null){
+			CustomerOrder sendCustomerOrder = new CustomerOrder();
+			BeanUtils.copyProperties(returnData.getObject(), sendCustomerOrder);
+			emailSendService.sendTo(MailType.NEW_ORDER, sendCustomerOrder.getCustomer().getEmail(), sendCustomerOrder);	
+		}
+		
+		return returnData;
 	}
 	
 	public void sendReq(HttpServletRequest request, HttpServletResponse hrp, String orderId) {

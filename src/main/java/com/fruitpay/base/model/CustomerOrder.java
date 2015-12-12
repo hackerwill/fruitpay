@@ -103,7 +103,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private List<Shipment> shipments;
 	
 	//bi-directional many-to-one association to Shipment
-	@OneToMany(mappedBy="customerOrder", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
 	@JsonManagedReference
 	private List<OrderPreference> orderPreferences;
 	

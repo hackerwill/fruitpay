@@ -3,6 +3,7 @@ package com.fruitpay.base.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -24,13 +25,15 @@ public class LoginServiceImpl implements LoginService {
 	
 
 	@Override
+	@Transactional
 	public ReturnData<Customer> signup(Customer customer) {
 
 		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
 			customer = getEncodedPasswordCustomer(customer);
-			customer = customerDAO.create(customer); 
+			customer = customerDAO.create(customer);
+			customerDAO.refresh(customer);
 			
 			return new ReturnObject<Customer>(
 					ReturnMessageEnum.Common.Success.getReturnMessage(),
@@ -45,6 +48,7 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
+	@Transactional
 	public ReturnData<Customer> login(String email, String password) {
 		Customer customer = customerDAO.getCustomerByEmail(email); 
 		if(customer == null){

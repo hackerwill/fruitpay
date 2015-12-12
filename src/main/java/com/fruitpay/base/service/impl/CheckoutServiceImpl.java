@@ -1,8 +1,6 @@
 package com.fruitpay.base.service.impl;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -18,19 +16,15 @@ import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.dao.ProductDAO;
-import com.fruitpay.base.dao.VillageDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
-import com.fruitpay.base.model.OrderPreferencePK;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.service.EmailSendService;
-import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
-import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
@@ -53,32 +47,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 	private EmailSendService emailSendService;
 	@Inject
 	private CustomerDAO customerDAO;
-	
-	@Override
-	public CustomerOrder checkoutOrder(CustomerOrder customerOrder) {
-		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
-
-		customerOrderDAO.createAndFlush(customerOrder);
-		
-		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
-			OrderPreference orderPreference = iterator.next();
-			OrderPreferencePK id = new OrderPreferencePK();
-			orderPreference.setProduct(productDAO.findById(orderPreference.getId().getProductId()));
-			orderPreference.setCustomerOrder(customerOrder);
-			id.setOrderId(orderPreference.getCustomerOrder().getOrderId());
-			orderPreference.setId(id);
-			
-			orderPreferenceDAO.create(orderPreference);
-		}
-		
-		//OrderProgram orderProgram = orderProgramDAO.findById(customerOrder.getOrderProgram().getProgramId());
-		//customerOrder.setOrderProgram(orderProgram);
-		return customerOrder;
-	}
 
 	@Override
-	public CustomerOrder getCustomerOrder(Integer orderId) {
-		return customerOrderDAO.findByOrderId(orderId);
+	@Transactional
+	public CustomerOrder getCustomerOrder(Integer customerId, Integer orderId) {
+		return customerOrderDAO.findById(orderId);
 	}
 
 	@Override
@@ -92,28 +65,19 @@ public class CheckoutServiceImpl implements CheckoutService {
 	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder) {
 		
 		logger.debug("add a customer, email is " + customer.getEmail());
-		String randomPassword = RadomValueUtil.getRandomPassword();
-		customer.setPassword(randomPassword);
 		
 		if(!customerDAO.isEmailExisted(customer.getEmail())){
+			
 			ReturnData<Customer> returnData = loginService.signup(customer);
 			if(!"0".equals(returnData.getErrorCode()))
 				return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
 			
 			customer = returnData.getObject();
-			logger.debug("customer Id : " + customer.getCustomerId());
-			if(customer!= null){
-				Customer sendCustomer = new Customer();;
-				sendCustomer.setPassword(randomPassword);
-				sendCustomer.setFirstName(customer.getFirstName());
-				sendCustomer.setLastName(customer.getLastName());
-				sendCustomer.setEmail(customer.getEmail());
-				emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, customer.getEmail(), sendCustomer);
-			}
-			
+			customerOrder.setCustomer(customer);
 		}else{
 			
-			Customer persistCustomer = customerDAO.getCustomerByEmail(customer.getEmail());
+			Customer persistCustomer = customerDAO.findById(customer.getCustomerId());
+			
 			persistCustomer.setBirthday(customer.getBirthday());
 			persistCustomer.setCellphone(customer.getCellphone());
 			persistCustomer.setEmail(customer.getEmail());
@@ -122,17 +86,17 @@ public class CheckoutServiceImpl implements CheckoutService {
 			persistCustomer.setHousePhone(customer.getHousePhone());
 			persistCustomer.setLastName(customer.getLastName());
 			persistCustomer.setVillage(customer.getVillage());
+			persistCustomer.addCustomerOrder(customerOrder);
 			
+			customerOrder.setCustomer(persistCustomer);
 		}
 		
-		customerOrder.setCustomer(customer);
-		customerOrder = this.checkoutOrder(customerOrder);
+		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
+		
+		customerOrderDAO.createAndFlush(customerOrder);
+		
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
-		
-		if(customerOrder!= null){
-			emailSendService.sendTo(MailType.NEW_ORDER, customer.getEmail(), customerOrder);	
-		}
 		return new ReturnObject<CustomerOrder>(customerOrder);
 	}
 

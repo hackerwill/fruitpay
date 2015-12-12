@@ -7,6 +7,7 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
@@ -20,6 +21,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Override
+	@Transactional
 	public Customer findById(Serializable id) {
 		Customer customer = super.findById(id);
 		return setVillageRelatedData(customer);
@@ -43,6 +45,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	
 	@Override
+	@Transactional
 	public Customer findByFbId(String fbId) {
 		Query q = getEntityManager().createQuery("SELECT c FROM Customer c WHERE c.fbId = ?1");
 		q.setParameter(1, fbId);
@@ -99,6 +102,7 @@ public class CustomerDAOImpl extends AbstractJPADAO<Customer> implements Custome
 	
 	private Customer setVillageRelatedData(Customer customer) {
 		if(customer != null && !AssertUtils.isEmpty(customer.getVillage())){
+			customer = refresh(customer);
 			Village village = customer.getVillage();
 			village.setCounty(new SelectOption(village.getCountyCode(), village.getCountyName()));
 			village.setTowership(new SelectOption(village.getTowershipCode(), village.getTowershipName()));

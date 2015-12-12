@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Pageable;
+
 import com.fruitpay.base.dao.DAO;
 import com.fruitpay.base.model.AbstractDataBean;
 
@@ -82,6 +84,12 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 		logger.debug("enter listAll method");
 		return getEntityManager().createQuery("select a from " + getDomainClassName() + " a", getModelClass()).getResultList();
 	}
+	
+	@Override
+	public List<T> listAll(Pageable pageable) {
+		logger.debug("enter listAll method with Pageable");
+		return getEntityManager().createQuery("select a from " + getDomainClassName() + " a", getModelClass()).getResultList();
+	}
 
 	public void setUpdateInfo(T t) {
 		logger.debug("enter setUpdateInfo method");
@@ -108,9 +116,15 @@ public abstract class AbstractJPADAO<T extends AbstractDataBean> implements DAO<
 	
 	@Override
 	public T refresh(T t){
-		logger.debug("enter flush method");
+		logger.debug("enter refresh method");
 		getEntityManager().flush();
 		getEntityManager().refresh(t);
+		return t;
+	}
+	
+	@Override
+	public T detach(T t) {
+		getEntityManager().detach(t);
 		return t;
 	}
 }

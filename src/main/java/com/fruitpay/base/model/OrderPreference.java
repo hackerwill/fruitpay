@@ -14,19 +14,19 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @NamedQuery(name="OrderPreference.findAll", query="SELECT o FROM OrderPreference o")
 public class OrderPreference extends AbstractDataBean implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@EmbeddedId
-	private OrderPreferencePK id;
+	
+	@Id
+	@Column(name="preference_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer preferenceId;
 	
 	@ManyToOne
-	@JoinColumn(name="order_id", insertable=false, updatable=false)
-	@MapsId("orderId")
+	@JoinColumn(name="order_id")
 	@JsonBackReference
 	private CustomerOrder customerOrder;
 	
 	@ManyToOne
-	@JoinColumn(name="product_id", insertable=false, updatable=false)
-	@MapsId("productId")
+	@JoinColumn(name="product_id")
 	private Product product;
 
 	@Column(name="like_degree")
@@ -35,12 +35,12 @@ public class OrderPreference extends AbstractDataBean implements Serializable {
 	public OrderPreference() {
 	}
 
-	public OrderPreferencePK getId() {
-		return this.id;
+	public Integer getPreferenceId() {
+		return preferenceId;
 	}
 
-	public void setId(OrderPreferencePK id) {
-		this.id = id;
+	public void setPreferenceId(Integer preferenceId) {
+		this.preferenceId = preferenceId;
 	}
 
 	public byte getLikeDegree() {
