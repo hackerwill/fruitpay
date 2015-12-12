@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
+import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.comm.model.ReturnData;
@@ -21,10 +23,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	
 	@Inject 
 	CustomerOrderDAO customerOrderDAO;
+	@Inject 
+	CustomerDAO customerDAO;
 	
 	@Override
 	public ReturnData<CustomerOrder> getCustomerOrder(Integer orderId) {
-		CustomerOrder customerOrder = customerOrderDAO.findById(orderId);
+		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
 		if(customerOrder == null)
 			return ReturnMessageEnum.Order.OrderNotFound.getReturnMessage();
 		return new ReturnObject<CustomerOrder>(customerOrder);
@@ -32,7 +36,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public ReturnData<List<CustomerOrder>> getCustomerOrdersByCustomerId(Integer customerId) {
-		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomerId(customerId);
+		Customer customer = customerDAO.findOne(customerId);
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomer(customer);
 		if(customerOrders.isEmpty())
 			return ReturnMessageEnum.Order.OrderNotFound.getReturnMessage();
 		return new ReturnObject<List<CustomerOrder>>(customerOrders);

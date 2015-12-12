@@ -2,6 +2,7 @@ package com.fruitpay.base.controller;
 
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -10,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.SelectOption;
 import com.fruitpay.util.AbstractSpringJnitTest;
@@ -21,6 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	
@@ -30,6 +35,8 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	StaticDataController staticDataController;
 	@Mock
 	StaticDataService staticDataServiceMock;
+	@Inject
+	StaticDataService staticDataService;
 	
 	private MockMvc mockMvc;
 	
@@ -44,7 +51,7 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
     }
 
 	@Test
-	public void findAllCustomer() throws Exception {
+	public void findAllCounties() throws Exception {
 		/*Customer newCustomer = new Customer();
 		newCustomer.setEmail("u9734017@gmail.com");
 		newCustomer.setPassword("123456");
@@ -69,5 +76,13 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 		
 		verify(staticDataServiceMock, times(1)).getAllCounties();
 	    verifyNoMoreInteractions(staticDataServiceMock);
+	}
+	
+	@Test
+	public void verifyAllVillageFields() throws Exception {
+		String villageCode = "1000201-001";
+		Village village = staticDataService.getVillage(villageCode);
+		Assert.assertEquals(villageCode, village.getVillageCode());
+		
 	}
 }

@@ -20,7 +20,6 @@ public class LoginServiceImpl implements LoginService {
 
 	private final String FB_PASSWORD = "FB_PASSWORD";
 	@Autowired
-	@Qualifier("CustomerDAOImpl")
 	CustomerDAO customerDAO;
 	
 
@@ -28,12 +27,11 @@ public class LoginServiceImpl implements LoginService {
 	@Transactional
 	public ReturnData<Customer> signup(Customer customer) {
 
-		if(customerDAO.getCustomerByEmail(customer.getEmail()) != null){
+		if(customerDAO.findByEmail(customer.getEmail()) != null){
 			return ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage();
 		}else{
 			customer = getEncodedPasswordCustomer(customer);
-			customer = customerDAO.create(customer);
-			customerDAO.refresh(customer);
+			customer = customerDAO.saveAndFlush(customer);
 			
 			return new ReturnObject<Customer>(
 					ReturnMessageEnum.Common.Success.getReturnMessage(),
@@ -50,10 +48,10 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	@Transactional
 	public ReturnData<Customer> login(String email, String password) {
-		Customer customer = customerDAO.getCustomerByEmail(email); 
+		Customer customer = customerDAO.findByEmail(email); 
 		if(customer == null){
 			return ReturnMessageEnum.Login.EmailNotFound.getReturnMessage();
-		}else if(!customerDAO.isEmailMatchPassword(email, Md5Util.getMd5(password))){
+		}else if(!Md5Util.getMd5(password).equals(customer.getPassword())){
 			return ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage();
 		}else{
 			return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),
@@ -63,10 +61,10 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Override
 	public ReturnData<Customer> loginByCustomerId(Integer customerId, String password) {
-		Customer customer = customerDAO.findById(customerId);
+		Customer customer = customerDAO.findOne(customerId);
 		if(customer == null){
 			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
-		}else if(!customerDAO.isCustomerIdMatchPassword(customerId, password)){
+		}else if(!Md5Util.getMd5(password).equals(customer.getPassword())){
 			return ReturnMessageEnum.Login.AccountNotFound.getReturnMessage();
 		}else{
 			return new ReturnObject<Customer>(ReturnMessageEnum.Common.Success.getReturnMessage(),
@@ -81,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
 		if(checkcustomer == null){
 			customer.setPassword(FB_PASSWORD);
 			customer = getEncodedPasswordCustomer(customer);
-			customer = customerDAO.createAndRefresh(customer); 
+			customer = customerDAO.saveAndFlush(customer); 
 			checkcustomer = customer;
 		}
 		
@@ -92,11 +90,8 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	@Transactional
 	public ReturnData<Customer> changePassword(Pwd pwd) {
-		Boolean matched = customerDAO.isCustomerIdMatchPassword(
-				pwd.getCustomerId(), Md5Util.getMd5(pwd.getOldPassword()));
-		Customer customer = null;
-		if(matched){
-			customer = customerDAO.findById(pwd.getCustomerId());
+		Customer customer = customerDAO.findByCustomerIdAndPassword(pwd.getCustomerId(), pwd.getOldPassword());
+		if(customer != null){
 			customer.setPassword(Md5Util.getMd5(pwd.getNewPassword()));
 		}else{
 			return ReturnMessageEnum.Login.PasswordNotMatched.getReturnMessage();

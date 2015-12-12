@@ -71,7 +71,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	@Override
 	public List<Village> getAllVillages() {
-		return villageDAO.listAll();
+		return villageDAO.findAll();
 	}
 	
 	@Override
@@ -81,7 +81,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 			thisVillages = allVillages.stream().filter(u -> u.getVillageCode().equals(villageCode)).collect(Collectors.toList());
 			return thisVillages.get(0);
 		}			
-		return villageDAO.findById(villageCode);
+		return villageDAO.findOne(villageCode);
 	}
 	
 	@Override
@@ -166,57 +166,57 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 
 	@Override
 	public List<Product> getAllProducts() {
-		return productDAO.listAll();
+		return productDAO.findAll();
 	}
 
 	@Override
 	public List<OrderPlatform> getAllOrderPlatform() {
-		return orderPlatformDAO.listAll();
+		return orderPlatformDAO.findAll();
 	}
 
 	@Override
 	public OrderPlatform getOrderPlatform(Integer platformId) {
-		return orderPlatformDAO.findById(platformId);
+		return orderPlatformDAO.findOne(platformId);
 	}
 
 	@Override
 	public List<OrderProgram> getAllOrderProgram() {
-		return orderProgramDAO.listAll();
+		return orderProgramDAO.findAll();
 	}
 
 	@Override
 	public OrderProgram getOrderProgram(Integer programId) {
-		return orderProgramDAO.findById(programId);
+		return orderProgramDAO.findOne(programId);
 	}
 
 	@Override
 	public List<OrderStatus> getAllOrderStatus() {
-		return orderStatusDAO.listAll();
+		return orderStatusDAO.findAll();
 	}
 
 	@Override
 	public OrderStatus getOrderStatus(Integer orderStatusId) {
-		return orderStatusDAO.findById(orderStatusId);
+		return orderStatusDAO.findOne(orderStatusId);
 	}
 
 	@Override
 	public List<PaymentMode> getAllPaymentMode() {
-		return paymentModeDAO.listAll();
+		return paymentModeDAO.findAll();
 	}
 
 	@Override
 	public PaymentMode getPaymentMode(Integer paymentModeId) {
-		return paymentModeDAO.findById(paymentModeId);
+		return paymentModeDAO.findOne(paymentModeId);
 	}
 
 	@Override
 	public List<ShipmentPeriod> getAllShipmentPeriod() {
-		return shipmentPeriodDAO.listAll();
+		return shipmentPeriodDAO.findAll();
 	}
 
 	@Override
 	public ShipmentPeriod getShipmentPeriod(Integer periodId) {
-		return shipmentPeriodDAO.findById(periodId);
+		return shipmentPeriodDAO.findOne(periodId);
 	}
 
 	@Override
@@ -224,22 +224,22 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 		if(consantList == null){
 			consantList = getAllConstants();
 		}
-		return constantDAO.listAll();
+		return constantDAO.findAll();
 	}
 
 	@Override
 	public Constant getConstant(Integer constId) {
-		return constantDAO.findById(constId);
+		return constantDAO.findOne(constId);
 	}
 
 	@Override
 	public List<ShipmentDay> getAllShipmentDays() {
-		return shipmentDayDAO.listAll();
+		return shipmentDayDAO.findAll();
 	}
 
 	@Override
 	public ShipmentDay getShipmentDay(Integer shipmentDaysId) {
-		return shipmentDayDAO.findById(shipmentDaysId);
+		return shipmentDayDAO.findOne(shipmentDaysId);
 	}
 	
 }

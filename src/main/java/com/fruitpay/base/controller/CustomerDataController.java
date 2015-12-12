@@ -22,6 +22,7 @@ import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.comm.model.ReturnData;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.AuthenticationUtil;
+import com.fruitpay.comm.utils.Md5Util;
 
 @Controller
 @RequestMapping("customerDataCtrl")
@@ -61,10 +62,41 @@ public class CustomerDataController {
 		return customerOrders;
 	}
 	
-	@RequestMapping(value = "/getCustomer", method = RequestMethod.POST)
-	public @ResponseBody ReturnData<Boolean> getAllCustomer(){
+	@RequestMapping(value = "/isEmailExisted/{email}/", method = RequestMethod.GET)
+	public @ResponseBody ReturnData<Boolean> isEmailExisted(@PathVariable String email){
+		if(AssertUtils.anyIsEmpty(email))
+			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
 		
-		return customerService
+		return customerService.isEmailExisted(email.trim());
+	}
+	
+	@RequestMapping(value = "/customers", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<List<Customer>> getAllCustomer(){
+		ReturnData<List<Customer>> returnObject = customerService.findAllCustomer();
+		return returnObject;
+	}
+	
+	@RequestMapping(value = "/customers/id", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<Customer> getCustomerByCustomerId(@RequestBody Customer customer){
+		ReturnData<Customer> returnObject = customerService.findCustomer(customer.getCustomerId());
+		return returnObject;
+	}
+	
+	@RequestMapping(value = "/customers/email", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<Customer> getCustomerByEmail(@RequestBody Customer customer){
+		
+		ReturnData<Customer> returnObject = customerService.findByEmail(customer.getEmail());
+		return returnObject;
+	}
+	
+	@RequestMapping(value = "/addCustomer", method = RequestMethod.POST)
+	public @ResponseBody ReturnData<Customer> addCustomer(@RequestBody Customer customer){
+		
+		//密碼加密
+		customer.setPassword(Md5Util.getMd5(customer.getPassword()));
+		 
+		ReturnData<Customer> returnObject = customerService.saveCustomer(customer);
+		return returnObject;
 	}
 	
 }

@@ -1,8 +1,10 @@
 package com.fruitpay.base.dao;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.fruitpay.base.model.Customer;
 
-public interface CustomerDAO extends DAO<Customer> {
+public interface CustomerDAO extends JpaRepository<Customer, Integer> {
 	
 	/**
      * 用信箱得到顧客資訊
@@ -12,7 +14,7 @@ public interface CustomerDAO extends DAO<Customer> {
      *
      * @return 顧客
      */
-	public Customer getCustomerByEmail(String email);
+	public Customer findByEmail(String email);
 	
 	/**
 	 * 用fbId得到顧客資訊
@@ -33,9 +35,9 @@ public interface CustomerDAO extends DAO<Customer> {
      * @param  password
      *         密碼
      *
-     * @return 是否吻合
+     * @return 顧客
      */
-	public boolean isEmailMatchPassword(String email, String password);
+	public Customer findByEmailAndPassword(String email, String password);
 	
 	/**
      * 驗證該ID與密碼是否與資料庫資料吻合
@@ -45,14 +47,8 @@ public interface CustomerDAO extends DAO<Customer> {
      * @param  password
      *         密碼
      *
-     * @return 是否吻合
+     * @return 顧客
      */
-	public boolean isCustomerIdMatchPassword(Integer custmerId, String password);
-	
-	/**
-	 * 驗證信箱是否存在
-	 * 
-	 * */
-	public boolean isEmailExisted(String email);
+	public Customer findByCustomerIdAndPassword(Integer custmerId, String password);
 	
 }
