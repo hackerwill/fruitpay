@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,17 +31,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.ShipmentDay;
+import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
-import com.fruitpay.base.model.Product;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.model.ReturnData;
-import com.fruitpay.comm.model.ReturnObject;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.HttpUtil;
@@ -64,7 +61,7 @@ public class checkoutController {
 	private EmailSendService emailSendService;
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
-	public @ResponseBody ReturnData<CustomerOrder> checkout(
+	public @ResponseBody CustomerOrder checkout(
 			@RequestBody CheckoutPostBean checkoutPostBean,
 			HttpServletRequest request, HttpServletResponse response){
 		Customer customer = checkoutPostBean.getCustomer();
@@ -75,14 +72,14 @@ public class checkoutController {
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(ShipmentDay.Tuesday.getDay()));
 		
 		if(customer == null || customerOrder == null)
-			return ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage();
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 
 		String randomPassword = RadomValueUtil.getRandomPassword();
 		customer.setPassword(randomPassword);
 		
-		ReturnData<Boolean> isEmailExisted = customerService.isEmailExisted(customer.getEmail());
+		boolean isEmailExisted = customerService.isEmailExisted(customer.getEmail());
 		Customer sendCustomer = null;
-		if(isEmailExisted != null && !isEmailExisted.getObject()){
+		if(!isEmailExisted){
 			sendCustomer = new Customer();
 			sendCustomer.setPassword(randomPassword);
 			sendCustomer.setFirstName(customer.getFirstName());
@@ -95,18 +92,18 @@ public class checkoutController {
 			orderPreference.setCustomerOrder(customerOrder);
 		}
 		
-		ReturnData<CustomerOrder> returnData = checkoutService.checkoutOrder(customer, customerOrder);
+		customerOrder = checkoutService.checkoutOrder(customer, customerOrder);
 		
 		if(sendCustomer!= null){
 			emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, sendCustomer.getEmail(), sendCustomer);
 		}
-		if(returnData!= null && returnData.getObject() != null){
+		if(customerOrder!= null ){
 			CustomerOrder sendCustomerOrder = new CustomerOrder();
-			BeanUtils.copyProperties(returnData.getObject(), sendCustomerOrder);
+			BeanUtils.copyProperties(customerOrder, sendCustomerOrder);
 			emailSendService.sendTo(MailType.NEW_ORDER, sendCustomerOrder.getCustomer().getEmail(), sendCustomerOrder);	
 		}
 		
-		return returnData;
+		return customerOrder;
 	}
 	
 	public void sendReq(HttpServletRequest request, HttpServletResponse hrp, String orderId) {
@@ -136,13 +133,5 @@ public class checkoutController {
 		}
 
 	}
-	
-	/*public static void main(String[] args){
-		Integer ShipmentDayOfWeek = 2;
-		Integer ToDestinationDay = 2 + 1;
-		Date currentDate = Calendar.getInstance().getTime();
-		Integer currentDayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-		System.out.println(currentDayOfWeek);
-	}*/
 
 }

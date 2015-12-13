@@ -1,5 +1,7 @@
 package com.fruitpay.base.comm.returndata;
 
+import org.springframework.http.HttpStatus;
+
 import com.fruitpay.comm.model.ReturnMessage;
 
 public class ReturnMessageEnum{
@@ -21,9 +23,9 @@ public class ReturnMessageEnum{
 	
 	public enum Common{
 		Success(new ReturnMessage(Status.Success.getStatus())),
-		RequiredFieldsIsEmpty(new ReturnMessage(Status.Failed.getStatus(), "必要欄位還沒有填寫")),
-		AuthenticationFailed(new ReturnMessage(Status.Failed.getStatus(), "認證錯誤")),
-		UnexpectedError(new ReturnMessage(Status.Failed.getStatus(), "未知錯誤發生"));
+		RequiredFieldsIsEmpty(new ReturnMessage(Status.Failed.getStatus(), "必要欄位還沒有填寫", HttpStatus.METHOD_NOT_ALLOWED)),
+		AuthenticationFailed(new ReturnMessage(Status.Failed.getStatus(), "認證錯誤", HttpStatus.FORBIDDEN)),
+		UnexpectedError(new ReturnMessage(Status.Failed.getStatus(), "未知錯誤發生", HttpStatus.INTERNAL_SERVER_ERROR));
 		
 		private ReturnMessage rm;
 		Common(ReturnMessage rm){
@@ -35,11 +37,11 @@ public class ReturnMessageEnum{
 	}
 	
 	public enum Login{
-		AccountNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個帳號")),
-		EmailNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個信箱")),
-		EmailPasswordNotMatch(new ReturnMessage(Status.Failed.getStatus(), "信箱與密碼不符")),
-		EmailAlreadyExisted(new ReturnMessage(Status.Failed.getStatus(), "信箱已被註冊")),
-		PasswordNotMatched(new ReturnMessage(Status.Failed.getStatus(), "密碼不符合"));
+		AccountNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個帳號", HttpStatus.NOT_FOUND)),
+		EmailNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個信箱", HttpStatus.NOT_FOUND)),
+		EmailPasswordNotMatch(new ReturnMessage(Status.Failed.getStatus(), "信箱與密碼不符", HttpStatus.FORBIDDEN)),
+		EmailAlreadyExisted(new ReturnMessage(Status.Failed.getStatus(), "信箱已被註冊", HttpStatus.FORBIDDEN)),
+		PasswordNotMatched(new ReturnMessage(Status.Failed.getStatus(), "密碼不符合", HttpStatus.FORBIDDEN));
 		
 		private ReturnMessage rm;
 		Login(ReturnMessage rm){
@@ -51,8 +53,8 @@ public class ReturnMessageEnum{
 	}
 	
 	public enum Order{
-		OrderNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個訂單號碼")),
-		AddCustomerFailed(new ReturnMessage(Status.Failed.getStatus(), "新增顧客失敗"));
+		OrderNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個訂單號碼", HttpStatus.NOT_FOUND)),
+		AddCustomerFailed(new ReturnMessage(Status.Failed.getStatus(), "新增顧客失敗", HttpStatus.METHOD_NOT_ALLOWED));
 		
 		private ReturnMessage rm;
 		Order(ReturnMessage rm){

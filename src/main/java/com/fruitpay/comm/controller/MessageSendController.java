@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
-import com.fruitpay.comm.model.ReturnData;
+import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.impl.EmailContentFactory;
 
 @Controller
@@ -29,7 +29,7 @@ public class MessageSendController {
 	
 	
 	@RequestMapping(value = "/sendTo", method = RequestMethod.GET )
-	public @ResponseBody ReturnData sendTo(
+	public @ResponseBody ReturnMessage sendTo(
 			@RequestParam(value = "emails") String emails){
 		
 		/*if(AssertUtils.isEmpty(customer.getEmail())){

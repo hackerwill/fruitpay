@@ -16,8 +16,6 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.model.ReturnData;
-import com.fruitpay.comm.model.ReturnObject;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
@@ -51,17 +49,13 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 	@Override
 	@Transactional
-	public ReturnData<CustomerOrder> checkoutOrder(Customer customer, CustomerOrder customerOrder) {
+	public CustomerOrder checkoutOrder(Customer customer, CustomerOrder customerOrder) {
 		
 		logger.debug("add a customer, email is " + customer.getEmail());
 		
 		if(customerDAO.findByEmail(customer.getEmail()) == null){
 			
-			ReturnData<Customer> returnData = loginService.signup(customer);
-			if(!"0".equals(returnData.getErrorCode()))
-				return ReturnMessageEnum.Order.AddCustomerFailed.getReturnMessage();
-			
-			customer = returnData.getObject();
+			customer = loginService.signup(customer);
 			customerOrder.setCustomer(customer);
 		}else{
 			
@@ -86,7 +80,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
-		return new ReturnObject<CustomerOrder>(customerOrder);
+		return customerOrder;
 	}
 
 }

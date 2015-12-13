@@ -1,11 +1,16 @@
 package com.fruitpay.comm.model;
 
-public class ReturnMessage implements ReturnData {
+import org.springframework.http.HttpStatus;
+
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+
+public class ReturnMessage{
 
 	private static final long serialVersionUID = 1L;
 	
-	protected String errorCode;	//錯誤代碼，0為無錯誤
-	protected String message;	//錯誤信息
+	protected String errorCode;		//錯誤代碼，0為無錯誤
+	protected String message;		//錯誤信息
+	protected HttpStatus status;	//HTTP錯誤代碼
 	
 	public ReturnMessage(String errorCode){
 		super();
@@ -13,27 +18,29 @@ public class ReturnMessage implements ReturnData {
 		this.message = "";
 	}
 	
-	public ReturnMessage(String errorCode, String message) {
+	public ReturnMessage(Throwable ex){
+		super();
+		this.errorCode = ReturnMessageEnum.Status.Failed.getStatus();
+		this.message = ex.getMessage();
+	}
+	
+	public ReturnMessage(String errorCode, String message, HttpStatus status) {
 		super();
 		this.errorCode = errorCode;
 		this.message = message;
+		this.status = status;
 	}
 
-	@Override
 	public String getErrorCode() {
 		return this.errorCode;
 	}
 
-	@Override
 	public String getMessage() {
 		return this.message;
 	}
 
-	@Override
-	public Object getObject() {
-		return null;
+	public HttpStatus getStatus() {
+		return status;
 	}
-	
-	
 	
 }

@@ -46,32 +46,21 @@ function logService($alert){
 	}
 	
 	function successCallback(response){
+		console.log(response);
 		var returnData = response.data;
-		if(returnData.errorCode == '0'){
-			return returnData.object;
-		}else{
-			if(returnData == null || returnData.length == 0){
-				returnData = {message : "請檢查網路連線"};
-			}
-			$alert({
-				title: returnData.message,
-				placement: 'top',
-				type: 'danger',
-				duration: '3',
-				animation: 'am-fade-and-scale'
-			});
-			return false;
-		}
+		return returnData;
 	}
 			
 	function errorCallback(response){
-			$alert({
-				title: '請確認網路連線',
-				placement: 'top',
-				type: 'danger',
-				duration: '3',
-				animation: 'am-fade-and-scale'
-			});
-			return false;
-		}
+		console.log(response);
+		var returnData = response.data;
+		$alert({
+			title: returnData ? returnData.message : '請確認網路連線',
+			placement: 'top',
+			type: 'danger',
+			duration: '3',
+			animation: 'am-fade-and-scale'
+		});
+		return false;
+	}
 }
