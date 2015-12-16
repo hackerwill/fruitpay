@@ -5,7 +5,7 @@
  - 開command line ,安裝gulp套件(如果裝不了 可能要用系統管理員權限開啟command line)
     npm install -g gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html gulp-imagemin gulp-minify-css gulp-autoprefixer bower
  - cd 到fruitpay目錄下,設定連結到global的目錄 ,讓gulp在執行時可以引用到lib
-    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember --save-dev gulp-minify-html gulp-imagemin gulp-minify-css gulp-autoprefixer bower
+    npm link gulp gulp-live-server gulp-uglify gulp-header gulp-footer gulp-concat gulp-jshint gulp-cached gulp-remember gulp-minify-html gulp-imagemin gulp-minify-css gulp-autoprefixer bower --save-dev 
  - 執行gulp
     gulp
 uglify : Minify files 
