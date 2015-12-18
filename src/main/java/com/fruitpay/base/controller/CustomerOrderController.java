@@ -9,11 +9,13 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.ShipmentDay;
 import com.fruitpay.base.comm.exception.HttpServiceException;
@@ -26,6 +28,7 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
+@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("orderCtrl")
 public class CustomerOrderController {

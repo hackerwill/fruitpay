@@ -6,11 +6,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Constant;
@@ -25,6 +27,7 @@ import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.SelectOption;
 import com.fruitpay.comm.utils.AssertUtils;
 
+@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("staticDataCtrl")
 public class StaticDataController {

@@ -13,12 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
-import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.AssertUtils;
@@ -34,6 +35,7 @@ import AllPay.Payment.Integration.PaymentMethod;
 import AllPay.Payment.Integration.PaymentMethodItem;
 import AllPay.Payment.Integration.PeriodType;
 
+@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {

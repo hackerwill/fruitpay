@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
@@ -25,7 +26,7 @@ import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.AuthenticationUtil;
 import com.fruitpay.comm.utils.Md5Util;
 
-@CrossOrigin(origins = "http://localhost:8888", maxAge = 3600)
+@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("customerDataCtrl")
 public class CustomerDataController {
