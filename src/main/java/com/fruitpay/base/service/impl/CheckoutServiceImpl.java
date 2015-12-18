@@ -77,7 +77,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
 		customerOrderDAO.saveAndFlush(customerOrder);
-		
+		customerOrder.setTowership(staticDataService.getTowership(customerOrder.getTowership().getTowershipCode()));
 		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
 		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		return customerOrder;

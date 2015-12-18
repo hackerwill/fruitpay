@@ -1,6 +1,5 @@
 package com.fruitpay.comm.model;
 
-import com.fruitpay.base.controller.StaticDataController;
 
 public class SelectOption{
 	

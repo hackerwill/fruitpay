@@ -95,4 +95,13 @@ public class CustomerDataController {
 		return customer;
 	}
 	
+	@RequestMapping(value = "/updateCustomer", method = RequestMethod.POST)
+	public @ResponseBody Customer updateCustomer(@RequestBody Customer customer){
+		
+		//密碼加密
+		customer = customerService.update(customer);
+		
+		return customer;
+	}
+	
 }

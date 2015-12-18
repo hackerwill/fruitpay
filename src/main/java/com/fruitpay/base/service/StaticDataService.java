@@ -10,6 +10,7 @@ import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
+import com.fruitpay.base.model.Towership;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
 
@@ -22,6 +23,10 @@ public interface StaticDataService {
 	public List<SelectOption> getAllCounties();
 	
 	public List<SelectOption> getTowerships(String countyCode);
+	
+	public List<Towership> getAllTowerships();
+	
+	public Towership getTowership(String towershipCode);
 	
 	public List<SelectOption>  getVillages(String towershipCode);
 	

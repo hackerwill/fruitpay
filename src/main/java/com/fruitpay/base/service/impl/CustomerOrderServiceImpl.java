@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.fruitpay.base.comm.exception.HttpServiceException;
@@ -39,6 +40,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomer(customer);
 		if(customerOrders.isEmpty())
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
+		return customerOrders;
+	}
+
+	@Override
+	public CustomerOrder updateCustomerOrder(CustomerOrder customerOrder) {
+		CustomerOrder origin = customerOrderDAO.findOne(customerOrder.getOrderId());
+		if(origin == null)
+			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
+		BeanUtils.copyProperties(customerOrder, origin);
+		return origin;
+	}
+
+	@Override
+	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		customerOrder = customerOrderDAO.saveAndFlush(customerOrder);
+		return customerOrder;
+	}
+
+	@Override
+	public List<CustomerOrder> getAllCustomerOrder() {
+		List<CustomerOrder> customerOrders = customerOrderDAO.findAll();
 		return customerOrders;
 	}
 

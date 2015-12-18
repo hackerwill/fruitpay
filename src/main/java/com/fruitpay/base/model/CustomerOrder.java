@@ -65,6 +65,10 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="village_code")
 	private Village village;
+	
+	@ManyToOne
+	@JoinColumn(name="towership_code")
+	private Towership towership;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
@@ -364,5 +368,13 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setAllowForeignFruits(String allowForeignFruits) {
 		this.allowForeignFruits = allowForeignFruits;
+	}
+
+	public Towership getTowership() {
+		return towership;
+	}
+
+	public void setTowership(Towership towership) {
+		this.towership = towership;
 	}
 }

@@ -28,10 +28,11 @@ public class CustomerServiceImpl implements CustomerService {
 	@Transactional
 	public Customer update(Customer customer) {
 		Customer origin = customerDAO.findOne(customer.getCustomerId());
-		BeanUtils.copyProperties(customer, origin);
-		if(origin == null){
+		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
-		}
+		
+		BeanUtils.copyProperties(customer, origin);
+		
 		return origin;
 	}
 
@@ -53,21 +54,24 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer findCustomer(int customerId) {
 		Customer customer = customerDAO.findOne(customerId);
-		customer = setVillageRelatedData(customer);
+		customer.getVillage().setVillageRelatedData();
+		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 	
 	@Override
 	public Customer findByEmail(String email) {
 		Customer customer = customerDAO.findByEmail(email);
-		customer = setVillageRelatedData(customer);
+		customer.getVillage().setVillageRelatedData();
+		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 
 	@Override
 	public Customer saveCustomer(Customer customer) {
 		customerDAO.saveAndFlush(customer);
-		customer = setVillageRelatedData(customer);
+		customer.getVillage().setVillageRelatedData();
+		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 
@@ -77,15 +81,4 @@ public class CustomerServiceImpl implements CustomerService {
 		return null;
 	}
 	
-	private Customer setVillageRelatedData(Customer customer) {
-		if(customer != null && !AssertUtils.isEmpty(customer.getVillage())){
-			Village village = customer.getVillage();
-			village.setCounty(new SelectOption(village.getCountyCode(), village.getCountyName()));
-			village.setTowership(new SelectOption(village.getTowershipCode(), village.getTowershipName()));
-			village.setId(village.getVillageCode());
-			village.setName(village.getVillageName());
-		}
-		return customer;
-	}
-
 }

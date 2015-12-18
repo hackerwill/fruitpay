@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fruitpay.comm.model.SelectOption;
+import com.fruitpay.comm.utils.AssertUtils;
 
 import java.util.List;
 
@@ -45,17 +46,16 @@ public class Village extends AbstractDataBean implements Serializable {
 	@Transient
 	private String name;
 	@Transient
-	@JsonProperty("county")
+	@JsonIgnore
 	private SelectOption county;
 	@Transient
-	@JsonProperty("towership")
+	@JsonIgnore
 	private SelectOption towership;
 	
 
 	public Village() {
 	}
 
-	//@JsonProperty("villageCode")
 	public String getVillageCode() {
 		return this.villageCode;
 	}
@@ -120,20 +120,38 @@ public class Village extends AbstractDataBean implements Serializable {
 		this.name = name;
 	}
 
+	@JsonProperty("county")
 	public SelectOption getCounty() {
 		return county;
 	}
 
+	@JsonIgnore
 	public void setCounty(SelectOption county) {
 		this.county = county;
 	}
 
+	@JsonProperty("towership")
 	public SelectOption getTowership() {
 		return towership;
 	}
 
+	@JsonIgnore
 	public void setTowership(SelectOption towership) {
 		this.towership = towership;
+	}
+	
+	public void setVillageRelatedData() {
+		if(AssertUtils.hasValue(this.getVillageCode()))
+			this.setId(this.getVillageCode());
+		
+		if(AssertUtils.hasValue(this.getVillageName()))
+			this.setName(this.getVillageName());
+		
+		if(AssertUtils.hasValue(this.getCountyCode()) && AssertUtils.hasValue(this.getCountyName()))
+			this.setCounty(new SelectOption(this.getCountyCode(), this.getCountyName()));
+		
+		if(AssertUtils.hasValue(this.getTowershipCode()) && AssertUtils.hasValue(this.getTowershipName()))
+			this.setTowership(new SelectOption(this.getTowershipCode(), this.getTowershipName()));
 	}
 	
 }

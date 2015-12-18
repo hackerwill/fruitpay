@@ -1,6 +1,5 @@
 package com.fruitpay.base.controller;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -11,6 +10,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
@@ -22,22 +26,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import javax.inject.Inject;
 
 @WebAppConfiguration
-public class LoginControllerTest extends AbstractSpringJnitTest{
+public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	
 	@Inject
     private WebApplicationContext webApplicationContext;
-	
-	private MockMvc mockMvc;
-	
+	@Inject
+	private
+	CustomerService customerService;
 	@Inject
 	private DataUtil dataUtil;
+	
+	private MockMvc mockMvc;
 	
 	@Before
     public void setup() {
  
-        // Process mock annotations
         MockitoAnnotations.initMocks(this);
-        // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
         		.build();
  
@@ -46,21 +50,37 @@ public class LoginControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void signupAndLoignTest() throws Exception {
-	
-		this.mockMvc.perform(post("/loginCtrl/signup")
+	public void addOrder() throws Exception {
+		
+		Customer customer = dataUtil.getBackgroundCustomer();
+		customer = customerService.saveCustomer(customer);
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		
+		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
+		checkoutPostBean.setCustomer(customer);
+		checkoutPostBean.setCustomerOrder(customerOrder);
+		
+		this.mockMvc.perform(post("/orderCtrl/addOrder")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+	   		.andExpect(jsonPath("$.receiverCellphone", is(customerOrder.getReceiverCellphone())));
+		
+		Customer newCustomer = dataUtil.getSignupCustomer();
 		
 		this.mockMvc.perform(post("/loginCtrl/login")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isOk())
+				.content(TestUtil.convertObjectToJsonBytes(newCustomer)))
+	   		.andExpect(status().isForbidden())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
 		
-		}
+	}
+	
+	
+	
+	
+	
+	
 }

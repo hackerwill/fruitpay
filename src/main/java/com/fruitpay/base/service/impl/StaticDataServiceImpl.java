@@ -21,6 +21,7 @@ import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.ProductDAO;
 import com.fruitpay.base.dao.ShipmentDayDAO;
 import com.fruitpay.base.dao.ShipmentPeriodDAO;
+import com.fruitpay.base.dao.TowershipDAO;
 import com.fruitpay.base.dao.VillageDAO;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.OrderPlatform;
@@ -30,6 +31,7 @@ import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
+import com.fruitpay.base.model.Towership;
 import com.fruitpay.base.model.Village;
 import com.fruitpay.comm.model.SelectOption;
 
@@ -38,6 +40,8 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 
 	@Autowired
 	VillageDAO villageDAO;
+	@Autowired
+	TowershipDAO towershipDAO;
 	@Autowired
 	ProductDAO productDAO;
 	@Autowired
@@ -71,7 +75,10 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	@Override
 	public List<Village> getAllVillages() {
-		return villageDAO.findAll();
+		List<Village> villages = villageDAO.findAll();
+		for(Village village : villages)
+			village.setVillageRelatedData();
+		return villages;
 	}
 	
 	@Override
@@ -79,9 +86,12 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 		List<Village> thisVillages = null;
 		if(!allVillages.isEmpty()){
 			thisVillages = allVillages.stream().filter(u -> u.getVillageCode().equals(villageCode)).collect(Collectors.toList());
+			thisVillages.get(0).setVillageRelatedData();
 			return thisVillages.get(0);
-		}			
-		return villageDAO.findOne(villageCode);
+		}		
+		Village village = villageDAO.findOne(villageCode);
+		village.setVillageRelatedData();
+		return village;
 	}
 	
 	@Override
@@ -240,6 +250,21 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public ShipmentDay getShipmentDay(Integer shipmentDaysId) {
 		return shipmentDayDAO.findOne(shipmentDaysId);
+	}
+
+	@Override
+	public List<Towership> getAllTowerships() {
+		List<Towership> towerships = towershipDAO.findAll();
+		for(Towership towership : towerships)
+			towership.setTowershipRelatedData();
+		return towerships;
+	}
+
+	@Override
+	public Towership getTowership(String towershipCode) {
+		Towership towership = towershipDAO.findOne(towershipCode);
+		towership.setTowershipRelatedData();
+		return towership;
 	}
 	
 }

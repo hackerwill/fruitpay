@@ -1,9 +1,11 @@
 package com.fruitpay.base.controller;
 
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.BeanUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.Customer;
-import com.fruitpay.base.model.Village;
-import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
 
@@ -21,8 +23,6 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,7 +33,9 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	@Inject
     private WebApplicationContext webApplicationContext;
 	@Inject
-	private StaticDataService staticDataService;
+	private CustomerService customerService;
+	@Inject
+	private DataUtil dataUtil;
 	
 	private MockMvc mockMvc;
 	
@@ -45,42 +47,31 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
         		.build();
  
     }
-
+	
+	@Test
+	public void getAllCustomerList() throws Exception {
+		List<Customer> customers = customerService.findAllCustomer();
+		Assert.assertTrue(customers.size() > 0);
+	}
+	
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void addCustomerAndGetByCustomerId() throws Exception {
-		
-		Village village = staticDataService.getVillage("1000402-002");
-
-		Customer customer = new Customer();
-		customer.setEmail("u9734017@gmail.com");
-		customer.setPassword("123456");
-		customer.setFirstName("瑋志");
-		customer.setLastName("徐");
-		customer.setGender("M");
-		customer.setVillage(village);
-		customer.setAddress("同安村西畔巷66弄40號");
-		customer.setCellphone("0933370691");
-		customer.setHousePhone("048238111");
+	public void addCustomerAndGetByLogin() throws Exception {
 		
 		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(customer)))
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.errorCode", is("0")));
-		
-		Customer newCustomer = new Customer();
-		newCustomer.setEmail("u9734017@gmail.com");
-		newCustomer.setPassword("123456");
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
 		
 		this.mockMvc.perform(post("/loginCtrl/login")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(newCustomer)))
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.errorCode", is("0")));
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
 		
 	}
 	
@@ -89,35 +80,47 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	@Rollback(true)
 	public void addCustomerAndGetByEmail() throws Exception {
 		
-		Village village = staticDataService.getVillage("1000402-002");
-
-		Customer customer = new Customer();
-		customer.setEmail("u9734017@gmail.com");
-		customer.setPassword("123456");
-		customer.setFirstName("瑋志");
-		customer.setLastName("徐");
-		customer.setGender("M");
-		customer.setVillage(village);
-		customer.setAddress("同安村西畔巷66弄40號");
-		customer.setCellphone("0933370691");
-		customer.setHousePhone("048238111");
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		this.mockMvc.perform(post("/customerDataCtrl/customers/email")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+		
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void addCustomerAndUpdate() throws Exception {
 		
 		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		Customer updatedCustomer = customerService.findByEmail(dataUtil.getCheckoutCustomer().getEmail());
+		Customer customer = new Customer();
+		BeanUtils.copyProperties(updatedCustomer, customer);
+		customer.setFirstName("updateName");
+		customer.setCustomerId(updatedCustomer.getCustomerId());
+		
+		this.mockMvc.perform(post("/customerDataCtrl/updateCustomer")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(customer)))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.errorCode", is("0")));
-		
-		Customer newCustomer = new Customer();
-		newCustomer.setEmail("u9734017@gmail.com");
-		
-		this.mockMvc.perform(post("/customerDataCtrl/customers/email")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(newCustomer)))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.errorCode", is("0")));
+	   		.andExpect(jsonPath("$.email", is(customer.getEmail())))
+	   		.andExpect(jsonPath("$.firstName", is(customer.getFirstName())));
 		
 	}
 

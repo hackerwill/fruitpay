@@ -53,10 +53,13 @@ public class Shipment extends AbstractDataBean implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date year;
 
-	//bi-directional many-to-one association to Village
 	@ManyToOne
 	@JoinColumn(name="village_Code")
 	private Village village;
+	
+	@ManyToOne
+	@JoinColumn(name="towership_code")
+	private Towership towership;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@ManyToOne
@@ -259,6 +262,14 @@ public class Shipment extends AbstractDataBean implements Serializable {
 		shipmentDetail.setShipment(null);
 
 		return shipmentDetail;
+	}
+
+	public Towership getTowership() {
+		return towership;
+	}
+
+	public void setTowership(Towership towership) {
+		this.towership = towership;
 	}
 
 }

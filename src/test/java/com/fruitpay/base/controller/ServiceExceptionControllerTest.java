@@ -52,9 +52,7 @@ public class ServiceExceptionControllerTest extends AbstractSpringJnitTest{
 	@Test
 	public void testNullPointerException() throws Exception {
 		this.mockMvc.perform(get("/staticDataCtrl/exceptionHandleTest"))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.errorCode", is("0")));
+	   		.andExpect(status().isInternalServerError());
 	}
 
 }
