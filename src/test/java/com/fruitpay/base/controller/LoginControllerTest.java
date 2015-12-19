@@ -62,5 +62,31 @@ public class LoginControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
 		
-		}
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void forgetPassword() throws Exception {
+		
+		this.mockMvc.perform(post("/loginCtrl/signup")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+		
+		this.mockMvc.perform(post("/loginCtrl/forgetPassword")
+				.param("email", dataUtil.getSignupCustomer().getEmail())
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(dataUtil.getSignupCustomer().getEmail()))
+	   		.andExpect(status().isOk());
+		
+		this.mockMvc.perform(post("/loginCtrl/login")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isForbidden());
+		
+	}
+	
 }

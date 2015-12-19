@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -71,12 +70,8 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private List<Customer> customers;
 
 	@ManyToOne
-	@JoinColumn(name="village_code")
-	private Village village;
-	
-	@ManyToOne
-	@JoinColumn(name="towership_code")
-	private Towership towership;
+	@JoinColumn(name="post_id")
+	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
@@ -234,14 +229,6 @@ public class Customer extends AbstractDataBean implements Serializable {
 		return customer;
 	}
 
-	public Village getVillage() {
-		return this.village;
-	}
-
-	public void setVillage(Village village) {
-		this.village = village;
-	}
-
 	public List<CustomerOrder> getCustomerOrders() {
 		return this.customerOrders;
 	}
@@ -264,13 +251,12 @@ public class Customer extends AbstractDataBean implements Serializable {
 		return customerOrder;
 	}
 
-	public Towership getTowership() {
-		return towership;
+	public PostalCode getPostalCode() {
+		return postalCode;
 	}
 
-	public void setTowership(Towership towership) {
-		this.towership = towership;
+	public void setPostalCode(PostalCode postalCode) {
+		this.postalCode = postalCode;
 	}
-
 	
 }

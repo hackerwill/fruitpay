@@ -61,14 +61,16 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	
 	@Column(name="allow_foreign_fruits")
 	private String allowForeignFruits;
+	
+	@Column(name="receipt_title")
+	private String receiptTitle;
+	
+	@Column(name="receipt_vat_number")
+	private String receiptVatNumber;
 
 	@ManyToOne
-	@JoinColumn(name="village_code")
-	private Village village;
-	
-	@ManyToOne
-	@JoinColumn(name="towership_code")
-	private Towership towership;
+	@JoinColumn(name="post_id")
+	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
@@ -222,14 +224,6 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.taxTitle = taxTitle;
 	}
 
-	public Village getVillage() {
-		return this.village;
-	}
-
-	public void setVillage(Village village) {
-		this.village = village;
-	}
-
 	public Customer getCustomer() {
 		return this.customer;
 	}
@@ -370,11 +364,28 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.allowForeignFruits = allowForeignFruits;
 	}
 
-	public Towership getTowership() {
-		return towership;
+	public PostalCode getPostalCode() {
+		return postalCode;
 	}
 
-	public void setTowership(Towership towership) {
-		this.towership = towership;
+	public void setPostalCode(PostalCode postalCode) {
+		this.postalCode = postalCode;
 	}
+
+	public String getReceiptTitle() {
+		return receiptTitle;
+	}
+
+	public void setReceiptTitle(String receiptTitle) {
+		this.receiptTitle = receiptTitle;
+	}
+
+	public String getReceiptVatNumber() {
+		return receiptVatNumber;
+	}
+
+	public void setReceiptVatNumber(String receiptVatNumber) {
+		this.receiptVatNumber = receiptVatNumber;
+	}
+
 }

@@ -54,12 +54,8 @@ public class Shipment extends AbstractDataBean implements Serializable {
 	private Date year;
 
 	@ManyToOne
-	@JoinColumn(name="village_Code")
-	private Village village;
-	
-	@ManyToOne
-	@JoinColumn(name="towership_code")
-	private Towership towership;
+	@JoinColumn(name="post_id")
+	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to CustomerOrder
 	@ManyToOne
@@ -186,14 +182,6 @@ public class Shipment extends AbstractDataBean implements Serializable {
 		this.year = year;
 	}
 
-	public Village getVillage() {
-		return this.village;
-	}
-
-	public void setVillage(Village village) {
-		this.village = village;
-	}
-
 	public CustomerOrder getCustomerOrder() {
 		return this.customerOrder;
 	}
@@ -264,12 +252,12 @@ public class Shipment extends AbstractDataBean implements Serializable {
 		return shipmentDetail;
 	}
 
-	public Towership getTowership() {
-		return towership;
+	public PostalCode getPostalCode() {
+		return postalCode;
 	}
 
-	public void setTowership(Towership towership) {
-		this.towership = towership;
+	public void setPostalCode(PostalCode postalCode) {
+		this.postalCode = postalCode;
 	}
 
 }

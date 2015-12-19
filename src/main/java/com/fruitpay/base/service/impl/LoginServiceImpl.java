@@ -11,6 +11,7 @@ import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.utils.Md5Util;
+import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -81,13 +82,22 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	@Transactional
 	public Customer changePassword(Pwd pwd) {
-		Customer customer = customerDAO.findByCustomerIdAndPassword(pwd.getCustomerId(), pwd.getOldPassword());
-		if(customer != null){
-			customer.setPassword(Md5Util.getMd5(pwd.getNewPassword()));
-		}else{
+		Customer customer = customerDAO.findByCustomerIdAndPassword(pwd.getCustomerId(), Md5Util.getMd5(pwd.getOldPassword()));
+		if(customer == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.PasswordNotMatched.getReturnMessage());
-		}
-			
+		
+		customer.setPassword(Md5Util.getMd5(pwd.getNewPassword()));
+		return customer;
+	}
+
+	@Override
+	@Transactional
+	public Customer forgetPassword(String email, String newPassword) {
+		Customer customer = customerDAO.findByEmail(email);
+		if(customer == null)
+			throw new HttpServiceException(ReturnMessageEnum.Login.EmailNotFound.getReturnMessage());
+		
+		customer.setPassword(Md5Util.getMd5(newPassword));
 		return customer;
 	}
 }

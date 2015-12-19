@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.Domain;
@@ -24,6 +26,7 @@ import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.RadomValueUtil;
 
 @CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
@@ -106,6 +109,26 @@ public class LoginController {
 		Customer customer = loginService.changePassword(pwd);
 		
 		return customer;
+	}
+	
+	@RequestMapping(value = "/forgetPassword", method = RequestMethod.POST)
+	public @ResponseBody String forgetPassword(@RequestBody Customer customer,
+			HttpServletRequest request, HttpServletResponse response){
+		String email = customer.getEmail();
+		if(AssertUtils.isEmpty(String.valueOf(email))){
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
+		String randomPassword = RadomValueUtil.getRandomPassword();
+		
+		customer = loginService.forgetPassword(email, randomPassword);
+		
+		Customer sendCustomer = new Customer();
+		BeanUtils.copyProperties(customer, sendCustomer);
+		sendCustomer.setPassword(randomPassword);
+		emailSendService.sendTo(MailType.FORGET_PASSWORD, sendCustomer.getEmail(), sendCustomer);
+		
+		return "true";
 	}
 
 }
