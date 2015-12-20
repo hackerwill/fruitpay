@@ -85,6 +85,9 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="program_id")
 	private OrderProgram orderProgram;
+	
+	@Column(name="program_num")
+	private Integer programNum;
 
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
@@ -132,6 +135,13 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JoinColumn(name="receipt_way")
 	@JsonProperty("receiptWay")
 	private ConstantOption receiptWay;
+	
+	@Column(name="shipping_cost")
+	private Integer shippingCost;
+	
+	@Column(name="total_price")
+	private Integer totalPrice;
+	
 
 	public CustomerOrder() {
 	}
@@ -386,6 +396,30 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setReceiptVatNumber(String receiptVatNumber) {
 		this.receiptVatNumber = receiptVatNumber;
+	}
+
+	public Integer getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(Integer shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	public Integer getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Integer totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public Integer getProgramNum() {
+		return programNum;
+	}
+
+	public void setProgramNum(Integer programNum) {
+		this.programNum = programNum;
 	}
 
 }

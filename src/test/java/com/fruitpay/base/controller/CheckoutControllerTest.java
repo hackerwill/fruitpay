@@ -1,6 +1,7 @@
 package com.fruitpay.base.controller;
 
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
@@ -19,6 +21,8 @@ import com.fruitpay.util.TestUtil;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -29,6 +33,8 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
     private WebApplicationContext webApplicationContext;
 	@Inject
 	DataUtil dataUtil;
+	@Inject 
+	private StaticDataService staticDataService;
 	
 	private MockMvc mockMvc;
 	
@@ -64,6 +70,33 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
 		
+	}
+	
+	@Test
+	public void getReceiveDay() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		cal.set(2015, 11, 20, 0, 0);
+		cal.getTime();
+		String nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
+		Assert.assertEquals("12/23", nextReceiveDay);
+		
+		cal = Calendar.getInstance();
+		cal.set(2015, 11, 21, 0, 0);
+		cal.getTime();
+		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
+		Assert.assertEquals("12/30", nextReceiveDay);
+		
+		cal = Calendar.getInstance();
+		cal.set(2015, 11, 22, 0, 0);
+		cal.getTime();
+		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
+		Assert.assertEquals("12/30", nextReceiveDay);
+		
+		cal = Calendar.getInstance();
+		cal.set(2015, 11, 25, 0, 0);
+		cal.getTime();
+		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
+		Assert.assertEquals("12/30", nextReceiveDay);
 	}
 
 }

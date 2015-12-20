@@ -1,8 +1,16 @@
 package com.fruitpay.base.controller;
 
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
-import com.fruitpay.base.comm.ShipmentDay;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
@@ -58,7 +65,7 @@ public class checkoutController {
 		
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
-		customerOrder.setShipmentDay(staticDataService.getShipmentDay(ShipmentDay.Tuesday.getDay()));
+		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
 		
 		if(customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
@@ -93,6 +100,29 @@ public class checkoutController {
 		}
 		
 		return customerOrder;
+	}
+	
+	@RequestMapping(value = "/getReceiveDay", method = RequestMethod.GET)
+	public @ResponseBody DateStr getReceiveDay(){
+		
+		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime()));
+		return dateStr;
+	}
+	
+	private class DateStr{
+		private String date;
+		
+		public DateStr(String date){
+			this.date = date;
+		}
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
 	}
 	
 }

@@ -90,6 +90,12 @@ public class Shipment extends AbstractDataBean implements Serializable {
 	//bi-directional many-to-one association to ShipmentDetail
 	@OneToMany(mappedBy="shipment")
 	private List<ShipmentDetail> shipmentDetails;
+	
+	@Column(name="shipping_cost")
+	private Integer shippingCost;
+	
+	@Column(name="total_price")
+	private Integer totalPrice;
 
 	public Shipment() {
 	}
@@ -258,6 +264,22 @@ public class Shipment extends AbstractDataBean implements Serializable {
 
 	public void setPostalCode(PostalCode postalCode) {
 		this.postalCode = postalCode;
+	}
+
+	public Integer getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(Integer shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	public Integer getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Integer totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

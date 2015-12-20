@@ -114,6 +114,12 @@ public class DataUtil {
 		customerOrder.setComingFrom(comingFrom);
 		customerOrder.setReceiptWay(receiptWay);
 		customerOrder.setAllowForeignFruits("Y");
+		customerOrder.setProgramNum(1);
+		
+		int shippingCost = paymentMode.getPaymentExtraPrice();
+		int totalPrice = orderProgram.getPrice() * customerOrder.getProgramNum() + shippingCost;	
+		customerOrder.setShippingCost(shippingCost);
+		customerOrder.setTotalPrice(totalPrice);
 		
 		List<OrderPreference> orderPreferences = new ArrayList<>();
 		for (Iterator<Product> iterator = products.iterator(); iterator.hasNext();) {

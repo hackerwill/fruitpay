@@ -1,5 +1,6 @@
 package com.fruitpay.base.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fruitpay.base.model.Constant;
@@ -47,5 +48,7 @@ public interface StaticDataService {
 	public List<ShipmentDay> getAllShipmentDays();
 	
 	public ShipmentDay getShipmentDay(Integer shipmentDaysId);
+	
+	public String getNextReceiveDay(Date nowTime);
 
 }

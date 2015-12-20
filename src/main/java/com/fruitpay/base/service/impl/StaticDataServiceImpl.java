@@ -1,7 +1,14 @@
 package com.fruitpay.base.service.impl;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -166,6 +173,33 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	public PostalCode getPostalCode(Integer postId) {
 		PostalCode postalCode = postalCodeDAO.findOne(postId);
 		return postalCode;
+	}
+	
+	@Override
+	public String getNextReceiveDay(Date nowTime){
+		LocalDate now = LocalDate.now();
+		//下一個禮拜三
+		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.WEDNESDAY));
+		LocalDate stopDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(12, 0);
+		
+		boolean isEnoughTime = durationSmallerThanCompareTime(
+				Date.from(stopDayTimeOfThisWeek.atZone(ZoneId.systemDefault()).toInstant()), 
+				nowTime,
+				72000000);
+		if(!isEnoughTime)
+			receiveDayOfThisWeek = receiveDayOfThisWeek.with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+		return receiveDayOfThisWeek.format(formatter);
+	}
+	
+	private static boolean durationSmallerThanCompareTime(Date compareDate, Date now, long compareTime){
+		long nowTime = now.getTime();
+		long compare = compareDate.getTime();
+		if(compare  - nowTime > compareTime)
+			return true;
+		else 
+			return false;
 	}
 
 }

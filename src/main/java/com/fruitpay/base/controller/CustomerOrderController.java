@@ -1,6 +1,7 @@
 package com.fruitpay.base.controller;
 
 
+import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
-import com.fruitpay.base.comm.ShipmentDay;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
@@ -49,7 +49,7 @@ public class CustomerOrderController {
 		customerOrder.setCustomer(customer);
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
-		customerOrder.setShipmentDay(staticDataService.getShipmentDay(ShipmentDay.Tuesday.getDay()));
+		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
 		
 		if(customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
