@@ -39,7 +39,7 @@ public class CustomerDataController {
 	AuthenticationUtil authenticationUtil;
 	
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/update", method = RequestMethod.PUT)
 	public @ResponseBody Customer update(@RequestBody Customer customer,
 			HttpServletRequest request, HttpServletResponse response){
 		
