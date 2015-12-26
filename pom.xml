@@ -373,25 +373,6 @@
 					<path>/fruitpay</path>
 					<url>http://139.162.2.196:8080/manager/text</url>
 				</configuration>
-				<executions>
-					<execution>
-					  <id>start-tomcat</id>
-					  <phase>pre-integration-test</phase>
-					  <goals>
-						<goal>run</goal>
-					  </goals>
-					  <configuration>
-						<fork>true</fork>
-					  </configuration>
-					</execution>
-					<execution>
-					  <id>stop-tomcat</id>
-					  <phase>post-integration-test</phase>
-					  <goals>
-						<goal>shutdown</goal>
-					  </goals>
-					</execution>
-				</executions>
 			</plugin>
 	
 		</plugins>
