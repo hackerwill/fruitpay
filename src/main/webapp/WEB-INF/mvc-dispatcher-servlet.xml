@@ -14,7 +14,7 @@
         http://www.springframework.org/schema/tx 
         http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
         http://www.springframework.org/schema/task 
         http://www.springframework.org/schema/task/spring-task-3.0.xsd
         http://www.springframework.org/schema/data/jpa
@@ -26,6 +26,17 @@
 	<jpa:repositories base-package="com.fruitpay" />
 	
 	<mvc:annotation-driven />
+	<mvc:resources mapping="/**" location="/build/" />
+	
+	<mvc:cors>
+
+	<mvc:mapping path="/**"
+		allowed-origins="http://139.162.2.196:8080/fruitpay, http://localhost:8888,, http://payment-stage.allpay.com.tw"
+		allowed-methods="GET, POST, PUT, DELETE, OPTIONS"
+		allow-credentials="false"
+		max-age="3600" />
+
+	</mvc:cors>
 	
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
 	<task:executor id="myExecutor" pool-size="5" />

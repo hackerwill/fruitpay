@@ -77,9 +77,8 @@ public class LoginControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
 		
 		this.mockMvc.perform(post("/loginCtrl/forgetPassword")
-				.param("email", dataUtil.getSignupCustomer().getEmail())
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(dataUtil.getSignupCustomer().getEmail()))
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
 	   		.andExpect(status().isOk());
 		
 		this.mockMvc.perform(post("/loginCtrl/login")

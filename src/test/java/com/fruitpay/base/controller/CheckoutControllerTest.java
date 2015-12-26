@@ -4,6 +4,9 @@ package com.fruitpay.base.controller;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -13,11 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.DataUtil;
+import com.fruitpay.comm.service.EmailSendService;
+import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
 
+import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,6 +40,9 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	
 	@Inject
     private WebApplicationContext webApplicationContext;
+	@Mock
+	private EmailSendService emailSendServiceMock;
+	
 	@Inject
 	DataUtil dataUtil;
 	@Inject 
@@ -43,6 +55,7 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
  
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+        //this.mockMvc = MockMvcBuilders.standaloneSetup(checkoutControllerMock)
         		.build();
  
     }
@@ -78,25 +91,26 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 		cal.set(2015, 11, 20, 0, 0);
 		cal.getTime();
 		String nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12/23", nextReceiveDay);
+		Assert.assertEquals("12-23", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 21, 0, 0);
 		cal.getTime();
 		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12/30", nextReceiveDay);
+		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 22, 0, 0);
 		cal.getTime();
 		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12/30", nextReceiveDay);
+		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 25, 0, 0);
 		cal.getTime();
 		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12/30", nextReceiveDay);
+		Assert.assertEquals("12-30", nextReceiveDay);
+		
 	}
 
 }

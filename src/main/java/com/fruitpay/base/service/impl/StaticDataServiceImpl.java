@@ -1,6 +1,7 @@
 package com.fruitpay.base.service.impl;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -177,10 +178,10 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	@Override
 	public String getNextReceiveDay(Date nowTime){
-		LocalDate now = LocalDate.now();
+		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		//下一個禮拜三
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.WEDNESDAY));
-		LocalDate stopDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
 		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(12, 0);
 		
 		boolean isEnoughTime = durationSmallerThanCompareTime(
@@ -196,7 +197,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	private static boolean durationSmallerThanCompareTime(Date compareDate, Date now, long compareTime){
 		long nowTime = now.getTime();
 		long compare = compareDate.getTime();
-		if(compare  - nowTime > compareTime)
+		if(compare > nowTime && compare  - nowTime > compareTime)
 			return true;
 		else 
 			return false;

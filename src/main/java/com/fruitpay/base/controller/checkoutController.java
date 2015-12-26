@@ -19,13 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -40,7 +38,6 @@ import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
-@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("checkoutCtrl")
 public class checkoutController {
@@ -66,6 +63,9 @@ public class checkoutController {
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
+		customerOrder.setShippingCost(customerOrder.getPaymentMode().getPaymentExtraPrice());
+		customerOrder.setTotalPrice(getTotalPrice(customerOrder));
+		
 		
 		if(customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
@@ -100,6 +100,11 @@ public class checkoutController {
 		}
 		
 		return customerOrder;
+	}
+	
+	private int getTotalPrice(CustomerOrder customerOrder){
+		return customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum() + 
+				customerOrder.getPaymentMode().getPaymentExtraPrice();
 	}
 	
 	@RequestMapping(value = "/getReceiveDay", method = RequestMethod.GET)
