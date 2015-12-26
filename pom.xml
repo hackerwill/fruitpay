@@ -15,9 +15,10 @@
 		<jstl.version>1.2</jstl.version>
 		<junit.version>4.11</junit.version>
 		<logback.version>1.0.13</logback.version>
+		<hibernate.version>5.0.0.Final</hibernate.version>
 		<jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
 		<mysql.version>5.1.6</mysql.version>
-		<hibernate.version>5.0.0.Final</hibernate.version>
+		<slf4j.version>1.6.1</slf4j.version>
 		<jackson.version>2.2.3</jackson.version>
 		<build.profile.id>dev</build.profile.id>
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -110,6 +111,12 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.1</version>
+		</dependency>
+		
+		 <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 		<dependency>
@@ -210,6 +217,11 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.1</version>
+		</dependency>
+		<dependency>
+	      	<groupId>com.allpay</groupId>
+	      	<artifactId>allpay</artifactId>
+	      	<version>1.0.0</version>
 		</dependency>
 		
 	</dependencies>
@@ -357,9 +369,29 @@
 			        <version>2.2</version>
 				<configuration>
 					<server>fruitpay</server>
+					<port>8081</port>
 					<path>/fruitpay</path>
 					<url>http://139.162.2.196:8080/manager/text</url>
 				</configuration>
+				<executions>
+				    <execution>
+				      <id>start-tomcat</id>
+				      <phase>pre-integration-test</phase>
+				      <goals>
+				        <goal>run</goal>
+				      </goals>
+				      <configuration>
+				        <fork>true</fork>
+				      </configuration>
+				    </execution>
+				    <execution>
+				      <id>stop-tomcat</id>
+				      <phase>post-integration-test</phase>
+				      <goals>
+				        <goal>shutdown</goal>
+				      </goals>
+				    </execution>
+				</executions>
 			</plugin>
 
 		</plugins>
