@@ -96,7 +96,7 @@ public class CustomerDataController {
 		return customer;
 	}
 	
-	@RequestMapping(value = "/updateCustomer", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateCustomer", method = RequestMethod.PUT) 
 	public @ResponseBody Customer updateCustomer(@RequestBody Customer customer){
 		
 		//密碼加密
