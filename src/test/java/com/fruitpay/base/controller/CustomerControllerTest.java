@@ -114,7 +114,7 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 		customer.setFirstName("updateName");
 		customer.setCustomerId(updatedCustomer.getCustomerId());
 		
-		this.mockMvc.perform(post("/customerDataCtrl/updateCustomer")
+		this.mockMvc.perform(put("/customerDataCtrl/updateCustomer")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(customer)))
 	   		.andExpect(status().isOk())
