@@ -61,14 +61,16 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	
 	@Column(name="allow_foreign_fruits")
 	private String allowForeignFruits;
+	
+	@Column(name="receipt_title")
+	private String receiptTitle;
+	
+	@Column(name="receipt_vat_number")
+	private String receiptVatNumber;
 
 	@ManyToOne
-	@JoinColumn(name="village_code")
-	private Village village;
-	
-	@ManyToOne
-	@JoinColumn(name="towership_code")
-	private Towership towership;
+	@JoinColumn(name="post_id")
+	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
@@ -83,6 +85,9 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="program_id")
 	private OrderProgram orderProgram;
+	
+	@Column(name="program_num")
+	private Integer programNum;
 
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
@@ -130,6 +135,13 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JoinColumn(name="receipt_way")
 	@JsonProperty("receiptWay")
 	private ConstantOption receiptWay;
+	
+	@Column(name="shipping_cost")
+	private Integer shippingCost;
+	
+	@Column(name="total_price")
+	private Integer totalPrice;
+	
 
 	public CustomerOrder() {
 	}
@@ -220,14 +232,6 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setTaxTitle(String taxTitle) {
 		this.taxTitle = taxTitle;
-	}
-
-	public Village getVillage() {
-		return this.village;
-	}
-
-	public void setVillage(Village village) {
-		this.village = village;
 	}
 
 	public Customer getCustomer() {
@@ -370,11 +374,52 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.allowForeignFruits = allowForeignFruits;
 	}
 
-	public Towership getTowership() {
-		return towership;
+	public PostalCode getPostalCode() {
+		return postalCode;
 	}
 
-	public void setTowership(Towership towership) {
-		this.towership = towership;
+	public void setPostalCode(PostalCode postalCode) {
+		this.postalCode = postalCode;
 	}
+
+	public String getReceiptTitle() {
+		return receiptTitle;
+	}
+
+	public void setReceiptTitle(String receiptTitle) {
+		this.receiptTitle = receiptTitle;
+	}
+
+	public String getReceiptVatNumber() {
+		return receiptVatNumber;
+	}
+
+	public void setReceiptVatNumber(String receiptVatNumber) {
+		this.receiptVatNumber = receiptVatNumber;
+	}
+
+	public Integer getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(Integer shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	public Integer getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Integer totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public Integer getProgramNum() {
+		return programNum;
+	}
+
+	public void setProgramNum(Integer programNum) {
+		this.programNum = programNum;
+	}
+
 }

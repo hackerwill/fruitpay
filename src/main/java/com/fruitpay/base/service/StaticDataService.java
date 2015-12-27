@@ -1,5 +1,6 @@
 package com.fruitpay.base.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fruitpay.base.model.Constant;
@@ -7,28 +8,16 @@ import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
+import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
-import com.fruitpay.base.model.Towership;
-import com.fruitpay.base.model.Village;
-import com.fruitpay.comm.model.SelectOption;
 
 public interface StaticDataService {
 	
-	public List<Village> getAllVillages();
+	public List<PostalCode> getAllPostalCodes();
 	
-	public Village getVillage(String villageCode);
-	
-	public List<SelectOption> getAllCounties();
-	
-	public List<SelectOption> getTowerships(String countyCode);
-	
-	public List<Towership> getAllTowerships();
-	
-	public Towership getTowership(String towershipCode);
-	
-	public List<SelectOption>  getVillages(String towershipCode);
+	public PostalCode getPostalCode(Integer postId);
 	
 	public List<Product> getAllProducts();
 	
@@ -59,5 +48,7 @@ public interface StaticDataService {
 	public List<ShipmentDay> getAllShipmentDays();
 	
 	public ShipmentDay getShipmentDay(Integer shipmentDaysId);
+	
+	public String getNextReceiveDay(Date nowTime);
 
 }

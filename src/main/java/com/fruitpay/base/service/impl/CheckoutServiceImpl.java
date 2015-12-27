@@ -68,7 +68,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 			persistCustomer.setGender(customer.getGender());
 			persistCustomer.setHousePhone(customer.getHousePhone());
 			persistCustomer.setLastName(customer.getLastName());
-			persistCustomer.setVillage(customer.getVillage());
+			persistCustomer.setPostalCode(customer.getPostalCode());
 			persistCustomer.addCustomerOrder(customerOrder);
 			
 			customerOrder.setCustomer(persistCustomer);
@@ -77,9 +77,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
 		customerOrderDAO.saveAndFlush(customerOrder);
-		customerOrder.setTowership(staticDataService.getTowership(customerOrder.getTowership().getTowershipCode()));
-		customerOrder.setVillage(staticDataService.getVillage(customerOrder.getVillage().getVillageCode()));
-		customer.setVillage(staticDataService.getVillage(customer.getVillage().getVillageCode()));
 		return customerOrder;
 	}
 

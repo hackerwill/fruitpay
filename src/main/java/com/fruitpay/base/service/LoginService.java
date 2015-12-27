@@ -45,6 +45,12 @@ public interface LoginService {
 	 * */
 	public Customer changePassword(Pwd pwd);
 	
+	/**
+	 * 查詢若信箱存在的話，修改密碼並寄通知密碼修改信
+	 * 
+	 * */
+	public Customer forgetPassword(String email, String newPassword);
+	
 	
 	
 	

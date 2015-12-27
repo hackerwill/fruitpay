@@ -16,7 +16,8 @@ public class EmailContentFactory {
 	public enum MailType{
 		NEW_ORDER,
 		NEW_MEMBER_FROM_ORDER,
-		NEW_MEMBER;
+		NEW_MEMBER,
+		FORGET_PASSWORD;
 	}
 	
 	Map<MailType, EmailContentService> map= null;
@@ -24,6 +25,8 @@ public class EmailContentFactory {
 	EmailNewMemberServiceImpl emailNewMemberServiceImpl;
 	@Inject
 	EmailNewOrderServiceImpl emailNewOrderServiceImpl;
+	@Inject
+	EmailForgetPasswordServiceImpl emailForgetPasswordServiceImpl;
 	@Inject
 	EmailNewMemberFromOrderServiceImpl emailNewMemberFromOrderServiceImpl;
 	
@@ -34,6 +37,7 @@ public class EmailContentFactory {
 		map.put(MailType.NEW_MEMBER, emailNewMemberServiceImpl);
 		map.put(MailType.NEW_MEMBER_FROM_ORDER, emailNewMemberFromOrderServiceImpl);
 		map.put(MailType.NEW_ORDER, emailNewOrderServiceImpl);
+		map.put(MailType.FORGET_PASSWORD, emailForgetPasswordServiceImpl);
 	}
 	
 	public <T> EmailContentService<T> getEmailContentServiceImpl(MailType mailType, T t){

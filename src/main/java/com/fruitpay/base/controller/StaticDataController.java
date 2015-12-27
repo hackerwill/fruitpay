@@ -6,13 +6,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Constant;
@@ -20,14 +18,11 @@ import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
+import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentPeriod;
-import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.model.SelectOption;
-import com.fruitpay.comm.utils.AssertUtils;
 
-@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("staticDataCtrl")
 public class StaticDataController {
@@ -36,34 +31,10 @@ public class StaticDataController {
 	@Autowired
 	StaticDataService staticDataService;
 	
-	@RequestMapping(value = "/getAllCounties", method = RequestMethod.GET)
-	public @ResponseBody List<SelectOption> getAllCounties(){
-		return staticDataService.getAllCounties();
-	}
-	
-	@RequestMapping(value = "/getTowerships/{countyCode}", method = RequestMethod.GET)
-	public @ResponseBody List<SelectOption> getAllTowerships(@PathVariable String countyCode){
-		if(AssertUtils.isEmpty(countyCode))
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-		
-		List<SelectOption> towerships = staticDataService.getTowerships(countyCode);
-		if(towerships == null)
-			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
-		
-		return towerships;
-	}
-		
-	
-	@RequestMapping(value = "/getVillages/{towershipCode}", method = RequestMethod.GET)
-	public @ResponseBody List<SelectOption> getAllVillages(@PathVariable String towershipCode){
-		if(AssertUtils.isEmpty(towershipCode))
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-		
-		List<SelectOption> villages = staticDataService.getVillages(towershipCode);
-		if(villages == null)
-			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
-		
-		return villages;
+	@RequestMapping(value = "/getAllPostalCodes", method = RequestMethod.GET)
+	public @ResponseBody List<PostalCode> getAllPostalCodes(){
+		List<PostalCode> postCodes = staticDataService.getAllPostalCodes();
+		return postCodes;
 	}
 	
 	@RequestMapping(value = "/getAllProducts", method = RequestMethod.GET)

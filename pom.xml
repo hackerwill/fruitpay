@@ -368,6 +368,7 @@
 			        <artifactId>tomcat7-maven-plugin</artifactId>
 			        <version>2.2</version>
 				<configuration>
+					<port>8081</port>
 					<server>fruitpay</server>
 					<port>8081</port>
 					<path>/fruitpay</path>
@@ -393,7 +394,7 @@
 				    </execution>
 				</executions>
 			</plugin>
-
+	
 		</plugins>
 	</build>
 

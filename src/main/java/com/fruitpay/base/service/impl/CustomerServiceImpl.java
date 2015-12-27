@@ -12,11 +12,7 @@ import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
-import com.fruitpay.base.model.Pwd;
-import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.CustomerService;
-import com.fruitpay.comm.model.SelectOption;
-import com.fruitpay.comm.utils.AssertUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -54,24 +50,18 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer findCustomer(int customerId) {
 		Customer customer = customerDAO.findOne(customerId);
-		customer.getVillage().setVillageRelatedData();
-		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 	
 	@Override
 	public Customer findByEmail(String email) {
 		Customer customer = customerDAO.findByEmail(email);
-		customer.getVillage().setVillageRelatedData();
-		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 
 	@Override
 	public Customer saveCustomer(Customer customer) {
 		customerDAO.saveAndFlush(customer);
-		customer.getVillage().setVillageRelatedData();
-		customer.getTowership().setTowershipRelatedData();
 		return customer;
 	}
 

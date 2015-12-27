@@ -13,12 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fruitpay.base.comm.Domain;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.StaticDataService;
@@ -35,7 +33,6 @@ import AllPay.Payment.Integration.PaymentMethod;
 import AllPay.Payment.Integration.PaymentMethodItem;
 import AllPay.Payment.Integration.PeriodType;
 
-@CrossOrigin(origins = {Domain.FRONTEND, Domain.BACKEND}, maxAge = 3600)
 @Controller
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
@@ -44,8 +41,8 @@ public class AllpayCheckoutController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final String ORDER_RESULT_URL = "/allpayCtrl/callback";
 	private final String PERIOD_RETURN_URL = "/allpayCtrl/schduleCallback";
-	private final String SHOW_ORDER_URL = "#/index/user/orders";
-	private final String SHOW_ORDER_SUCCESS_URL = "#/index/checkoutCreditCardSuccess";
+	private final String SHOW_ORDER_URL = "/app/user/orders";
+	private final String SHOW_ORDER_SUCCESS_URL = "/app/checkoutCreditCardSuccess";
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -75,8 +72,7 @@ public class AllpayCheckoutController {
 	}
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
-	public void allpayCallback( 
-			HttpServletRequest request, HttpServletResponse response){
+	public void allpayCallback(HttpServletRequest request, HttpServletResponse response){
 		
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");

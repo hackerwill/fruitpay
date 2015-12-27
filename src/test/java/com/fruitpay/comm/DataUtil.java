@@ -16,11 +16,10 @@ import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.PaymentMode;
+import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
-import com.fruitpay.base.model.Towership;
-import com.fruitpay.base.model.Village;
 import com.fruitpay.base.service.StaticDataService;
 
 @Component
@@ -39,8 +38,7 @@ public class DataUtil {
 	}
 	
 	public Customer getCheckoutCustomer(){
-		Village village = staticDataService.getVillage("1000402-002");
-		Towership towership = staticDataService.getTowership("1000402");
+		PostalCode postalCode = staticDataService.getPostalCode(100);
 
 		Customer customer = new Customer();
 		customer.setEmail("u9734017@gmail.com");
@@ -48,8 +46,7 @@ public class DataUtil {
 		customer.setFirstName("瑋志");
 		customer.setLastName("徐");
 		customer.setGender("M");
-		customer.setVillage(village);
-		customer.setTowership(towership);
+		customer.setPostalCode(postalCode);
 		customer.setAddress("同安村西畔巷66弄40號");
 		customer.setCellphone("0933370691");
 		customer.setHousePhone("048238111");
@@ -58,8 +55,7 @@ public class DataUtil {
 	}
 	
 	public Customer getBackgroundCustomer(){
-		Village village = staticDataService.getVillage("1000402-002");
-		Towership towership = staticDataService.getTowership("1000402");
+		PostalCode postalCode = staticDataService.getPostalCode(100);
 
 		Customer customer = new Customer();
 		customer.setEmail("u9734017@gmail.com");
@@ -67,8 +63,7 @@ public class DataUtil {
 		customer.setFirstName("瑋志");
 		customer.setLastName("徐");
 		customer.setGender("M");
-		customer.setVillage(village);
-		customer.setTowership(towership);
+		customer.setPostalCode(postalCode);
 		customer.setAddress("同安村西畔巷66弄40號");
 		customer.setCellphone("0933370691");
 		customer.setHousePhone("048238111");
@@ -79,8 +74,7 @@ public class DataUtil {
 	
 	public CustomerOrder getCustomerOrder(){
 		
-		Towership towership = staticDataService.getTowership("1000402");
-		Village village = staticDataService.getVillage("1000402-002");
+		PostalCode postalCode = staticDataService.getPostalCode(100);
 		OrderPlatform orderPlatform = staticDataService.getOrderPlatform(1);
 		OrderProgram orderProgram = staticDataService.getOrderProgram(1);
 		PaymentMode paymentMode = staticDataService.getPaymentMode(1);
@@ -108,8 +102,10 @@ public class DataUtil {
 		customerOrder.setReceiverGender("M");
 		customerOrder.setReceiverCellphone("0933370691");
 		customerOrder.setReceiverHousePhone("048238111");
-		customerOrder.setVillage(village);
+		customerOrder.setPostalCode(postalCode);
 		customerOrder.setReceiverAddress("同安村西畔巷66弄40號");
+		customerOrder.setReceiptTitle("抬頭");
+		customerOrder.setReceiptVatNumber("123456789");
 		customerOrder.setPaymentMode(paymentMode);
 		customerOrder.setShipmentPeriod(shipmentPeriod);
 		customerOrder.setShipmentDay(shipmentDay);
@@ -118,7 +114,12 @@ public class DataUtil {
 		customerOrder.setComingFrom(comingFrom);
 		customerOrder.setReceiptWay(receiptWay);
 		customerOrder.setAllowForeignFruits("Y");
-		customerOrder.setTowership(towership);
+		customerOrder.setProgramNum(1);
+		
+		int shippingCost = paymentMode.getPaymentExtraPrice();
+		int totalPrice = orderProgram.getPrice() * customerOrder.getProgramNum() + shippingCost;	
+		customerOrder.setShippingCost(shippingCost);
+		customerOrder.setTotalPrice(totalPrice);
 		
 		List<OrderPreference> orderPreferences = new ArrayList<>();
 		for (Iterator<Product> iterator = products.iterator(); iterator.hasNext();) {

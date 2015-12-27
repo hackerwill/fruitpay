@@ -37,7 +37,7 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 		map.put("RECEIVER_HOUSE_PHONE", order.getCustomer().getHousePhone());
 		map.put("RECEIVER_LAST_NAME", order.getReceiverLastName());
 		map.put("RECEIVER_FIRST_NAME", order.getReceiverFirstName());
-		map.put("RECEIVER_ADDRESS", order.getVillage().getCountyName() + order.getVillage().getTowershipName() + order.getVillage().getVillageName() + order.getReceiverAddress());
+		map.put("RECEIVER_ADDRESS", order.getPostalCode().toString() + order.getReceiverAddress());
 		
 		return map;
 	}
