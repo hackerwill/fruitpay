@@ -12,5 +12,9 @@ public class HttpUtil {
 		String resultPath = scheme + "://" + serverName + ":" + serverPort + contextPath;
 		return resultPath;
 	}
+	
+	public static String getDomainURL(){
+		return "http://beta.fruitpay.com.tw/fruitpay/";
+	}
 
 }

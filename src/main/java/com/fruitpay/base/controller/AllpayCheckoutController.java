@@ -39,10 +39,10 @@ public class AllpayCheckoutController {
 	
 	private boolean DEBUG_MODE = true;
 	private final Logger logger = Logger.getLogger(this.getClass());
-	private final String ORDER_RESULT_URL = "/allpayCtrl/callback";
-	private final String PERIOD_RETURN_URL = "/allpayCtrl/schduleCallback";
-	private final String SHOW_ORDER_URL = "/app/user/orders";
-	private final String SHOW_ORDER_SUCCESS_URL = "/app/checkoutCreditCardSuccess";
+	private final String ORDER_RESULT_URL = HttpUtil.getDomainURL() + "allpayCtrl/callback";
+	private final String PERIOD_RETURN_URL = HttpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
+	private final String SHOW_ORDER_URL = HttpUtil.getDomainURL() + "/app/user/orders";
+	private final String SHOW_ORDER_SUCCESS_URL = HttpUtil.getDomainURL() + "app/checkoutCreditCardSuccess";
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -181,12 +181,12 @@ public class AllpayCheckoutController {
 			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful);
-				response.setHeader("Location", HttpUtil.getDomainURL(request) + SHOW_ORDER_SUCCESS_URL);
+				response.setHeader("Location", SHOW_ORDER_SUCCESS_URL);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed);
-				response.setHeader("Location", HttpUtil.getDomainURL(request));
+				response.setHeader("Location", HttpUtil.getDomainURL());
 				out.println("0|" + enErrors);
 			}
 
@@ -209,8 +209,6 @@ public class AllpayCheckoutController {
 			@RequestParam("programId") Integer programId,
 			@RequestParam("duration") Integer duration,
 			HttpServletRequest request, HttpServletResponse response){
-		
-		String index = HttpUtil.getDomainURL(request);
 		
 		if(AssertUtils.anyIsEmpty(String.valueOf(orderId), String.valueOf(price), 
 				String.valueOf(programId), String.valueOf(duration))){
@@ -237,9 +235,9 @@ public class AllpayCheckoutController {
 			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
 			oPayment.MerchantID = DEBUG_MODE ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
-			oPayment.Send.ReturnURL = index;
-			oPayment.Send.ClientBackURL = index + ORDER_RESULT_URL;
-			oPayment.Send.OrderResultURL = index + ORDER_RESULT_URL;
+			oPayment.Send.ReturnURL = HttpUtil.getDomainURL();
+			oPayment.Send.ClientBackURL = ORDER_RESULT_URL;
+			oPayment.Send.OrderResultURL = ORDER_RESULT_URL;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
@@ -262,7 +260,7 @@ public class AllpayCheckoutController {
 			oPayment.SendExtend.PeriodType = PeriodType.Day;
 			oPayment.SendExtend.Frequency = duration;// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = MAX_EXCUTE_TIME;// "<<執行次數>>";
-			oPayment.SendExtend.PeriodReturnURL = index + PERIOD_RETURN_URL;
+			oPayment.SendExtend.PeriodReturnURL = PERIOD_RETURN_URL;
 			/* 產生訂單 */
 			enErrors.addAll(oPayment.CheckOut(response.getWriter()));
 			/* 產生產生訂單 Html Code 的方法 */
