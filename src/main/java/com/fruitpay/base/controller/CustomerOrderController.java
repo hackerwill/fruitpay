@@ -63,7 +63,7 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/updateOrder", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateOrder", method = RequestMethod.PUT)
 	public @ResponseBody CustomerOrder updateOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
@@ -75,7 +75,7 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/orders", method = RequestMethod.POST)
+	@RequestMapping(value = "/getOrders", method = RequestMethod.POST)
 	public @ResponseBody List<CustomerOrder> orders(){
 	
 		List<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder();
@@ -83,11 +83,11 @@ public class CustomerOrderController {
 		return customerOrders;
 	}
 	
-	@RequestMapping(value = "/order", method = RequestMethod.POST)
+	@RequestMapping(value = "/getOrder", method = RequestMethod.POST)
 	public @ResponseBody CustomerOrder getOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
-		if(customerOrder == null)
+		if(customerOrder == null || customerOrder.getOrderId() == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
 		customerOrder = customerOrderService.getCustomerOrder(customerOrder.getOrderId());
@@ -95,7 +95,17 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
+	@RequestMapping(value = "/deleteOrder", method = RequestMethod.DELETE)
+	public @ResponseBody CustomerOrder deleteOrder(
+			@RequestBody CustomerOrder customerOrder){
+		
+		if(customerOrder == null || customerOrder.getOrderId() == null)
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
+		customerOrderService.deleteOrder(customerOrder);
+		
+		return customerOrder;
+	}
 
 
 }

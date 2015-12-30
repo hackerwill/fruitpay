@@ -64,4 +64,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		return customerOrders;
 	}
 
+	@Override
+	public void deleteOrder(CustomerOrder customerOrder) {
+		
+		customerOrderDAO.delete(customerOrder);
+	}
+
 }

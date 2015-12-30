@@ -15,5 +15,7 @@ public interface CustomerOrderService {
 	public List<CustomerOrder> getAllCustomerOrder();
 	
 	public List<CustomerOrder> getCustomerOrdersByCustomerId(Integer customerId);
+	
+	public void deleteOrder(CustomerOrder customerOrder);
 
 }
