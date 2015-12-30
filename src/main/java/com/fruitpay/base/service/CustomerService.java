@@ -18,6 +18,6 @@ public interface CustomerService {
 	
 	public Customer saveCustomer(Customer customer);
 	
-	public Customer updateCustomer(Customer customer);
+	public void deleteCustomer(Customer customer);
 
 }

@@ -105,4 +105,16 @@ public class CustomerDataController {
 		return customer;
 	}
 	
+	@RequestMapping(value = "/deleteCustomer", method = RequestMethod.DELETE) 
+	public @ResponseBody boolean deleteCustomer(@RequestBody Customer customer){
+		
+		customer = customerService.findCustomer(customer.getCustomerId());
+		if(customer == null || customer.getCustomerId() == null)
+			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
+		//密碼加密
+		customerService.deleteCustomer(customer);
+		
+		return true;
+	}
+	
 }

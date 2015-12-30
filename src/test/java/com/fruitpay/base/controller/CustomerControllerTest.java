@@ -123,6 +123,35 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(jsonPath("$.firstName", is(customer.getFirstName())));
 		
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void deleteCustomer() throws Exception {
+		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		
+		this.mockMvc.perform(delete("/customerDataCtrl/deleteCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		this.mockMvc.perform(post("/loginCtrl/login")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
+	   		.andExpect(status().isNotFound())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		
+	}
 
 
 }
