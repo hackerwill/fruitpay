@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,8 +51,10 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	
 	@Test
 	public void getAllCustomerList() throws Exception {
-		List<Customer> customers = customerService.findAllCustomer();
-		Assert.assertTrue(customers.size() > 0);
+		int page =0; 
+		int size =10;
+		Page<Customer> customers = customerService.findAllCustomer(page,size);
+		Assert.assertTrue(customers.getContent().size() > 0);
 	}
 	
 	@Test
