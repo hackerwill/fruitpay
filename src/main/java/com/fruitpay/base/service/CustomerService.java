@@ -1,6 +1,6 @@
 package com.fruitpay.base.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.model.Customer;
 
@@ -10,7 +10,7 @@ public interface CustomerService {
 	
 	public Boolean isEmailExisted(String email);
 	
-	public List<Customer> findAllCustomer();
+	public Page<Customer> findAllCustomer(int page , int size);
 	
 	public Customer findCustomer(int customerId);
 	

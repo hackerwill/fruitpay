@@ -5,6 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> findAllCustomer() {
-		List<Customer> customers = customerDAO.findAll();
+	public Page<Customer> findAllCustomer(int page , int size) {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Page<Customer> customers = customerDAO.findAll(pageRequest);
 		return customers;
 	}
 

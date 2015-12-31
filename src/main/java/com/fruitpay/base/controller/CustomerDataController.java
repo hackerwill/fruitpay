@@ -7,11 +7,13 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.exception.HttpServiceException;
@@ -69,8 +71,10 @@ public class CustomerDataController {
 	}
 	
 	@RequestMapping(value = "/customers", method = RequestMethod.POST)
-	public @ResponseBody List<Customer> getAllCustomer(){
-		List<Customer> customers = customerService.findAllCustomer();
+	public @ResponseBody Page<Customer> getAllCustomer(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){
+		Page<Customer> customers = customerService.findAllCustomer(page , size);
 		return customers;
 	}
 	
