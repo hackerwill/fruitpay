@@ -9,10 +9,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.OrderStatus;
@@ -76,9 +78,11 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/getOrders", method = RequestMethod.POST)
-	public @ResponseBody List<CustomerOrder> orders(){
+	public @ResponseBody Page<CustomerOrder> orders(			
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){
 	
-		List<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder();
+		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(page , size);
 		
 		return customerOrders;
 	}
