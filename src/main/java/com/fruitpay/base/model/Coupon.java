@@ -40,13 +40,13 @@ public class Coupon extends AbstractDataBean implements Serializable{
 	@Column(name="max_limit")
 	private int maxLimit;
 	
-	@Column(name="max_limit")
+	@Column(name="min_limit")
 	private int minLimit;
 	
-	@Column(name="max_limit")
+	@Column(name="max_usage_per_coupon")
 	private int maxUsagePerCoupon;
 	
-	@Column(name="max_limit")
+	@Column(name="max_usage_per_user")
 	private int maxUsagePerUser;
 	
 	@ManyToOne

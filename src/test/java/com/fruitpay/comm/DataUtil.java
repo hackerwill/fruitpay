@@ -33,12 +33,14 @@ public class DataUtil {
 	
 	public Coupon getCoupon(){
 		Constant couponTypes = staticDataService.getConstant(8);
+		Constant yesOrNo = staticDataService.getConstant(7);
 		
 		Coupon coupon = new Coupon();
 		coupon.setCouponName("test");
 		coupon.setCouponType(couponTypes.getConstOptions().get(0));
 		coupon.setExpiryDay(new Date());
 		coupon.setValue(10);
+		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
 		return coupon;
 	}
 	
