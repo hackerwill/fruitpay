@@ -58,8 +58,8 @@ public abstract class EmailContentService<T> {
 	
 	private Map<String,String> replaceNullWithEmptyStr(Map<String,String> map){
 		for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
-			String key = map.get(iterator.next());
-			if(AssertUtils.isEmpty(key))
+			String key = iterator.next();
+			if(AssertUtils.isEmpty(map.get(key)))
 				map.put(key, "");
 		}
 		return map;

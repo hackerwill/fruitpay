@@ -136,6 +136,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JsonProperty("receiptWay")
 	private ConstantOption receiptWay;
 	
+	@ManyToOne
+	@JoinColumn(name="delivery_day")
+	@JsonProperty("deliveryDay")
+	private ConstantOption deliveryDay;
+	
 	@Column(name="shipping_cost")
 	private Integer shippingCost;
 	
@@ -420,6 +425,14 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setProgramNum(Integer programNum) {
 		this.programNum = programNum;
+	}
+
+	public ConstantOption getDeliveryDay() {
+		return deliveryDay;
+	}
+
+	public void setDeliveryDay(ConstantOption deliveryDay) {
+		this.deliveryDay = deliveryDay;
 	}
 
 }

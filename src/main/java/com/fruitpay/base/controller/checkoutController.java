@@ -62,7 +62,9 @@ public class checkoutController {
 		
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
-		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
+		//前一天
+		customerOrder.setShipmentDay(staticDataService.getShipmentDay(
+				getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
 		customerOrder.setShippingCost(customerOrder.getPaymentMode().getPaymentExtraPrice());
 		customerOrder.setTotalPrice(getTotalPrice(customerOrder));
 		
@@ -102,6 +104,13 @@ public class checkoutController {
 		return customerOrder;
 	}
 	
+	private int getPreviousDayInt(int day){
+		if(day == 1)
+			return 7;
+		else
+			return day - 1;
+	}
+	
 	private int getTotalPrice(CustomerOrder customerOrder){
 		return customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum() + 
 				customerOrder.getPaymentMode().getPaymentExtraPrice();
@@ -110,7 +119,7 @@ public class checkoutController {
 	@RequestMapping(value = "/getReceiveDay", method = RequestMethod.GET)
 	public @ResponseBody DateStr getReceiveDay(){
 		
-		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime()));
+		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime(), DayOfWeek.WEDNESDAY));
 		return dateStr;
 	}
 	

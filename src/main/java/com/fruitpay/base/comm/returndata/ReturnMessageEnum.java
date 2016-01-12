@@ -65,5 +65,17 @@ public class ReturnMessageEnum{
 		}
 	}
 	
+	public enum Coupon{
+		CouponNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個優惠券號碼", HttpStatus.NOT_FOUND));
+	
+		private ReturnMessage rm;
+		Coupon(ReturnMessage rm){
+			this.rm = rm;
+		}
+		public ReturnMessage getReturnMessage(){
+			return rm;
+		}
+	}
+	
 }
 
