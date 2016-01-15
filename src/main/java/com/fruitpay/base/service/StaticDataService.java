@@ -1,5 +1,6 @@
 package com.fruitpay.base.service;
 
+import java.time.DayOfWeek;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,6 @@ public interface StaticDataService {
 	
 	public ShipmentDay getShipmentDay(Integer shipmentDaysId);
 	
-	public String getNextReceiveDay(Date nowTime);
+	public String getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek);
 
 }

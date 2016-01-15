@@ -25,7 +25,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Id
 	@Column(name="order_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer orderId;
+	private int orderId;
 
 	
 	@Column(name="order_date")
@@ -87,7 +87,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private OrderProgram orderProgram;
 	
 	@Column(name="program_num")
-	private Integer programNum;
+	private int programNum;
 
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
@@ -136,21 +136,33 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JsonProperty("receiptWay")
 	private ConstantOption receiptWay;
 	
+	@ManyToOne
+	@JoinColumn(name="delivery_day")
+	@JsonProperty("deliveryDay")
+	private ConstantOption deliveryDay;
+	
 	@Column(name="shipping_cost")
-	private Integer shippingCost;
+	private int shippingCost;
 	
 	@Column(name="total_price")
-	private Integer totalPrice;
+	private int totalPrice;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	  @JoinTable(
+	      name="CouponRecord",
+	      joinColumns={@JoinColumn(name="order_id", referencedColumnName="order_id")},
+	      inverseJoinColumns={@JoinColumn(name="coupon_id", referencedColumnName="coupon_id")})
+	private List<Coupon> coupons;
 	
 
 	public CustomerOrder() {
 	}
 
-	public Integer getOrderId() {
+	public int getOrderId() {
 		return this.orderId;
 	}
 
-	public void setOrderId(Integer orderId) {
+	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 
@@ -398,28 +410,53 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.receiptVatNumber = receiptVatNumber;
 	}
 
-	public Integer getShippingCost() {
+	public int getShippingCost() {
 		return shippingCost;
 	}
 
-	public void setShippingCost(Integer shippingCost) {
+	public void setShippingCost(int shippingCost) {
 		this.shippingCost = shippingCost;
 	}
 
-	public Integer getTotalPrice() {
+	public int getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Integer totalPrice) {
+	public void setTotalPrice(int totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-	public Integer getProgramNum() {
+	public int getProgramNum() {
 		return programNum;
 	}
 
-	public void setProgramNum(Integer programNum) {
+	public void setProgramNum(int programNum) {
 		this.programNum = programNum;
 	}
 
+	public ConstantOption getDeliveryDay() {
+		return deliveryDay;
+	}
+
+	public void setDeliveryDay(ConstantOption deliveryDay) {
+		this.deliveryDay = deliveryDay;
+	}
+	
+	public List<Coupon> getCoupons() {
+		return this.coupons;
+	}
+
+	public void setCoupons(List<Coupon> coupons) {
+		this.coupons = coupons;
+	}
+
+	public Coupon addCoupon(Coupon coupon) {
+		getCoupons().add(coupon);
+		return coupon;
+	}
+
+	public Coupon removeCoupon(Coupon coupon) {
+		getCoupons().remove(coupon);
+		return coupon;
+	}
 }

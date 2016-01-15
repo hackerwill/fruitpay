@@ -9,10 +9,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.OrderStatus;
@@ -24,6 +26,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Controller
@@ -63,7 +66,7 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/updateOrder", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateOrder", method = RequestMethod.PUT)
 	public @ResponseBody CustomerOrder updateOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
@@ -75,19 +78,21 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/orders", method = RequestMethod.POST)
-	public @ResponseBody List<CustomerOrder> orders(){
+	@RequestMapping(value = "/getOrders", method = RequestMethod.POST)
+	public @ResponseBody Page<CustomerOrder> orders(			
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){
 	
-		List<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder();
+		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(page , size);
 		
 		return customerOrders;
 	}
 	
-	@RequestMapping(value = "/order", method = RequestMethod.POST)
+	@RequestMapping(value = "/getOrder", method = RequestMethod.POST)
 	public @ResponseBody CustomerOrder getOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
-		if(customerOrder == null)
+		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
 		customerOrder = customerOrderService.getCustomerOrder(customerOrder.getOrderId());
@@ -95,7 +100,17 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
+	@RequestMapping(value = "/deleteOrder", method = RequestMethod.DELETE)
+	public @ResponseBody CustomerOrder deleteOrder(
+			@RequestBody CustomerOrder customerOrder){
+		
+		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
+		customerOrderService.deleteOrder(customerOrder);
+		
+		return customerOrder;
+	}
 
 
 }

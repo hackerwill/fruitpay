@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.fruitpay.base.comm.exception.HttpServiceException;
@@ -59,9 +61,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
-	public List<CustomerOrder> getAllCustomerOrder() {
-		List<CustomerOrder> customerOrders = customerOrderDAO.findAll();
+	public Page<CustomerOrder> getAllCustomerOrder(int page , int size) {
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findAll(new PageRequest(page, size));
 		return customerOrders;
+	}
+
+	@Override
+	public void deleteOrder(CustomerOrder customerOrder) {
+		
+		customerOrderDAO.delete(customerOrder);
 	}
 
 }

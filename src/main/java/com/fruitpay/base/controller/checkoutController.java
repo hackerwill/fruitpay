@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
@@ -62,9 +64,11 @@ public class checkoutController {
 		
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
-		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
+		//前一天
+		customerOrder.setShipmentDay(staticDataService.getShipmentDay(
+				getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
 		customerOrder.setShippingCost(customerOrder.getPaymentMode().getPaymentExtraPrice());
-		customerOrder.setTotalPrice(getTotalPrice(customerOrder));
+		customerOrder.setTotalPrice(checkoutService.getTotalPrice(customerOrder));
 		
 		
 		if(customer == null || customerOrder == null)
@@ -102,15 +106,41 @@ public class checkoutController {
 		return customerOrder;
 	}
 	
-	private int getTotalPrice(CustomerOrder customerOrder){
-		return customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum() + 
-				customerOrder.getPaymentMode().getPaymentExtraPrice();
+	private int getPreviousDayInt(int day){
+		if(day == 1)
+			return 7;
+		else
+			return day - 1;
 	}
 	
-	@RequestMapping(value = "/getReceiveDay", method = RequestMethod.GET)
-	public @ResponseBody DateStr getReceiveDay(){
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public @ResponseBody Integer getTotalPrice(){
 		
-		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime()));
+		return 10;
+	}
+	
+	@RequestMapping(value = "/totalPrice", method = RequestMethod.POST)
+	public @ResponseBody Integer getTotalPrice(@RequestBody CustomerOrder customerOrder){
+		
+		if(customerOrder == null || customerOrder.getOrderProgram() == null)
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		return checkoutService.getTotalPrice(customerOrder);
+	}
+	
+	@RequestMapping(value = "/totalPriceWithoutShipment", method = RequestMethod.POST)
+	public @ResponseBody Integer getTotalPriceWithoutShipment(@RequestBody CustomerOrder customerOrder){
+		
+		if(customerOrder == null || customerOrder.getOrderProgram() == null)
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		return checkoutService.getTotalPriceWithoutShipment(customerOrder);
+	}
+	
+	@RequestMapping(value = "/getReceiveDay/{dayOfWeek}", method = RequestMethod.GET)
+	public @ResponseBody DateStr getReceiveDay(@PathVariable int dayOfWeek){
+		
+		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime(), DayOfWeek.of(dayOfWeek)));
 		return dateStr;
 	}
 	

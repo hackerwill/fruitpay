@@ -1,6 +1,7 @@
 package com.fruitpay.comm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPlatform;
@@ -27,6 +29,28 @@ public class DataUtil {
 	
 	@Inject
 	StaticDataService staticDataService;
+	
+	public List<Coupon> getCouponList(){
+		List<Coupon> coupons = new ArrayList<Coupon>();
+		coupons.add(getCoupon());
+		return coupons;
+	}
+	
+	
+	public Coupon getCoupon(){
+		Constant couponTypes = staticDataService.getConstant(8);
+		Constant yesOrNo = staticDataService.getConstant(7);
+		
+		Coupon coupon = new Coupon();
+		coupon.setCouponName("test");
+		coupon.setCouponDesc("測試資料");
+		coupon.setCouponType(couponTypes.getConstOptions().get(0));
+		coupon.setExpiryDay(new Date());
+		coupon.setValue(10);
+		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
+		
+		return coupon;
+	}
 	
 	public Customer getSignupCustomer(){
 		Customer customer = new Customer();
@@ -94,6 +118,9 @@ public class DataUtil {
 		Constant receiptWays =  staticDataService.getConstant(4);
 		ConstantOption receiptWay = receiptWays.getConstOptions().get(0);
 		
+		Constant deliveryDays =  staticDataService.getConstant(6);
+		ConstantOption deliveryDay = deliveryDays.getConstOptions().get(0);
+		
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderPlatform(orderPlatform);
 		customerOrder.setOrderProgram(orderProgram);
@@ -113,6 +140,7 @@ public class DataUtil {
 		customerOrder.setShipmentTime(shipmentTime);
 		customerOrder.setComingFrom(comingFrom);
 		customerOrder.setReceiptWay(receiptWay);
+		customerOrder.setDeliveryDay(deliveryDay);
 		customerOrder.setAllowForeignFruits("Y");
 		customerOrder.setProgramNum(1);
 		

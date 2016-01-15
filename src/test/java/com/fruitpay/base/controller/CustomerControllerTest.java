@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,8 +51,10 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	
 	@Test
 	public void getAllCustomerList() throws Exception {
-		List<Customer> customers = customerService.findAllCustomer();
-		Assert.assertTrue(customers.size() > 0);
+		int page =0; 
+		int size =10;
+		Page<Customer> customers = customerService.findAllCustomer(page,size);
+		Assert.assertTrue(customers.getContent().size() > 0);
 	}
 	
 	@Test
@@ -121,6 +124,35 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.email", is(customer.getEmail())))
 	   		.andExpect(jsonPath("$.firstName", is(customer.getFirstName())));
+		
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void deleteCustomer() throws Exception {
+		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		
+		this.mockMvc.perform(delete("/customerDataCtrl/deleteCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		this.mockMvc.perform(post("/loginCtrl/login")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
+	   		.andExpect(status().isNotFound())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
 		
 	}
 
