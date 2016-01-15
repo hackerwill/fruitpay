@@ -70,9 +70,9 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 		
 	}
 	
-	@Test
+	/*@Test
 	@Rollback(true)
-	@Transactional
+	@Transactional*/
 	public void addCouponAndUpdateAndDelete() throws Exception {
 		
 		Coupon coupon = dataUtil.getCoupon();
