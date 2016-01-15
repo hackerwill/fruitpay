@@ -31,6 +31,12 @@ public class CouponServiceImpl implements CouponService {
 		Coupon coupon = couponDAO.findOne(couponId);
 		return coupon;
 	}
+	
+	@Override
+	public Coupon findByCouponName(String couponName) {
+		Coupon coupon = couponDAO.findByCouponName(couponName);
+		return coupon;
+	}
 
 	@Override
 	@Transactional
@@ -57,6 +63,7 @@ public class CouponServiceImpl implements CouponService {
 	public void delete(Coupon coupon) {
 		couponDAO.delete(coupon);
 	}
+
 	
 
 }

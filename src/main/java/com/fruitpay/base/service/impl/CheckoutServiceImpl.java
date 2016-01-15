@@ -11,6 +11,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
@@ -78,6 +79,23 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		customerOrderDAO.saveAndFlush(customerOrder);
 		return customerOrder;
+	}
+	
+	@Override
+	public int getTotalPrice(CustomerOrder customerOrder){
+		return getTotalPriceWithoutShipment(customerOrder) 
+				+ customerOrder.getPaymentMode().getPaymentExtraPrice();
+	}
+
+	@Override
+	public int getTotalPriceWithoutShipment(CustomerOrder customerOrder) {
+		//加上Coupon打折的金額
+		int totalProductsPrice = customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum();
+		for (int i = 0; i < customerOrder.getCoupons().size(); i++) {
+			Coupon coupon = customerOrder.getCoupons().get(i);
+			totalProductsPrice = (int)(totalProductsPrice * coupon.getDiscountPercentage());
+		}
+		return totalProductsPrice;
 	}
 
 }

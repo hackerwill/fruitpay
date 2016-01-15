@@ -24,4 +24,15 @@ public interface CheckoutService {
 	 * */
 	public CustomerOrder checkoutOrder(Customer customer, CustomerOrder customerOrder);
 	
+	/**
+	 * 計算產品總價格
+	 * 
+	 * */
+	public int getTotalPrice(CustomerOrder customerOrder);
+	
+	/**
+	 * 計算產品總價格(不包含運費)
+	 * 
+	 * */
+	public int getTotalPriceWithoutShipment(CustomerOrder customerOrder);
 }

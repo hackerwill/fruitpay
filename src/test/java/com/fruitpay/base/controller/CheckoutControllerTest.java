@@ -11,17 +11,18 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.CheckoutPostBean;
-import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.CustomerOrder;
-import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CouponService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.comm.service.EmailSendService;
-import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
 
@@ -31,7 +32,8 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -45,8 +47,10 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	
 	@Inject
 	DataUtil dataUtil;
-	@Inject 
-	private StaticDataService staticDataService;
+	@Inject
+	CouponService couponService;
+	@Inject
+	CheckoutService checkoutService;
 	
 	private MockMvc mockMvc;
 	
@@ -64,10 +68,12 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void checkout() throws Exception {
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
 		
+		customerOrder.setCoupons(new ArrayList<Coupon>());
 		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
 		checkoutPostBean.setCustomer(dataUtil.getCheckoutCustomer());
-		checkoutPostBean.setCustomerOrder(dataUtil.getCustomerOrder());
+		checkoutPostBean.setCustomerOrder(customerOrder);
 		
 		this.mockMvc.perform(post("/checkoutCtrl/checkout")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -84,5 +90,58 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
 		
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void checkoutWithCoupon() throws Exception {
+		
+		//add
+		this.mockMvc.perform(post("/couponCtrl/coupon")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCoupon())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getCoupon().getCouponName())))
+	   		.andExpect(jsonPath("$.value", is(dataUtil.getCoupon().getValue())));
+		
+		Coupon coupon = couponService.findByCouponName(dataUtil.getCoupon().getCouponName());
+		List<Coupon> coupons = new ArrayList<Coupon>() ;
+		coupons.add(coupon);
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		customerOrder.setCoupons(coupons);
+		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
+		checkoutPostBean.setCustomer(dataUtil.getCheckoutCustomer());
+		checkoutPostBean.setCustomerOrder(customerOrder);
+		
+		this.mockMvc.perform(post("/checkoutCtrl/checkout")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())))
+	   		.andExpect(jsonPath("$.totalPrice", is(449)));
+		
+		this.mockMvc.perform(post("/loginCtrl/login")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isForbidden())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
+		
+	}
+	
+	@Test 
+	public void calculateTotalPriceWithCoupon() throws Exception{
+		
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		customerOrder.setCoupons(dataUtil.getCouponList());
+		
+		this.mockMvc.perform(post("/checkoutCtrl/totalPrice")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customerOrder)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().string("449"));
+	} 
 
 }

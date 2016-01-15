@@ -10,6 +10,8 @@ public interface CouponService {
 	
 	public Coupon findById(Integer couponId);
 	
+	public Coupon findByCouponName(String couponName);
+	
 	public Coupon add(Coupon coupon);
 	
 	public Coupon update(Coupon coupon);

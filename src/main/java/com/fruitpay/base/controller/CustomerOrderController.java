@@ -26,6 +26,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Controller
@@ -91,7 +92,7 @@ public class CustomerOrderController {
 	public @ResponseBody CustomerOrder getOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
-		if(customerOrder == null || customerOrder.getOrderId() == null)
+		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
 		customerOrder = customerOrderService.getCustomerOrder(customerOrder.getOrderId());
@@ -103,7 +104,7 @@ public class CustomerOrderController {
 	public @ResponseBody CustomerOrder deleteOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
-		if(customerOrder == null || customerOrder.getOrderId() == null)
+		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
 		customerOrderService.deleteOrder(customerOrder);

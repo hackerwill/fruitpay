@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,8 +28,14 @@ public class CouponController {
 	}
 	
 	@RequestMapping(value = "/coupon/{couponId}", method = RequestMethod.GET)
-	public @ResponseBody Coupon getCoupon(Integer couponId){
+	public @ResponseBody Coupon getCoupon(@PathVariable Integer couponId){
 		Coupon coupon = couponService.findById(couponId);
+		return coupon;
+	}
+	
+	@RequestMapping(value = "/coupon/name/{couponName}", method = RequestMethod.GET)
+	public @ResponseBody Coupon getCouponName(@PathVariable String couponName){
+		Coupon coupon = couponService.findByCouponName(couponName);
 		return coupon;
 	}
 	

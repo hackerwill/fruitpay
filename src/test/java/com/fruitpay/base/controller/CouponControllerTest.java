@@ -50,6 +50,29 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Rollback(true)
 	@Transactional
+	public void addCouponGetByCouponName() throws Exception {
+		Coupon coupon = dataUtil.getCoupon();
+		
+		//add
+		this.mockMvc.perform(post("/couponCtrl/coupon")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(coupon)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getCoupon().getCouponName())))
+	   		.andExpect(jsonPath("$.value", is(coupon.getValue())));
+		
+		//find
+		this.mockMvc.perform(get("/couponCtrl/coupon/name/" + coupon.getCouponName()))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.couponName", is(coupon.getCouponName())));
+		
+	}
+	
+	@Test
+	@Rollback(true)
+	@Transactional
 	public void addCouponAndUpdateAndDelete() throws Exception {
 		
 		Coupon coupon = dataUtil.getCoupon();

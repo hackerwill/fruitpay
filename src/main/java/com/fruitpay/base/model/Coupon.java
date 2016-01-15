@@ -26,11 +26,15 @@ public class Coupon extends AbstractDataBean implements Serializable{
 	@Column(name="coupon_name")
 	private String couponName;
 	
+	@Column(name="coupon_desc")
+	private String couponDesc;
+	
 	@ManyToOne
 	@JoinColumn(name="coupon_type")
 	@JsonProperty("couponType")
 	private ConstantOption couponType;
 	
+	@Column(name="value")
 	private int value;
 	
 	@Column(name="expiry_day")
@@ -68,6 +72,14 @@ public class Coupon extends AbstractDataBean implements Serializable{
 
 	public void setCouponName(String couponName) {
 		this.couponName = couponName;
+	}
+
+	public String getCouponDesc() {
+		return couponDesc;
+	}
+
+	public void setCouponDesc(String couponDesc) {
+		this.couponDesc = couponDesc;
 	}
 
 	public ConstantOption getCouponType() {
@@ -132,6 +144,10 @@ public class Coupon extends AbstractDataBean implements Serializable{
 
 	public void setUsageIndividually(ConstantOption usageIndividually) {
 		this.usageIndividually = usageIndividually;
+	}
+	
+	public double getDiscountPercentage(){
+		return (100 - this.value) / 100.0;
 	}
 
 }

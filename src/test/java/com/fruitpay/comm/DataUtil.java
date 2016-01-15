@@ -30,6 +30,12 @@ public class DataUtil {
 	@Inject
 	StaticDataService staticDataService;
 	
+	public List<Coupon> getCouponList(){
+		List<Coupon> coupons = new ArrayList<Coupon>();
+		coupons.add(getCoupon());
+		return coupons;
+	}
+	
 	
 	public Coupon getCoupon(){
 		Constant couponTypes = staticDataService.getConstant(8);
@@ -37,10 +43,12 @@ public class DataUtil {
 		
 		Coupon coupon = new Coupon();
 		coupon.setCouponName("test");
+		coupon.setCouponDesc("測試資料");
 		coupon.setCouponType(couponTypes.getConstOptions().get(0));
 		coupon.setExpiryDay(new Date());
 		coupon.setValue(10);
 		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
+		
 		return coupon;
 	}
 	
