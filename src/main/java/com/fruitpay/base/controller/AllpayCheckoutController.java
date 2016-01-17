@@ -49,7 +49,7 @@ public class AllpayCheckoutController {
 	private final String TEST_HASH_IV = "v77hoKGq4kWxNNIS";
 	private final String TEST_MERCHANT_ID = "2000132";
 	
-	private final String SERVICE_URL = "http://payment.allpay.com.tw/Cashier/AioCheckOut";
+	private final String SERVICE_URL = "https://payment.allpay.com.tw/Cashier/AioCheckOut";
 	private final String HASH_KEY = "gXLhKG6NYxJOosdd";
 	private final String HASH_IV = "z2G1om86YlJ35noj";
 	private final String MERCHANT_ID = "1074763";
