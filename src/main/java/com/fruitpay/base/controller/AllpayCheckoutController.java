@@ -37,7 +37,7 @@ import AllPay.Payment.Integration.PeriodType;
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
 	
-	private boolean DEBUG_MODE = false;
+	private boolean DEBUG_MODE = true;
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final String ORDER_RESULT_URL = HttpUtil.getDomainURL() + "allpayCtrl/callback";
 	private final String PERIOD_RETURN_URL = HttpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
