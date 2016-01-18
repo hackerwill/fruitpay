@@ -31,7 +31,7 @@
 	<mvc:cors>
 
 	<mvc:mapping path="/**"
-		allowed-origins="http://beta.fruitpay.com.tw,http://139.162.2.196:8080/fruitpay,http://localhost:8888,http://payment-stage.allpay.com.tw,https://payment.allpay.com.tw,https://pay.allpay.com.tw,https://credit.allpay.com.tw""
+		allowed-origins="*""
 		allowed-methods="GET,POST,PUT,DELETE,OPTIONS"
 		allow-credentials="false"
 		max-age="3600" />
