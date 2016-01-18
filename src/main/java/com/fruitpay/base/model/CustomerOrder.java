@@ -459,4 +459,5 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		getCoupons().remove(coupon);
 		return coupon;
 	}
+	
 }

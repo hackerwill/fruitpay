@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.HttpUtil;
@@ -62,6 +64,8 @@ public class AllpayCheckoutController {
 	private CheckoutService checkoutService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	CustomerOrderService customerOrderService;
 	
 	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
 	public void callbackTest( 
@@ -241,7 +245,7 @@ public class AllpayCheckoutController {
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
-			oPayment.Send.TradeDesc = "no";
+			oPayment.Send.TradeDesc = programName;
 			oPayment.Send.ChoosePayment = PaymentMethod.Credit;
 			oPayment.Send.Remark = "";
 			oPayment.Send.ChooseSubPayment = PaymentMethodItem.None;

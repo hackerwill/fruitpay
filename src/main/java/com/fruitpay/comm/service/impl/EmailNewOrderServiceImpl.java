@@ -1,10 +1,13 @@
 package com.fruitpay.comm.service.impl;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.comm.model.EmailComponent;
 import com.fruitpay.comm.service.EmailContentService;
@@ -28,8 +31,11 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 		map.put("ORDER_ID", String.valueOf(order.getOrderId()));
 		map.put("ORDER_DATE", order.getOrderDate().toString());
 		map.put("ORDER_PROGRAM_NAME", order.getOrderProgram().getProgramName());
-		map.put("TOTAL_PRICE", String.valueOf(order.getOrderProgram().getPrice() + order.getPaymentMode().getPaymentExtraPrice()));
+		map.put("TOTAL_PRICE", String.valueOf(order.getTotalPrice()));
 		map.put("PRICE", String.valueOf(order.getOrderProgram().getPrice()));
+		map.put("COUPON_DESC",  getCouponDescs(order.getCoupons()));
+		map.put("PRODUCT_NUMBER", String.valueOf(order.getProgramNum()));
+		map.put("COUPON_DISCOUNT", getCouponDiscount(order.getCoupons()));
 		map.put("PAYMENT_MODE_NAME", order.getPaymentMode().getPaymentModeName());
 		map.put("PAYMENT_EXTRA_PRICE", String.valueOf(order.getPaymentMode().getPaymentExtraPrice()));
 		map.put("EMAIL", order.getCustomer().getEmail());
@@ -40,6 +46,25 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 		map.put("RECEIVER_ADDRESS", order.getPostalCode().toString() + order.getReceiverAddress());
 		
 		return map;
+	}
+	
+	private String getCouponDescs(List<Coupon> coupons){
+		StringBuilder sb = new StringBuilder();
+		coupons.forEach(coupon -> sb.append(coupon.getCouponDesc() + " "));
+		return sb.toString();
+	}
+	
+	private String getCouponDiscount(List<Coupon> coupons){
+		Double percentage = 1.0;
+		if(coupons.isEmpty())
+			return "";
+		
+		for (Iterator<Coupon> iterator = coupons.iterator(); iterator.hasNext();) {
+			Coupon coupon = iterator.next();
+			percentage *= coupon.getDiscountPercentage();
+		}
+		
+		return " * " + String.valueOf(percentage);
 	}
 
 	@Override
