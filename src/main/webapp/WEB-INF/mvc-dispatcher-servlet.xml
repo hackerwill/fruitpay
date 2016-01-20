@@ -6,6 +6,7 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -18,7 +19,9 @@
         http://www.springframework.org/schema/task 
         http://www.springframework.org/schema/task/spring-task-3.0.xsd
         http://www.springframework.org/schema/data/jpa
-    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    	http://www.springframework.org/schema/util 
+    	http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<context:annotation-config />
 	<context:component-scan base-package="com.fruitpay" />
@@ -56,5 +59,11 @@
  		  p:entityManagerFactory-ref="entityManagerFactory" />
   
 	 <tx:annotation-driven transaction-manager="transactionManager" />
+	 
+	<util:map id="configXmlMap" map-class="java.util.HashMap">
+	    <entry key="DEBUG_MODE" value="false"/>
+	</util:map>
+	 
+	 
 
 </beans>

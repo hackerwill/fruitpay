@@ -56,5 +56,9 @@
  		  p:entityManagerFactory-ref="entityManagerFactory" />
   
 	 <tx:annotation-driven transaction-manager="transactionManager" />
+	 
+	 <util:map id="configXmlMap" map-class="java.util.HashMap">
+	    <entry key="DEBUG_MODE" value="false"/>
+	</util:map>
 
 </beans>

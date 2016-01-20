@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.ConfigMap;
 import com.fruitpay.comm.utils.HttpUtil;
 
 import AllPay.Payment.Integration.AllInOne;
@@ -34,12 +37,12 @@ import AllPay.Payment.Integration.Item;
 import AllPay.Payment.Integration.PaymentMethod;
 import AllPay.Payment.Integration.PaymentMethodItem;
 import AllPay.Payment.Integration.PeriodType;
+import javassist.NotFoundException;
 
 @Controller
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
 	
-	private boolean DEBUG_MODE = true;
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final String ORDER_RESULT_URL = HttpUtil.getDomainURL() + "allpayCtrl/callback";
 	private final String SHOW_ORDER_SUCCESS_POST_URL = HttpUtil.getDomainURL() + "allpayCtrl/checkoutCreditCardSuccess";
@@ -59,8 +62,8 @@ public class AllpayCheckoutController {
 	
 	private final Integer MAX_EXCUTE_TIME = 999;
 	
-	
-	
+	@Inject
+	ConfigMap configMap;
 	@Inject
 	private CheckoutService checkoutService;
 	@Inject
@@ -96,8 +99,8 @@ public class AllpayCheckoutController {
 		try {
 			out = response.getWriter();
 			AllInOne oPayment = new AllInOne();
-			oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
-			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
+			oPayment.HashKey = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_IV : HASH_IV;
 
 			Hashtable<String, String> htFeedback = new Hashtable<String, String>();
 			enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request));
@@ -242,10 +245,10 @@ public class AllpayCheckoutController {
 			AllInOne oPayment = new AllInOne();
 			/* 服務參數 */
 			oPayment.ServiceMethod = HttpMethod.HttpPOST;
-			oPayment.ServiceURL = DEBUG_MODE ? TEST_SERVICE_URL : SERVICE_URL;
-			oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
-			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
-			oPayment.MerchantID = DEBUG_MODE ? TEST_MERCHANT_ID : MERCHANT_ID;
+			oPayment.ServiceURL = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_SERVICE_URL : SERVICE_URL;
+			oPayment.HashKey = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_IV : HASH_IV;
+			oPayment.MerchantID = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
 			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
 			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL;
