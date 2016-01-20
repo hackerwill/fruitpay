@@ -80,6 +80,8 @@ public class AllpayCheckoutController {
 	@RequestMapping(value = "/checkoutCreditCardSuccess", method = RequestMethod.POST)
 	public void checkoutCreditCardSuccess( 
 			HttpServletRequest request, HttpServletResponse response){
+
+		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL);
 	}
 	
@@ -88,7 +90,6 @@ public class AllpayCheckoutController {
 		
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 
 		List<String> enErrors = new ArrayList<String>();
 		String szMerchantTradeNo = "";
