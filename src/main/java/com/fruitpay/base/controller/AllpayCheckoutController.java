@@ -39,7 +39,7 @@ import AllPay.Payment.Integration.PeriodType;
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
 	
-	private boolean DEBUG_MODE = false;
+	private boolean DEBUG_MODE = true;
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final String ORDER_RESULT_URL = HttpUtil.getDomainURL() + "allpayCtrl/callback";
 	private final String PERIOD_RETURN_URL = HttpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
@@ -185,7 +185,7 @@ public class AllpayCheckoutController {
 			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful);
-				response.setHeader("Location", SHOW_ORDER_SUCCESS_URL);
+				//response.setHeader("Location", SHOW_ORDER_SUCCESS_URL);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
@@ -239,9 +239,9 @@ public class AllpayCheckoutController {
 			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
 			oPayment.MerchantID = DEBUG_MODE ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
-			oPayment.Send.ReturnURL = HttpUtil.getDomainURL();
-			oPayment.Send.ClientBackURL = ORDER_RESULT_URL;
-			oPayment.Send.OrderResultURL = ORDER_RESULT_URL;
+			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
+			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_URL;
+			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_URL;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
