@@ -1,8 +1,10 @@
 package com.fruitpay.base.controller;
 
-
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,18 +21,22 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
+import com.fruitpay.comm.auth.LoginConst;
 import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
+import com.fruitpay.comm.session.FPSessionUtil;
+import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
+import com.fruitpay.comm.utils.StringUtil;
 
 @Controller
 @RequestMapping("loginCtrl")
 public class LoginController {
-	
+
 	private final Logger logger = Logger.getLogger(this.getClass());
-	
+
 	@Inject
 	private LoginService loginService;
 	@Inject
@@ -38,91 +44,124 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody Customer loginAsOneCustomer(@RequestBody Customer customer,
-			HttpServletRequest request, HttpServletResponse response){
-		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());
-		if(AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword()))
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-		
-		Customer returnCustomer = loginService.login(customer.getEmail(), customer.getPassword());
-		return returnCustomer;
-	}
-	
-	@RequestMapping(value = "/loginById", method = RequestMethod.POST)
-	public @ResponseBody Customer loginByIdAsOneCustomer(@RequestBody Customer customer,
-			HttpServletRequest request, HttpServletResponse response){
-		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());
-		if(AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()), customer.getPassword())){
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+			HttpServletRequest request, HttpServletResponse response) {
+		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());	
+		Customer returnCustomer = null;
+		try {
+			if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword()))
+				throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+			returnCustomer = loginService.login(customer.getEmail(), customer.getPassword());			
+			/*** normal login: create user token ***/
+			if (returnCustomer != null) {
+				try {
+					String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.NORMAL);
+					returnCustomer.setToken(token);
+				} catch (Exception e) {
+					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("login error when LoginController: " + e);
 		}
-		Customer returnCustomer = 
-				loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());
 		return returnCustomer;
 	}
-	
+
+	@RequestMapping(value = "/loginById", method = RequestMethod.POST)
+	public @ResponseBody Customer  loginByIdAsOneCustomer(@RequestBody Customer customer, HttpServletRequest request,
+			HttpServletResponse response) {
+		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());		
+		Customer returnCustomer =null;
+		try {
+			if (AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()), customer.getPassword())) {
+				throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+			}	
+			returnCustomer = loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());			
+			/*** normal login: create user token ***/
+			if (returnCustomer != null) {
+				try {
+					Cookie[] cookie = request.getCookies();
+					if (cookie!=null){
+				        for (Cookie c : cookie){
+				            if(c.getName().equalsIgnoreCase("uId")){
+				            	//returnCustomer.setToken(String.valueOf(c.getName().equalsIgnoreCase("uId")));
+				            	break;
+				            }
+				}
+				        String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.LOGINBYID);
+						returnCustomer.setToken(token);
+					}
+					
+				} catch (Exception e) {
+					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("login error when LoginController: " + e);
+		}
+		return returnCustomer;
+	}
+
 	@RequestMapping(value = "/fbLogin", method = RequestMethod.POST)
-	public @ResponseBody Customer fbLoginAsOneCustomer(@RequestBody Customer customer, 
-			HttpServletRequest request, HttpServletResponse response){
-		
+	public @ResponseBody Customer fbLoginAsOneCustomer(@RequestBody Customer customer, HttpServletRequest request,
+			HttpServletResponse response) {
+
 		logger.debug("LoginController#fbLoginAsOneCustomer fbId=" + customer.getFbId());
-		if(AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())){
+		if (AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
 		Customer returnCustomer = loginService.fbLogin(customer);
 		return returnCustomer;
 	}
-	
-	@RequestMapping(value = "/signup", method = RequestMethod.POST )
-	public @ResponseBody Customer SignupAsOneCustomer(@RequestBody Customer customer){
-		
-		if(AssertUtils.anyIsEmpty(
-				customer.getEmail(), customer.getPassword(),
-				customer.getFirstName(), customer.getLastName())){
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage()); 
+
+	@RequestMapping(value = "/signup", method = RequestMethod.POST)
+	public @ResponseBody Customer SignupAsOneCustomer(@RequestBody Customer customer) {
+
+		if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword(), customer.getFirstName(),
+				customer.getLastName())) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
-		
+
 		customer = loginService.signup(customer);
 		emailSendService.sendTo(MailType.NEW_MEMBER, customer.getEmail(), customer);
 		return customer;
-		
+
 	}
-	
+
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public @ResponseBody ReturnMessage logout(
-			HttpServletRequest request, HttpServletResponse response){
-		
+	public @ResponseBody ReturnMessage logout(HttpServletRequest request, HttpServletResponse response) {
+
 		return ReturnMessageEnum.Common.Success.getReturnMessage();
 	}
-	
+
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd,
-			HttpServletRequest request, HttpServletResponse response){
-		
-		if(AssertUtils.anyIsEmpty(
-				String.valueOf(pwd.getCustomerId()), pwd.getOldPassword(), pwd.getNewPassword())){
+	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd, HttpServletRequest request,
+			HttpServletResponse response) {
+
+		if (AssertUtils.anyIsEmpty(String.valueOf(pwd.getCustomerId()), pwd.getOldPassword(), pwd.getNewPassword())) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
-		
+
 		Customer customer = loginService.changePassword(pwd);
-		
+
 		return customer;
 	}
-	
+
 	@RequestMapping(value = "/forgetPassword", method = RequestMethod.POST)
-	public @ResponseBody String forgetPassword(@RequestBody Customer customer){
+	public @ResponseBody String forgetPassword(@RequestBody Customer customer) {
 		String email = customer.getEmail();
-		if(AssertUtils.isEmpty(String.valueOf(email))){
+		if (AssertUtils.isEmpty(String.valueOf(email))) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
-		
+
 		String randomPassword = RadomValueUtil.getRandomPassword();
-		
+
 		customer = loginService.forgetPassword(email, randomPassword);
-		
+
 		Customer sendCustomer = new Customer();
 		BeanUtils.copyProperties(customer, sendCustomer);
 		sendCustomer.setPassword(randomPassword);
 		emailSendService.sendTo(MailType.FORGET_PASSWORD, sendCustomer.getEmail(), sendCustomer);
-		
+
 		return "true";
 	}
 

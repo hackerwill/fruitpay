@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -52,6 +53,9 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private String officePhone;
 
 	private String password;
+	
+	@Transient
+	private String token;
 
 	//bi-directional many-to-one association to CreditCardInfo
 	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
@@ -259,4 +263,12 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.postalCode = postalCode;
 	}
 	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 }
