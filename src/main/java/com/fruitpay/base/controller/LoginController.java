@@ -1,8 +1,5 @@
 package com.fruitpay.base.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -26,10 +23,8 @@ import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
-import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
-import com.fruitpay.comm.utils.StringUtil;
 
 @Controller
 @RequestMapping("loginCtrl")
