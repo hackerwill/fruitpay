@@ -145,6 +145,18 @@ public class LoginController {
 
 		return customer;
 	}
+	
+	@RequestMapping(value = "/validateToken", method = RequestMethod.POST)
+	public @ResponseBody Boolean validateToken(@RequestBody Customer customer, HttpServletRequest request,
+			HttpServletResponse response) {
+		boolean validate = false;
+		try {
+			validate = FPSessionUtil.getInfoAndVlidateToken(customer, request, LoginConst.LOGINBYID);
+		} catch (Exception e) {
+			logger.debug("LoginController.validateToken failed");
+		}
+		return validate;
+	}
 
 	@RequestMapping(value = "/forgetPassword", method = RequestMethod.POST)
 	public @ResponseBody String forgetPassword(@RequestBody Customer customer) {

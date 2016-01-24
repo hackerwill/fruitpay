@@ -1,7 +1,10 @@
 package com.fruitpay.comm.session;
 
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,29 +54,11 @@ public class FPSessionUtil {
 		return locale;
 	}
 	public static String logonGetToken(Customer pCustomer, HttpServletRequest request, String loginStyle) {
-		Locale locale = null;
 		String FPToken = null;
 		try{
-			if (!StringUtil.isEmptyOrSpace(request.getHeaders("uId"))) {
-				FPSessionInfo fpSessionInfo = new FPSessionInfo();
-				fpSessionInfo.setSessionId(request.getHeaders("uId").toString());
-				log.debug("The SessionId:"+fpSessionInfo.getSessionId());
-				/**
-				 * Set User Information
-				 */
-				fpSessionInfo.setUserName(pCustomer.getFirstName()+pCustomer.getLastName());
-				log.debug("The UserName:"+fpSessionInfo.getUserName());
-				fpSessionInfo.setUserId(Integer.toString(pCustomer.getCustomerId()));
-				log.debug("The UserId:"+fpSessionInfo.getUserId());				
-			    locale = Locale.getDefault();			 
-			    log.debug("Locale: " + locale);
-			    fpSessionInfo.setUserLocale(locale);
-			    log.debug("The UserLocale:"+fpSessionInfo.getUserLocale());
-			    fpSessionInfo.setLogonAddress(StringUtil.isEmptyOrSpace(request.getRemoteAddr())?"127.0.0.1":request.getRemoteAddr());
-				
-				Date date = new Date();
-				fpSessionInfo.setLastAccessTime(date);
-				fpSessionInfo.setLogonTime(date);			
+			if (!StringUtil.isEmptyOrSpace(getHeader(request, "uid"))) {
+						
+				FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
 				
 				if(StringUtil.isEmptyOrSpace(FPToken) || "null".equalsIgnoreCase(FPToken)){
 					FPToken=FPAuthentication.generateFPToken(fpSessionInfo);
@@ -92,5 +77,65 @@ public class FPSessionUtil {
 			log.error("FPAuthorizationService.logon fail", e);		
 		}
 		return FPToken;
+	}
+	public static boolean getInfoAndVlidateToken(Customer pCustomer, HttpServletRequest request, String loginStyle)
+			throws Exception{
+		FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
+		boolean validated = false;
+		if (!StringUtil.isEmptyOrSpace(getHeader(request, "uid")) 
+				&& !StringUtil.isEmptyOrSpace(getHeader(request, "authorization"))) {
+			fpSessionInfo.setFPToken(request.getHeaders("authorization").toString());
+			validated = FPAuthentication.validateFPToken(fpSessionInfo);
+		}else{
+			System.out.println("The request JSESSIONID is null or request Token is null");
+		}
+		return validated;
+	}
+	private static FPSessionInfo getFPSessionInfo(Customer pCustomer, HttpServletRequest request, String loginStyle){
+		FPSessionInfo fpSessionInfo = null;
+		Locale locale = null;
+		try{
+			fpSessionInfo = new FPSessionInfo();
+			fpSessionInfo.setSessionId(getHeader(request, "uid"));
+			log.debug("The SessionId:"+fpSessionInfo.getSessionId());
+			/**
+			 * Set User Information
+			 */
+			fpSessionInfo.setUserName(pCustomer.getFirstName());
+			log.debug("The UserName:"+fpSessionInfo.getUserName());
+			fpSessionInfo.setUserId(Integer.toString(pCustomer.getCustomerId()));
+			log.debug("The UserId:"+fpSessionInfo.getUserId());				
+		    locale = Locale.getDefault();			 
+		    log.debug("Locale: " + locale);
+		    fpSessionInfo.setUserLocale(locale);
+		    log.debug("The UserLocale:"+fpSessionInfo.getUserLocale());
+		    fpSessionInfo.setLogonAddress(StringUtil.isEmptyOrSpace(request.getRemoteAddr())?"127.0.0.1":request.getRemoteAddr());
+			
+			Date date = new Date();
+			fpSessionInfo.setLastAccessTime(date);
+			fpSessionInfo.setLogonTime(date);	
+		}catch(Exception e){
+			log.error("FPSessionUtil.getFPSessionInfo fail", e);		
+		}
+		return fpSessionInfo;
+	}
+	
+	//get request headers
+	private static Map<String, String> getHeadersInfo(HttpServletRequest request) {
+
+		Map<String, String> map = new HashMap<String, String>();
+
+		Enumeration<String> headerNames = request.getHeaderNames();
+		while (headerNames.hasMoreElements()) {
+			String key =headerNames.nextElement();
+			String value = request.getHeader(key);
+			map.put(key, value);
+		}
+
+		return map;
+	}
+	
+	private static String getHeader(HttpServletRequest request, String key){
+		return getHeadersInfo(request).get(key);
 	}
 }
