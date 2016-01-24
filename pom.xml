@@ -19,6 +19,7 @@
 		<jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
 		<mysql.version>5.1.6</mysql.version>
 		<slf4j.version>1.6.1</slf4j.version>
+		<c3p0.version>0.9.1.2</c3p0.version>
 		<jackson.version>2.2.3</jackson.version>
 		<build.profile.id>dev</build.profile.id>
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -185,11 +186,24 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.1-api</artifactId>
 			<version>1.0.0.Final</version>
+		</dependency>
+		
+		<!-- connection pooling with c3p0 -->
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>${c3p0.version}</version>
 		</dependency>
 
 		<!-- Jackson JSON Mapper -->
