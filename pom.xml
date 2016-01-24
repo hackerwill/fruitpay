@@ -387,9 +387,9 @@
 			        <artifactId>tomcat7-maven-plugin</artifactId>
 			        <version>2.2</version>
 				<configuration>
-					<port>8081</port>
-					<server>fruitpay</server>
-					<path>/fruitpay</path>
+					<port>8080</port>
+					<server>fruitpayTest</server>
+					<path>/fruitpayTest</path>
 					<url>http://139.162.2.196:8080/manager/text</url>
 				</configuration>
 			</plugin>
