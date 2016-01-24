@@ -246,7 +246,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>fruitpay</finalName>
+		<finalName>fruitpayTest</finalName>
 		<filters>
 			<filter>profiles/${build.profile.id}/config.properties</filter>
 		</filters>

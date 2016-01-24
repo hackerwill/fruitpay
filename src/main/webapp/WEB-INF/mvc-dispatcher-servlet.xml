@@ -59,6 +59,7 @@
         p:minPoolSize="${c3p0.min_size}"
         p:maxPoolSize="${c3p0.max_size}" 
         p:maxIdleTime="${c3p0.max_idle_time}"
+        p:initialPoolSize="${c3p0.initial_pool_size}"
         p:unreturnedConnectionTimeout="${c3p0.unreturned_connection_timeout}"/>
  	
 
