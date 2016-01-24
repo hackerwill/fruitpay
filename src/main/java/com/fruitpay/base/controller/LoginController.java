@@ -62,6 +62,7 @@ public class LoginController {
 			}
 		} catch (Exception e) {
 			logger.error("login error when LoginController: " + e);
+			throw e;
 		}
 		return returnCustomer;
 	}
@@ -97,6 +98,7 @@ public class LoginController {
 			}
 		} catch (Exception e) {
 			logger.error("login error when LoginController: " + e);
+			throw e;
 		}
 		return returnCustomer;
 	}
