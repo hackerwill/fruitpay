@@ -50,7 +50,7 @@
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
    
 	<!--  classpath*:*.properties-->
-	<context:property-placeholder location="classpath:db.properties" />	
+	<context:property-placeholder location="classpath:db.properties,classpath:config.properties" />
 	
 	<!-- data source with c3p0 -->
 	<bean id="dataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
@@ -105,7 +105,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	 
 	<util:map id="configXmlMap" map-class="java.util.HashMap">
-	    <entry key="DEBUG_MODE" value="false"/>
+	    <entry key="DEBUG_MODE" value="${config.debugMode}"/>
 	</util:map>
 	
 

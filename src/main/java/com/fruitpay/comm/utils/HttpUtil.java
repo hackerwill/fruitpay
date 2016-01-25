@@ -1,10 +1,20 @@
 package com.fruitpay.comm.utils;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class HttpUtil {
 	
-	public static String getDomainURL(HttpServletRequest request){
+	private String TEST_DOMAIN_URL = "http://beta.fruitpay.com.tw/fruitpayTest/";
+	private String DOMAIN_URL = "http://fruitpay.com.tw/fruitpay/";
+	
+	@Inject
+	private ConfigMap configMap;
+	
+	public String getDomainURL(HttpServletRequest request){
 		String scheme = request.getScheme();
 		String serverName = request.getServerName();
 		int serverPort = request.getServerPort();
@@ -13,8 +23,9 @@ public class HttpUtil {
 		return resultPath;
 	}
 	
-	public static String getDomainURL(){
-		return "http://beta.fruitpay.com.tw/fruitpay/";
+	public String getDomainURL() throws Exception{
+		String debugMode = configMap.get(ConfigMap.Key.DEBUG_MODE);
+		return "true".equals(debugMode) ? TEST_DOMAIN_URL : DOMAIN_URL;
 	}
 
 }

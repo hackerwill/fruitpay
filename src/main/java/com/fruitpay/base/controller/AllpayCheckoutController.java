@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +44,14 @@ import javassist.NotFoundException;
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
 	
+	
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
-	private final String ORDER_RESULT_URL = HttpUtil.getDomainURL() + "allpayCtrl/callback";
-	private final String SHOW_ORDER_SUCCESS_POST_URL = HttpUtil.getDomainURL() + "allpayCtrl/checkoutCreditCardSuccess";
-	private final String PERIOD_RETURN_URL = HttpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
-	private final String SHOW_ORDER_URL = HttpUtil.getDomainURL() + "app/user/orders";
-	private final String SHOW_ORDER_SUCCESS_URL = HttpUtil.getDomainURL() + "app/checkoutCreditCardSuccess";
+	private String ORDER_RESULT_URL = null;
+	private String SHOW_ORDER_SUCCESS_POST_URL = null;
+	private String PERIOD_RETURN_URL = null;
+	private String SHOW_ORDER_URL = null;
+	private String SHOW_ORDER_SUCCESS_URL = null;
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -65,11 +68,22 @@ public class AllpayCheckoutController {
 	@Inject
 	ConfigMap configMap;
 	@Inject
+	private HttpUtil httpUtil;
+	@Inject
 	private CheckoutService checkoutService;
 	@Inject
 	private StaticDataService staticDataService;
 	@Inject
 	CustomerOrderService customerOrderService;
+	
+	@PostConstruct
+	public void init() throws Exception{
+		ORDER_RESULT_URL = httpUtil.getDomainURL() + "allpayCtrl/callback";
+		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/checkoutCreditCardSuccess";
+		PERIOD_RETURN_URL = httpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
+		SHOW_ORDER_URL = httpUtil.getDomainURL() + "app/user/orders";
+		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/checkoutCreditCardSuccess";
+	}
 	
 	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
 	public void callbackTest( 
@@ -89,7 +103,8 @@ public class AllpayCheckoutController {
 	}
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
-	public void allpayCallback(HttpServletRequest request, HttpServletResponse response){
+	public void allpayCallback(HttpServletRequest request, HttpServletResponse response)
+		throws Exception{
 		
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
@@ -201,7 +216,7 @@ public class AllpayCheckoutController {
 			// 回覆錯誤訊息。
 			} else {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed);
-				response.setHeader("Location", HttpUtil.getDomainURL());
+				response.setHeader("Location", httpUtil.getDomainURL());
 				out.println("0|" + enErrors);
 			}
 
