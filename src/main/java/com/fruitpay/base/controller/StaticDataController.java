@@ -2,6 +2,7 @@ package com.fruitpay.base.controller;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Constant;
+import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
@@ -107,17 +109,22 @@ public class StaticDataController {
 	public @ResponseBody List<Constant> getAllConstants(){
 		List<Constant> constants = staticDataService.getAllConstants();
 		//過濾掉僅顯示有效的常數
-		constants.forEach(constant -> 
-		constant.getConstOptions().stream()
-			.filter(option -> "1".equals(option.getValidFlag())));
+		for (Constant constant : constants) {
+			List<ConstantOption> options = constant.getConstOptions().stream()
+					.filter(option -> "1".equals(option.getValidFlag()))
+					.collect(Collectors.toList());
+				constant.setConstOptions(options);
+		}
 		return constants;
 	}
 	
 	@RequestMapping(value = "/constants/{constId}", method = RequestMethod.GET)
 	public @ResponseBody Constant getAllConstants(@PathVariable Integer constId){
 		Constant constant = staticDataService.getConstant(constId);
-		constant.getConstOptions().stream()
-			.filter(option -> "1".equals(option.getValidFlag()));
+		List<ConstantOption> options = constant.getConstOptions().stream()
+			.filter(option -> "1".equals(option.getValidFlag()))
+			.collect(Collectors.toList());
+		constant.setConstOptions(options);
 		return constant;
 	}
 	
