@@ -141,9 +141,6 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 
 	@Override
 	public List<Constant> getAllConstants() {
-		if(consantList == null){
-			consantList = getAllConstants();
-		}
 		return constantDAO.findAll();
 	}
 
