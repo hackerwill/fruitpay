@@ -106,12 +106,18 @@ public class StaticDataController {
 	@RequestMapping(value = "/constants", method = RequestMethod.GET)
 	public @ResponseBody List<Constant> getAllConstants(){
 		List<Constant> constants = staticDataService.getAllConstants();
+		//過濾掉僅顯示有效的常數
+		constants.forEach(constant -> 
+		constant.getConstOptions().stream()
+			.filter(option -> "1".equals(option.getValidFlag())));
 		return constants;
 	}
 	
 	@RequestMapping(value = "/constants/{constId}", method = RequestMethod.GET)
 	public @ResponseBody Constant getAllConstants(@PathVariable Integer constId){
 		Constant constant = staticDataService.getConstant(constId);
+		constant.getConstOptions().stream()
+			.filter(option -> "1".equals(option.getValidFlag()));
 		return constant;
 	}
 	
