@@ -47,7 +47,7 @@
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
    
 	<!--  classpath*:*.properties-->
-	<context:property-placeholder location="classpath:db.properties" />	
+	<context:property-placeholder location="classpath:db.properties,classpath:config.properties" />	
 	
 	<!-- data source with c3p0 -->
 	<bean id="dataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
@@ -59,6 +59,7 @@
         p:minPoolSize="${c3p0.min_size}"
         p:maxPoolSize="${c3p0.max_size}" 
         p:maxIdleTime="${c3p0.max_idle_time}"
+        p:initialPoolSize="${c3p0.initial_pool_size}"
         p:unreturnedConnectionTimeout="${c3p0.unreturned_connection_timeout}"/>
  	
 
@@ -101,7 +102,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	 
 	<util:map id="configXmlMap" map-class="java.util.HashMap">
-	    <entry key="DEBUG_MODE" value="false"/>
+	    <entry key="DEBUG_MODE" value="${config.debugMode}"/>
 	</util:map>
 	
 </beans>

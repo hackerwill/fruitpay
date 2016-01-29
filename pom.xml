@@ -245,18 +245,127 @@
 		
 	</dependencies>
 
+	<profiles>
+		<profile>
+            <id>all-tests</id>
+            <properties>
+                <build.profile.id>all-tests</build.profile.id>
+                <!-- All tests are run. -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>false</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+        </profile>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <!-- Used to locate the profile specific configuration file. -->
+                <build.profile.id>integration-test</build.profile.id>
+                <!-- Only integration tests are run. -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+        	<id>beta</id>
+        	<properties>
+                <!-- Used to locate the profile specific configuration file. -->
+                <build.profile.id>beta</build.profile.id>
+                <!-- Only integration tests are run. -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        	<build>
+        		<plugins>
+        			<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete file="${project.build.outputDirectory}/config.properties" />
+										<copy file="profiles/${build.profile.id}/config.properties"
+											tofile="${project.build.outputDirectory}/config.properties" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- For Maven Tomcat Plugin -->
+					<plugin>
+				        <groupId>org.apache.tomcat.maven</groupId>
+				        <artifactId>tomcat7-maven-plugin</artifactId>
+				        <version>2.2</version>
+						<configuration>
+							<port>8080</port>
+							<server>fruitpayTest</server>
+							<path>/fruitpayTest</path>
+							<url>http://139.162.2.196:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+        	</build>
+        </profile>
+        <profile>
+        	<id>formal</id>
+        	<properties>
+                <!-- Used to locate the profile specific configuration file. -->
+                <build.profile.id>formal</build.profile.id>
+                <!-- Only integration tests are run. -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        	<build>
+        		<plugins>
+        			<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete file="${project.build.outputDirectory}/config.properties" />
+										<copy file="profiles/${build.profile.id}/config.properties"
+											tofile="${project.build.outputDirectory}/config.properties" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- For Maven Tomcat Plugin -->
+					<plugin>
+				        <groupId>org.apache.tomcat.maven</groupId>
+				        <artifactId>tomcat7-maven-plugin</artifactId>
+				        <version>2.2</version>
+						<configuration>
+							<port>8080</port>
+							<server>fruitpay</server>
+							<path>/fruitpay</path>
+							<url>http://139.162.2.196:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+        	</build>
+        </profile>
+    </profiles>
+	
 	<build>
 		<finalName>fruitpay</finalName>
-		<filters>
-			<filter>profiles/${build.profile.id}/config.properties</filter>
-		</filters>
 		<resources>
 			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-
 		<plugins>
 			<plugin>
                 <groupId>org.jacoco</groupId>
@@ -378,19 +487,6 @@
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-
-			<!-- For Maven Tomcat Plugin -->
-			<plugin>
-			        <groupId>org.apache.tomcat.maven</groupId>
-			        <artifactId>tomcat7-maven-plugin</artifactId>
-			        <version>2.2</version>
-				<configuration>
-					<port>8081</port>
-					<server>fruitpay</server>
-					<path>/fruitpay</path>
-					<url>http://139.162.2.196:8080/manager/text</url>
 				</configuration>
 			</plugin>
 	
