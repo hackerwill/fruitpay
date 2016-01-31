@@ -1,8 +1,5 @@
 package com.fruitpay.base.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -26,10 +23,8 @@ import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
-import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
-import com.fruitpay.comm.utils.StringUtil;
 
 @Controller
 @RequestMapping("loginCtrl")
@@ -43,7 +38,7 @@ public class LoginController {
 	private EmailSendService emailSendService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody Customer loginAsOneCustomer(@RequestBody Customer customer,
+	public @ResponseBody Customer loginAsOneRCustomer(@RequestBody Customer customer,
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());	
 		Customer returnCustomer = null;
@@ -60,7 +55,7 @@ public class LoginController {
 					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
 				}
 			}
-		} catch (Exception e) {
+		} catch (HttpServiceException e) {
 			logger.error("login error when LoginController: " + e);
 			throw e;
 		}
@@ -92,11 +87,12 @@ public class LoginController {
 						returnCustomer.setToken(token);
 					}
 					
-				} catch (Exception e) {
+				} catch (HttpServiceException e) {
 					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+					throw e;
 				}
 			}
-		} catch (Exception e) {
+		} catch (HttpServiceException e) {
 			logger.error("login error when LoginController: " + e);
 			throw e;
 		}

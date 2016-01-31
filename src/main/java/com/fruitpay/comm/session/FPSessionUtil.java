@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.comm.auth.FPAuthentication;
@@ -20,19 +21,19 @@ import com.fruitpay.comm.utils.StringUtil;
 
 
 public class FPSessionUtil {
-	private static final Log log = LogFactory.getLog(FPSessionUtil.class);
+	private static final Logger logger = Logger.getLogger(FPSessionUtil.class);
 	public static FPSessionInfo getFPSession(String FPToken) throws Exception{
 		FPSessionInfo FPSession = null;
 		try{
 			FPSession = FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
 			if(null!=FPSession && null != FPSession.getFPToken() && FPSession.getFPToken().length()>0){
-				log.debug("The FPSessionInfo Exist");
+				logger.debug("The FPSessionInfo Exist");
 			}else{
 				throw new Exception("FPSessionInfo is null");
 			}
 					
 		}catch(Exception e){
-			log.error("getFPSession fail", e);
+			logger.error("getFPSession fail", e);
 			throw e;
 		}
 		return FPSession;
@@ -48,7 +49,7 @@ public class FPSessionUtil {
 			}
 					
 		}catch(Exception e){
-			log.error("getFPSession fail", e);
+			logger.error("getFPSession fail", e);
 			throw e;
 		}
 		return locale;
@@ -65,16 +66,16 @@ public class FPSessionUtil {
 				}
 				//Generate FPToken Key				
 				fpSessionInfo.setFPToken(FPToken);
-				log.debug("The currency Token:"+FPToken);
+				logger.debug("The currency Token:"+FPToken);
 				//Put FPToken into FPSessionMap
 				FPSessionFactory.getInstance().putFPToken(FPToken, fpSessionInfo);
 				FPSessionFactory.getInstance().putLogonMap(fpSessionInfo.getSessionId(), fpSessionInfo.getLogonAddress()+";"+FPToken);
-				log.debug("FPSessionMap["+FPSessionFactory.getInstance().getFPSessionMap().entrySet()+"]");				
+				logger.debug("FPSessionMap["+FPSessionFactory.getInstance().getFPSessionMap().entrySet()+"]");				
 			}else{
 				System.out.println("The request JSESSIONID is null");
 			}
 		}catch(Exception e){
-			log.error("FPAuthorizationService.logon fail", e);		
+			logger.error("FPAuthorizationService.logon fail", e);		
 		}
 		return FPToken;
 	}
@@ -82,9 +83,11 @@ public class FPSessionUtil {
 			throws Exception{
 		FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
 		boolean validated = false;
+		logger.debug(getHeader(request, "uid"));
+		logger.debug(getHeader(request, "authorization"));
 		if (!StringUtil.isEmptyOrSpace(getHeader(request, "uid")) 
 				&& !StringUtil.isEmptyOrSpace(getHeader(request, "authorization"))) {
-			fpSessionInfo.setFPToken(request.getHeaders("authorization").toString());
+			fpSessionInfo.setFPToken(getHeader(request, "authorization"));
 			validated = FPAuthentication.validateFPToken(fpSessionInfo);
 		}else{
 			System.out.println("The request JSESSIONID is null or request Token is null");
@@ -97,25 +100,25 @@ public class FPSessionUtil {
 		try{
 			fpSessionInfo = new FPSessionInfo();
 			fpSessionInfo.setSessionId(getHeader(request, "uid"));
-			log.debug("The SessionId:"+fpSessionInfo.getSessionId());
+			logger.debug("The SessionId:"+fpSessionInfo.getSessionId());
 			/**
 			 * Set User Information
 			 */
 			fpSessionInfo.setUserName(pCustomer.getFirstName());
-			log.debug("The UserName:"+fpSessionInfo.getUserName());
+			logger.debug("The UserName:"+fpSessionInfo.getUserName());
 			fpSessionInfo.setUserId(Integer.toString(pCustomer.getCustomerId()));
-			log.debug("The UserId:"+fpSessionInfo.getUserId());				
+			logger.debug("The UserId:"+fpSessionInfo.getUserId());				
 		    locale = Locale.getDefault();			 
-		    log.debug("Locale: " + locale);
+		    logger.debug("Locale: " + locale);
 		    fpSessionInfo.setUserLocale(locale);
-		    log.debug("The UserLocale:"+fpSessionInfo.getUserLocale());
+		    logger.debug("The UserLocale:"+fpSessionInfo.getUserLocale());
 		    fpSessionInfo.setLogonAddress(StringUtil.isEmptyOrSpace(request.getRemoteAddr())?"127.0.0.1":request.getRemoteAddr());
 			
 			Date date = new Date();
 			fpSessionInfo.setLastAccessTime(date);
 			fpSessionInfo.setLogonTime(date);	
 		}catch(Exception e){
-			log.error("FPSessionUtil.getFPSessionInfo fail", e);		
+			logger.error("FPSessionUtil.getFPSessionInfo fail", e);		
 		}
 		return fpSessionInfo;
 	}

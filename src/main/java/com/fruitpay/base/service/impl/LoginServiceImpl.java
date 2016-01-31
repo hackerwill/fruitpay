@@ -58,7 +58,7 @@ public class LoginServiceImpl implements LoginService {
 		Customer customer = customerDAO.findOne(customerId);
 		if(customer == null){
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
-		}else if(!password.equals(customer.getPassword())){
+		}else if(!Md5Util.getMd5(password).equals(customer.getPassword())){
 			throw new HttpServiceException(ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage());
 		}
 		
