@@ -38,7 +38,7 @@ public class LoginController {
 	private EmailSendService emailSendService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody Customer loginAsOneCustomer(@RequestBody Customer customer,
+	public @ResponseBody Customer loginAsOneRCustomer(@RequestBody Customer customer,
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());	
 		Customer returnCustomer = null;
@@ -55,7 +55,7 @@ public class LoginController {
 					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
 				}
 			}
-		} catch (Exception e) {
+		} catch (HttpServiceException e) {
 			logger.error("login error when LoginController: " + e);
 			throw e;
 		}
@@ -87,11 +87,12 @@ public class LoginController {
 						returnCustomer.setToken(token);
 					}
 					
-				} catch (Exception e) {
+				} catch (HttpServiceException e) {
 					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+					throw e;
 				}
 			}
-		} catch (Exception e) {
+		} catch (HttpServiceException e) {
 			logger.error("login error when LoginController: " + e);
 			throw e;
 		}
