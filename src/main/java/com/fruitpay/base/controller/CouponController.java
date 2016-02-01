@@ -1,14 +1,14 @@
 package com.fruitpay.base.controller;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.model.Coupon;
@@ -22,8 +22,10 @@ public class CouponController {
 	private CouponService couponService;
 	
 	@RequestMapping(value = "/coupons", method = RequestMethod.GET)
-	public @ResponseBody List<Coupon> getAllCoupons(){
-		List<Coupon> coupons = couponService.findAll();
+	public @ResponseBody Page<Coupon> getAllCoupons(			
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){
+		Page<Coupon> coupons = couponService.findAll(page,size);
 		return coupons;
 	}
 	

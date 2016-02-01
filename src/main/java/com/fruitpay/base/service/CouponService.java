@@ -2,11 +2,13 @@ package com.fruitpay.base.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.fruitpay.base.model.Coupon;
 
 public interface CouponService {
 	
-	public List<Coupon> findAll();
+	public Page<Coupon> findAll(int page ,int size);
 	
 	public Coupon findById(Integer couponId);
 	
