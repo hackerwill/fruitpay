@@ -12,7 +12,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.comm.utils.AssertUtils;
 
 @Controller
-@RequestMapping("AdminloginCtrl")
+@RequestMapping("adminloginCtrl")
 public class AdminLoginController {
 	
 	private final String MANAGER_ID = "FruitpayAdmin";
