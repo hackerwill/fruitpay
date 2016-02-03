@@ -1,7 +1,5 @@
 package com.fruitpay.base.service.impl;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;

@@ -1,10 +1,10 @@
 package com.fruitpay.base.service.impl;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +21,9 @@ public class CouponServiceImpl implements CouponService {
 	private CouponDAO couponDAO;
 
 	@Override
-	public List<Coupon> findAll() {
-		List<Coupon> coupons = couponDAO.findAll();
+	public Page<Coupon> findAll(int page ,int size) {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Page<Coupon> coupons = couponDAO.findAll(pageRequest);
 		return coupons;
 	}
 
