@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class Manager implements Serializable {
 	
-	private Integer managerId;
+	private String managerId;
 	private String roleId;
 	private String password;
 	
-	public Integer getManagerId() {
+	public String getManagerId() {
 		return managerId;
 	}
-	public void setManagerId(Integer managerId) {
+	public void setManagerId(String managerId) {
 		this.managerId = managerId;
 	}
 	public String getPassword() {
