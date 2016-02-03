@@ -12,4 +12,12 @@ public class LoginConst {
 	
 	public static final String CUSTOMERINFO= "customerInfo";
 	
+	public static final String LOGIN_UID="uid";
+	
+	public static final String LOGIN_AUTHORIZATION= "authorization";
+	
+	public static final String LOGIN_THIRD_PARTY_LOGOUT="exterLogout";	
+	
+	public static final String FP_SESSION_SECURITY_KEY="fpSecurityKey";
+	
 }
