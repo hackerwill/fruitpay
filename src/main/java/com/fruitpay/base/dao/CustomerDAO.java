@@ -1,6 +1,7 @@
 package com.fruitpay.base.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.fruitpay.base.model.Customer;
 
@@ -50,5 +51,8 @@ public interface CustomerDAO extends JpaRepository<Customer, Integer> {
      * @return 顧客
      */
 	public Customer findByCustomerIdAndPassword(Integer custmerId, String password);
+	
+	@Query("select c from Customer c join c.customerOrders o where o.orderId = ?1")
+	public Customer findByOrderId(Integer orderId);
 	
 }

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +41,7 @@ public class CustomerOrderController {
 	@Inject
 	private StaticDataService staticDataService;
 	
-	@RequestMapping(value = "/addOrder", method = RequestMethod.POST)
+	@RequestMapping(value = "/order", method = RequestMethod.POST)
 	public @ResponseBody CustomerOrder addOrder(
 			@RequestBody CheckoutPostBean checkoutPostBean){
 		CustomerOrder customerOrder = checkoutPostBean.getCustomerOrder();
@@ -66,7 +67,7 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/updateOrder", method = RequestMethod.PUT)
+	@RequestMapping(value = "/order", method = RequestMethod.PUT)
 	public @ResponseBody CustomerOrder updateOrder(
 			@RequestBody CustomerOrder customerOrder){
 		
@@ -74,6 +75,29 @@ public class CustomerOrderController {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 	
 		customerOrder = customerOrderService.updateCustomerOrder(customerOrder);
+		
+		return customerOrder;
+	}
+	
+	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
+	public @ResponseBody CustomerOrder getOrder(@PathVariable Integer orderId){
+		
+		if(AssertUtils.isEmpty(orderId))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+	
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+		
+		return customerOrder;
+	}
+	
+	@RequestMapping(value = "/order", method = RequestMethod.DELETE)
+	public @ResponseBody CustomerOrder deleteOrder(
+			@RequestBody CustomerOrder customerOrder){
+		
+		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+	
+		customerOrderService.deleteOrder(customerOrder);
 		
 		return customerOrder;
 	}
@@ -86,30 +110,6 @@ public class CustomerOrderController {
 		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(page , size);
 		
 		return customerOrders;
-	}
-	
-	@RequestMapping(value = "/getOrder", method = RequestMethod.POST)
-	public @ResponseBody CustomerOrder getOrder(
-			@RequestBody CustomerOrder customerOrder){
-		
-		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-	
-		customerOrder = customerOrderService.getCustomerOrder(customerOrder.getOrderId());
-		
-		return customerOrder;
-	}
-	
-	@RequestMapping(value = "/deleteOrder", method = RequestMethod.DELETE)
-	public @ResponseBody CustomerOrder deleteOrder(
-			@RequestBody CustomerOrder customerOrder){
-		
-		if(customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
-			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-	
-		customerOrderService.deleteOrder(customerOrder);
-		
-		return customerOrder;
 	}
 
 

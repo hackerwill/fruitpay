@@ -121,4 +121,14 @@ public class CustomerDataController {
 		return true;
 	}
 	
+	@RequestMapping(value = "/customerNamesStr", method = RequestMethod.POST) 
+	public @ResponseBody String getCustomerNamesStr(){
+		return customerService.getCustomerNamesStr();
+	}
+	
+	@RequestMapping(value = "/customerByOrderId/{orderId}", method = RequestMethod.POST) 
+	public @ResponseBody Customer customerByOrderId(@PathVariable Integer orderId){
+		return customerService.findByOrderId(orderId);
+	}
+	
 }

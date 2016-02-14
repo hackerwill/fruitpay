@@ -19,5 +19,14 @@ public interface CustomerService {
 	public Customer saveCustomer(Customer customer);
 	
 	public void deleteCustomer(Customer customer);
+	
+	public Customer findByOrderId(Integer orderId);
+	
+	/**
+	 * 得到所有顧客的名稱字串
+	 * 格式為 姓名(顧客ID), 姓名(顧客ID)
+	 * 如"王大明(101), 陳志朋(102)"  
+	 * */
+	public String getCustomerNamesStr();
 
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -46,15 +47,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
+	@Transactional
 	public CustomerOrder updateCustomerOrder(CustomerOrder customerOrder) {
 		CustomerOrder origin = customerOrderDAO.findOne(customerOrder.getOrderId());
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
 		BeanUtils.copyProperties(customerOrder, origin);
+		origin = customerOrderDAO.save(origin);
 		return origin;
 	}
 
 	@Override
+	@Transactional
 	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
 		customerOrder = customerOrderDAO.saveAndFlush(customerOrder);
 		return customerOrder;
@@ -67,6 +71,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteOrder(CustomerOrder customerOrder) {
 		
 		customerOrderDAO.delete(customerOrder);

@@ -3,6 +3,7 @@ package com.fruitpay.base.controller;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -92,8 +93,8 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$", hasSize(1)));
 		
-		List<Coupon> coupons = couponService.findAll();
-		Coupon updateOne = coupons.get(0);
+		Page<Coupon> coupons = couponService.findAll(10, 10);
+		Coupon updateOne = coupons.getContent().get(0);
 		updateOne.setCouponName("UPDATE_TEST");
 		
 		//update

@@ -67,7 +67,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
-		this.mockMvc.perform(post("/orderCtrl/addOrder")
+		this.mockMvc.perform(post("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
@@ -79,9 +79,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		int orderId = order.getOrderId();
 		CustomerOrder searchOrder = new CustomerOrder();
 		searchOrder.setOrderId(orderId);
-		this.mockMvc.perform(post("/orderCtrl/getOrder")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(searchOrder)))
+		this.mockMvc.perform(get("/orderCtrl/order/" + orderId)
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.orderId", is(order.getOrderId())));
@@ -101,7 +100,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
-		this.mockMvc.perform(post("/orderCtrl/addOrder")
+		this.mockMvc.perform(post("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
@@ -127,7 +126,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
-		this.mockMvc.perform(post("/orderCtrl/addOrder")
+		this.mockMvc.perform(post("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
@@ -140,7 +139,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		String testAddress = "TESTUPDATE";
 		order.setReceiverAddress(testAddress);
 		
-		this.mockMvc.perform(put("/orderCtrl/updateOrder")
+		this.mockMvc.perform(put("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(order)))
 	   		.andExpect(status().isOk())
@@ -162,7 +161,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
-		this.mockMvc.perform(post("/orderCtrl/addOrder")
+		this.mockMvc.perform(post("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
@@ -172,7 +171,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
 		CustomerOrder order = customerOrders.get(0);
 		
-		this.mockMvc.perform(delete("/orderCtrl/deleteOrder")
+		this.mockMvc.perform(delete("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(order)))
 	   		.andExpect(status().isOk())
