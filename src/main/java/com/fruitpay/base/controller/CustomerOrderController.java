@@ -48,15 +48,10 @@ public class CustomerOrderController {
 		Customer customer = checkoutPostBean.getCustomer();
 
 		customerOrder.setCustomer(customer);
-		customerOrder.setOrderDate(Calendar.getInstance().getTime());
-		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
 		
 		if(customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-
-		String randomPassword = RadomValueUtil.getRandomPassword();
-		customer.setPassword(randomPassword);
 		
 		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
 			OrderPreference orderPreference = iterator.next();
