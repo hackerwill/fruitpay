@@ -27,7 +27,7 @@ public interface LoginService {
      *
      * @return 是否登入成功，回傳信息
      */
-	public Customer  loginByCustomerId(Integer customerId, String password);
+	public Customer  loginByCustomerId(Integer customerId);
 	
 	/**
 	 * 若帳號存在直接登入，若不存在建立一個帳號

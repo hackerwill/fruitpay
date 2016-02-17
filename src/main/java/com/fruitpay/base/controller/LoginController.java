@@ -68,30 +68,21 @@ public class LoginController {
 		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());		
 		Customer returnCustomer =null;
 		try {
-			if (AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()), customer.getPassword())) {
+			boolean validate = false;
+			try {
+				validate = FPSessionUtil.getInfoAndVlidateToken(customer, request, LoginConst.LOGINBYID);
+			} catch (Exception e) {
+				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+			}
+			
+			if(!validate)
+				throw new HttpServiceException(ReturnMessageEnum.Login.RequiredLogin.getReturnMessage()); 
+			
+			if (AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()))) {
 				throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 			}	
-			returnCustomer = loginService.loginByCustomerId(customer.getCustomerId(), customer.getPassword());			
-			/*** normal login: create user token ***/
-			if (returnCustomer != null) {
-				try {
-					Cookie[] cookie = request.getCookies();
-					if (cookie!=null){
-				        for (Cookie c : cookie){
-				            if(c.getName().equalsIgnoreCase("uId")){
-				            	//returnCustomer.setToken(String.valueOf(c.getName().equalsIgnoreCase("uId")));
-				            	break;
-				            }
-				}
-				        String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.LOGINBYID);
-						returnCustomer.setToken(token);
-					}
-					
-				} catch (HttpServiceException e) {
-					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
-					throw e;
-				}
-			}
+			returnCustomer = loginService.loginByCustomerId(customer.getCustomerId());			
+			
 		} catch (HttpServiceException e) {
 			logger.error("login error when LoginController: " + e);
 			throw e;
@@ -108,6 +99,14 @@ public class LoginController {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
 		Customer returnCustomer = loginService.fbLogin(customer);
+		if (returnCustomer != null) {
+			try {
+				String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.NORMAL);
+				returnCustomer.setToken(token);
+			} catch (Exception e) {
+				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+			}
+		}
 		return returnCustomer;
 	}
 

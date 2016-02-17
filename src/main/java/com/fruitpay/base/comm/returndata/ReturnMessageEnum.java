@@ -41,7 +41,8 @@ public class ReturnMessageEnum{
 		EmailNotFound(new ReturnMessage(Status.Failed.getStatus(), "找不到這個信箱", HttpStatus.NOT_FOUND)),
 		EmailPasswordNotMatch(new ReturnMessage(Status.Failed.getStatus(), "信箱與密碼不符", HttpStatus.FORBIDDEN)),
 		EmailAlreadyExisted(new ReturnMessage(Status.Failed.getStatus(), "信箱已被註冊", HttpStatus.FORBIDDEN)),
-		PasswordNotMatched(new ReturnMessage(Status.Failed.getStatus(), "密碼不符合", HttpStatus.FORBIDDEN));
+		PasswordNotMatched(new ReturnMessage(Status.Failed.getStatus(), "密碼不符合", HttpStatus.FORBIDDEN)),
+		RequiredLogin(new ReturnMessage(Status.Failed.getStatus(), "需要重新登入", HttpStatus.FORBIDDEN));
 		
 		private ReturnMessage rm;
 		Login(ReturnMessage rm){

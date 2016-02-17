@@ -54,12 +54,10 @@ public class LoginServiceImpl implements LoginService {
 	}
 	
 	@Override
-	public Customer loginByCustomerId(Integer customerId, String password) {
+	public Customer loginByCustomerId(Integer customerId) {
 		Customer customer = customerDAO.findOne(customerId);
 		if(customer == null){
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
-		}else if(!Md5Util.getMd5(password).equals(customer.getPassword())){
-			throw new HttpServiceException(ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage());
 		}
 		
 		return customer;

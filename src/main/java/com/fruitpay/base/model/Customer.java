@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -52,6 +53,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@Column(name="office_phone")
 	private String officePhone;
 
+	@JsonIgnore //僅在deserialization使用, 不在serialization時使用
 	private String password;
 	
 	@Transient
@@ -173,10 +175,12 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.officePhone = officePhone;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return this.password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
