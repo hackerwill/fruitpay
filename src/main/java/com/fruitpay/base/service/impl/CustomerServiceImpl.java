@@ -31,6 +31,8 @@ public class CustomerServiceImpl implements CustomerService {
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
 		
+		if(AssertUtils.isEmpty(customer.getPassword()))
+			customer.setPassword(origin.getPassword());
 		BeanUtils.copyProperties(customer, origin);
 		
 		return origin;
@@ -82,6 +84,12 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	
 	@Override
+	public Customer findByFbId(String fbId) {
+		Customer customer = customerDAO.findByFbId(fbId);
+		return customer;
+	}
+	
+	@Override
 	public String getCustomerNamesStr() {
 		List<Customer> customers = customerDAO.findAll();
 		StringBuilder names = new StringBuilder();
@@ -101,7 +109,7 @@ public class CustomerServiceImpl implements CustomerService {
 				
 		}
 		return names.toString();
+	
 	}
-
 	
 }

@@ -16,6 +16,8 @@ public interface CustomerService {
 	
 	public Customer findByEmail(String email);
 	
+	public Customer findByFbId(String fbId);
+	
 	public Customer saveCustomer(Customer customer);
 	
 	public void deleteCustomer(Customer customer);
