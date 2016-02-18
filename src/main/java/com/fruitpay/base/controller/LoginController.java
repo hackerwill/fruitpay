@@ -1,7 +1,6 @@
 package com.fruitpay.base.controller;
 
 import javax.inject.Inject;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,12 +18,13 @@ import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.auth.LoginConst;
-import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
+import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
+import com.fruitpay.comm.utils.StringUtil;
 
 @Controller
 @RequestMapping("loginCtrl")
@@ -123,11 +123,29 @@ public class LoginController {
 		return customer;
 
 	}
-
+	
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public @ResponseBody ReturnMessage logout(HttpServletRequest request, HttpServletResponse response) {
-
-		return ReturnMessageEnum.Common.Success.getReturnMessage();
+	public @ResponseBody boolean logout(HttpServletRequest request, HttpServletResponse response) {
+		/*** get user token from Header **/
+		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	
+        boolean cleanSessionStatus= false;
+		if (!StringUtil.isEmptyOrSpace(FPToken)) {
+			try {				
+				logger.debug("FPToken==[" + FPToken + "]");
+				logger.debug("=======================FP Session Logout Start=======================");
+				FPSessionFactory.getInstance().getFPSessionMap().remove(FPToken);
+				cleanSessionStatus = true;
+				logger.debug("=======================FP Session Logout End=======================");
+			} catch (Exception e) {
+				cleanSessionStatus = false;
+				logger.error("ClearSessionServlet Fail", e);
+			}
+		}
+		else{
+			/** token is null **/
+			cleanSessionStatus =true;
+		}
+		return cleanSessionStatus;
 	}
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
