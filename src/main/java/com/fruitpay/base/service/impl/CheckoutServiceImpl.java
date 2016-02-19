@@ -54,26 +54,20 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		logger.debug("add a customer, email is " + customer.getEmail());
 		
-		if(customerDAO.findByEmail(customer.getEmail()) == null){
-			
-			customer = loginService.signup(customer);
-			customerOrder.setCustomer(customer);
-		}else{
-			
-			Customer persistCustomer = customerDAO.findOne(customer.getCustomerId());
-			
-			persistCustomer.setBirthday(customer.getBirthday());
-			persistCustomer.setCellphone(customer.getCellphone());
-			persistCustomer.setEmail(customer.getEmail());
-			persistCustomer.setFirstName(customer.getFirstName());
-			persistCustomer.setGender(customer.getGender());
-			persistCustomer.setHousePhone(customer.getHousePhone());
-			persistCustomer.setLastName(customer.getLastName());
-			persistCustomer.setPostalCode(customer.getPostalCode());
-			persistCustomer.addCustomerOrder(customerOrder);
-			
-			customerOrder.setCustomer(persistCustomer);
-		}
+		Customer persistCustomer = customerDAO.findOne(customer.getCustomerId());
+		
+		persistCustomer.setBirthday(customer.getBirthday());
+		persistCustomer.setAddress(customer.getAddress());
+		persistCustomer.setCellphone(customer.getCellphone());
+		persistCustomer.setEmail(customer.getEmail());
+		persistCustomer.setFirstName(customer.getFirstName());
+		persistCustomer.setGender(customer.getGender());
+		persistCustomer.setHousePhone(customer.getHousePhone());
+		persistCustomer.setLastName(customer.getLastName());
+		persistCustomer.setPostalCode(customer.getPostalCode());
+		persistCustomer.addCustomerOrder(customerOrder);
+		
+		customerOrder.setCustomer(persistCustomer);
 		
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		

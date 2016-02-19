@@ -91,6 +91,16 @@ public class CustomerDataController {
 		return customer;
 	}
 	
+	@RequestMapping(value = "/isFbIdExisted/{fbId}", method = RequestMethod.POST)
+	public @ResponseBody Boolean isFbIdExisted(@PathVariable String fbId){
+		
+		Customer customer = customerService.findByFbId(fbId);
+		if(customer != null)
+			return true;
+		else
+			return false;
+	}
+	
 	@RequestMapping(value = "/addCustomer", method = RequestMethod.POST)
 	public @ResponseBody Customer addCustomer(@RequestBody Customer customer){
 		

@@ -36,6 +36,18 @@ public class LoginController {
 	private LoginService loginService;
 	@Inject
 	private EmailSendService emailSendService;
+	
+	@RequestMapping(value = "/match", method = RequestMethod.POST)
+	public @ResponseBody Boolean checkMatch(@RequestBody Customer customer) {
+		if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword()))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		Customer returnCustomer = loginService.login(customer.getEmail(), customer.getPassword());
+		if(returnCustomer != null){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody Customer loginAsOneRCustomer(@RequestBody Customer customer,

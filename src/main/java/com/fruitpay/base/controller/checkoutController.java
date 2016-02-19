@@ -38,6 +38,7 @@ import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
+import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Controller
@@ -73,19 +74,6 @@ public class checkoutController {
 		
 		if(customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-
-		String randomPassword = RadomValueUtil.getRandomPassword();
-		customer.setPassword(randomPassword);
-		
-		boolean isEmailExisted = customerService.isEmailExisted(customer.getEmail());
-		Customer sendCustomer = null;
-		if(!isEmailExisted){
-			sendCustomer = new Customer();
-			sendCustomer.setPassword(randomPassword);
-			sendCustomer.setFirstName(customer.getFirstName());
-			sendCustomer.setLastName(customer.getLastName());
-			sendCustomer.setEmail(customer.getEmail());
-		}
 		
 		for (Iterator<OrderPreference> iterator = customerOrder.getOrderPreferences().iterator(); iterator.hasNext();) {
 			OrderPreference orderPreference = iterator.next();
@@ -94,10 +82,7 @@ public class checkoutController {
 		
 		customerOrder = checkoutService.checkoutOrder(customer, customerOrder);
 		
-		if(sendCustomer!= null){
-			emailSendService.sendTo(MailType.NEW_MEMBER_FROM_ORDER, sendCustomer.getEmail(), sendCustomer);
-		}
-		if(customerOrder!= null ){
+		if(customerOrder!= null && AssertUtils.hasValue(customerOrder.getCustomer().getEmail())){
 			CustomerOrder sendCustomerOrder = new CustomerOrder();
 			BeanUtils.copyProperties(customerOrder, sendCustomerOrder);
 			emailSendService.sendTo(MailType.NEW_ORDER, sendCustomerOrder.getCustomer().getEmail(), sendCustomerOrder);	
