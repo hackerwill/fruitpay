@@ -76,7 +76,7 @@ public class ReturnMessageEnum{
 		public ReturnMessage getReturnMessage(){
 			return rm;
 		}
-	}
-	
+	}	
+
 }
 

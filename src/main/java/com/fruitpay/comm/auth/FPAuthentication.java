@@ -2,10 +2,15 @@ package com.fruitpay.comm.auth;
 
 import java.net.InetAddress;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fruitpay.comm.session.FPSessionUtil;
+import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.session.model.FPSessionInfo;
+import com.fruitpay.comm.utils.StringUtil;
 
 public class FPAuthentication {
 	private static final Log log = LogFactory.getLog(FPAuthentication.class);
@@ -49,25 +54,42 @@ public class FPAuthentication {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean validateFPToken(FPSessionInfo fpToken) throws Exception {
+	public static boolean validateFPToken(HttpServletRequest request) throws Exception {
 		boolean isValidate = false;
-		try {
-			String originalKey = fpToken.getLogonAddress() + ";" + fpToken.getUserName() + ";" + fpToken.getSessionId();
-			String deKey = FPEnDeCryption.encryptCipher(originalKey);
-			deKey = deKey.replaceAll(" ", ":");
-			deKey = deKey.replaceAll("[+]", ":");
-			deKey = deKey.replaceAll("=", ":");
-			if (null != deKey && deKey.length() > 0) {
-				if (deKey.equalsIgnoreCase(fpToken.getFPToken()))
-					isValidate = true;
+		/*** get user token from Header **/
+		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	    
+		if (!StringUtil.isEmptyOrSpace(FPToken)) {
+			try {			
+				isValidate =StringUtil.isEmptyOrSpace(FPSessionFactory.getInstance().getFPSessionMap().get(FPToken))?false:true;
+			} catch (Exception e) {
+				isValidate = false;
+				e.printStackTrace();
+				log.error("validateFPToken Fail", e);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("validateFPToken fail", e);
-			throw e;
 		}
-		return isValidate;
+		else{
+			/** token is null **/
+			isValidate =true;
+		}
+		return isValidate ;
 	}
+//		try {
+//			String originalKey = fpToken.getLogonAddress() + ";" + fpToken.getUserName() + ";" + fpToken.getSessionId();
+//			String deKey = FPEnDeCryption.encryptCipher(originalKey);
+//			deKey = deKey.replaceAll(" ", ":");
+//			deKey = deKey.replaceAll("[+]", ":");
+//			deKey = deKey.replaceAll("=", ":");
+//			if (null != deKey && deKey.length() > 0) {
+//				if (deKey.equalsIgnoreCase(fpToken.getFPToken()))
+//					isValidate = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			log.error("validateFPToken fail", e);
+//			throw e;
+//		}
+//		return isValidate;
+//	}
 
 	/**
 	 * Get Host Name

@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +59,10 @@ public class FPSessionUtil {
 		String FPToken = null;
 		try {
 			if (!StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))) {
-
+				
+				/*****check LogonMap: clean user others token**********/
+				removeUserToken(pCustomer.getCustomerId().toString());				
+				
 				FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
 
 				if (StringUtil.isEmptyOrSpace(FPToken) || "null".equalsIgnoreCase(FPToken)) {
@@ -69,9 +73,18 @@ public class FPSessionUtil {
 				logger.debug("The currency Token:" + FPToken);
 				// Put FPToken into FPSessionMap
 				FPSessionFactory.getInstance().putFPToken(FPToken, fpSessionInfo);
-				FPSessionFactory.getInstance().putLogonMap(fpSessionInfo.getSessionId(),
-						fpSessionInfo.getLogonAddress() + ";" + FPToken);
+				FPSessionFactory.getInstance().putLogonMap(pCustomer.getCustomerId().toString()//fpSessionInfo.getSessionId(),
+						,fpSessionInfo.getLogonAddress() + ";" + FPToken);
 				logger.debug("FPSessionMap[" + FPSessionFactory.getInstance().getFPSessionMap().entrySet() + "]");
+				/********put FPToken into session********/
+				 HttpSession session = request.getSession(false);
+				 if(session != null){
+				 session.invalidate();
+				 request.getSession().setAttribute(LoginConst.LOGIN_AUTHORIZATION, FPToken);
+				 }
+				 else{
+					 
+				 }
 			} else {
 				System.out.println("The request JSESSIONID is null");
 			}
@@ -90,7 +103,7 @@ public class FPSessionUtil {
 		if (!StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))
 				&& !StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_AUTHORIZATION))) {
 			fpSessionInfo.setFPToken(getHeader(request, LoginConst.LOGIN_AUTHORIZATION));
-			validated = FPAuthentication.validateFPToken(fpSessionInfo);
+			validated = FPAuthentication.validateFPToken(request);
 		} else {
 			System.out.println("The request JSESSIONID is null or request Token is null");
 		}
@@ -144,5 +157,13 @@ public class FPSessionUtil {
 
 	public static String getHeader(HttpServletRequest request, String key) {
 		return getHeadersInfo(request).get(key);
+	}
+	
+	public static void removeUserToken(String userId) {
+		if(!StringUtil.isEmptyOrSpace(FPSessionFactory.getInstance().getLogonMap().get(userId))){
+			String userToken = FPSessionFactory.getInstance().getLogonMap().get(userId);
+			userToken= userToken.substring(userToken.indexOf(";"), userToken.length());
+			FPSessionFactory.getInstance().getFPSessionMap().remove(userToken);			
+		}		
 	}
 }

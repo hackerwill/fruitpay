@@ -12,16 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.auth.LoginConst;
+import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.session.model.FPSessionFactory;
+import com.fruitpay.comm.session.model.FPSessionInfo;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
 import com.fruitpay.comm.utils.StringUtil;
@@ -73,7 +76,7 @@ public class LoginController {
 		}
 		return returnCustomer;
 	}
-
+    
 	@RequestMapping(value = "/loginById", method = RequestMethod.POST)
 	public @ResponseBody Customer  loginByIdAsOneCustomer(@RequestBody Customer customer, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -139,15 +142,19 @@ public class LoginController {
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public @ResponseBody boolean logout(HttpServletRequest request, HttpServletResponse response) {
 		/*** get user token from Header **/
-		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	
+		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);		
         boolean cleanSessionStatus= false;
 		if (!StringUtil.isEmptyOrSpace(FPToken)) {
-			try {				
+			try {			
+				if(!StringUtil.isEmptyOrSpace(FPSessionFactory.getInstance().getFPSessionMap().get(FPToken))){
+					FPSessionInfo tempFPS =(FPSessionInfo)FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
 				logger.debug("FPToken==[" + FPToken + "]");
 				logger.debug("=======================FP Session Logout Start=======================");
 				FPSessionFactory.getInstance().getFPSessionMap().remove(FPToken);
+				FPSessionFactory.getInstance().getLogonMap().put(tempFPS.getUserId(), null);
 				cleanSessionStatus = true;
 				logger.debug("=======================FP Session Logout End=======================");
+				}
 			} catch (Exception e) {
 				cleanSessionStatus = false;
 				logger.error("ClearSessionServlet Fail", e);
@@ -159,7 +166,7 @@ public class LoginController {
 		}
 		return cleanSessionStatus;
 	}
-
+	@UserAccessAnnotation(UserAuthStatus.NO)
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd, HttpServletRequest request,
 			HttpServletResponse response) {
