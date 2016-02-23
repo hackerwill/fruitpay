@@ -27,12 +27,6 @@
 		<skip.integration.tests>true</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
 	</properties>
-	<repositories>
-		<repository>
-			<id>my-internal-site</id>
-			<url>http://10.1.1.4:9090/nexus/content/repositories/thirdparty/</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
