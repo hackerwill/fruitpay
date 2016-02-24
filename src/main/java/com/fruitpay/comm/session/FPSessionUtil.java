@@ -147,7 +147,7 @@ public class FPSessionUtil {
 
 		Enumeration<String> headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
-			String key = headerNames.nextElement();
+			String key = headerNames.nextElement().toLowerCase();
 			String value = request.getHeader(key);
 			map.put(key, value);
 		}
@@ -156,7 +156,7 @@ public class FPSessionUtil {
 	}
 
 	public static String getHeader(HttpServletRequest request, String key) {
-		return getHeadersInfo(request).get(key);
+		return getHeadersInfo(request).get(key.toLowerCase());
 	}
 	
 	public static void removeUserToken(String userId) {
