@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
@@ -37,7 +38,8 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	private CustomerService customerService;
 	@Inject
 	private DataUtil dataUtil;
-	
+	@Inject
+	private LoginService loginService;
 	private MockMvc mockMvc;
 	
 	@Before
@@ -68,13 +70,6 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
-		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
 		
 	}
 	
@@ -145,14 +140,11 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(customer)))
 	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));		
 		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(customer)))
-	   		.andExpect(status().isNotFound())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
-		
+
+		Customer loginCustomer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		Assert.assertNull(loginCustomer);
 		
 	}
 

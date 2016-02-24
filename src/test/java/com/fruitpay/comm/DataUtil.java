@@ -1,6 +1,7 @@
 package com.fruitpay.comm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Coupon;
@@ -143,6 +145,8 @@ public class DataUtil {
 		customerOrder.setDeliveryDay(deliveryDay);
 		customerOrder.setAllowForeignFruits("Y");
 		customerOrder.setProgramNum(1);
+		customerOrder.setOrderDate(Calendar.getInstance().getTime());
+		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
 		
 		int shippingCost = paymentMode.getPaymentExtraPrice();
 		int totalPrice = orderProgram.getPrice() * customerOrder.getProgramNum() + shippingCost;	

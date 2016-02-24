@@ -18,9 +18,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Coupon;
+import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CouponService;
+import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.util.AbstractSpringJnitTest;
@@ -51,6 +54,10 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	CouponService couponService;
 	@Inject
 	CheckoutService checkoutService;
+	@Inject
+	CustomerService customerService;
+	@Inject
+	private LoginService loginService;
 	
 	private MockMvc mockMvc;
 	
@@ -70,9 +77,18 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	public void checkout() throws Exception {
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
 		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getCheckoutCustomer().getEmail());
+		
 		customerOrder.setCoupons(new ArrayList<Coupon>());
 		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
-		checkoutPostBean.setCustomer(dataUtil.getCheckoutCustomer());
+		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
 		this.mockMvc.perform(post("/checkoutCtrl/checkout")
@@ -81,13 +97,6 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())));
-		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isForbidden())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
 		
 	}
 	
@@ -111,7 +120,17 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
 		customerOrder.setCoupons(coupons);
 		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
-		checkoutPostBean.setCustomer(dataUtil.getCheckoutCustomer());
+		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getCheckoutCustomer().getEmail());
+		
+		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
 		
 		this.mockMvc.perform(post("/checkoutCtrl/checkout")
@@ -121,13 +140,6 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())))
 	   		.andExpect(jsonPath("$.totalPrice", is(449)));
-		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isForbidden())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
 		
 	}
 	

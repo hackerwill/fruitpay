@@ -65,13 +65,13 @@ public class CheckoutServiceImpl implements CheckoutService {
 		persistCustomer.setHousePhone(customer.getHousePhone());
 		persistCustomer.setLastName(customer.getLastName());
 		persistCustomer.setPostalCode(customer.getPostalCode());
-		persistCustomer.addCustomerOrder(customerOrder);
 		
 		customerOrder.setCustomer(persistCustomer);
 		
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
 		customerOrderDAO.saveAndFlush(customerOrder);
+		
 		return customerOrder;
 	}
 	

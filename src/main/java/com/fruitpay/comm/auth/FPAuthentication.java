@@ -2,11 +2,13 @@ package com.fruitpay.comm.auth;
 
 import java.net.InetAddress;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fruitpay.comm.service.RoleService;
 import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.session.model.FPSessionInfo;
@@ -14,7 +16,6 @@ import com.fruitpay.comm.utils.StringUtil;
 
 public class FPAuthentication {
 	private static final Log log = LogFactory.getLog(FPAuthentication.class);
-
 	public static void main(String[] args) throws Exception {
 		try {
 
@@ -90,6 +91,35 @@ public class FPAuthentication {
 //		}
 //		return isValidate;
 //	}
+	/**
+	 * Validate Admin User By Referer of request
+	 * 
+	 * @param FPToken
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean validateAdmin(HttpServletRequest request) throws Exception {
+		boolean isValidate = false;
+		/*** get user referer from Header **/
+		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	    
+		if (!StringUtil.isEmptyOrSpace(FPToken)) {
+			try {			
+				FPSessionInfo tempFPS =(FPSessionInfo)FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
+				if(!StringUtil.isEmptyOrSpace(tempFPS)){
+				isValidate =isAdmin(tempFPS.getUserId());//request.getLocalAddr()+LoginConst.ADMIN_URL).equalsIgnoreCase(FPReferer)?false:true;
+				}
+			} catch (Exception e) {
+				isValidate = false;
+				e.printStackTrace();
+				log.error("validateFPToken Fail", e);
+			}
+		}
+		else{
+			/** token is null **/
+			isValidate =true;
+		}
+		return isValidate ;
+	}
 
 	/**
 	 * Get Host Name
@@ -115,5 +145,12 @@ public class FPAuthentication {
 		}
 		return host;
 	}
+	private final static String MANAGER_ID = "FruitpayAdmin";
 
+	public static boolean isAdmin(String userId) {
+		if(userId.equals(MANAGER_ID))
+			return true;
+		else
+			return false;
+	}
 }

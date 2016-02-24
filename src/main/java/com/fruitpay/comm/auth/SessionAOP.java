@@ -2,6 +2,7 @@ package com.fruitpay.comm.auth;
 
 import java.lang.reflect.Method;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,12 +13,14 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 
 /**
  * Session AOP切面 
  * 
  */
+
 @Component
 @Aspect
 public class SessionAOP {
@@ -33,18 +36,19 @@ public class SessionAOP {
 		}
 
 		boolean validateisYes = type == UserAuthStatus.YES && FPAuthentication.validateFPToken(request); 
-		boolean validateisNo = type == UserAuthStatus.NO && FPAuthentication.validateFPToken(request); 
+		boolean validateisNo = type == UserAuthStatus.NO ; 
+        boolean validateisAdmin = type == UserAuthStatus.ADMIN && FPAuthentication.validateAdmin(request);
 
-		try {
-			if (validateisYes) {				
-				return pj.proceed();
-			} else if(validateisNo){				
-				response.getWriter().print(ReturnMessageEnum.Common.AuthenticationFailed.getReturnMessage());   
+			if (validateisYes || validateisNo || validateisAdmin) {				
+				try {
+					return pj.proceed();
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else{
+				throw new HttpServiceException(ReturnMessageEnum.Common.AuthenticationFailed.getReturnMessage());
 			}
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return null;
 	}
 

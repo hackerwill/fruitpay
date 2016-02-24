@@ -166,7 +166,7 @@ public class LoginController {
 		}
 		return cleanSessionStatus;
 	}
-	@UserAccessAnnotation(UserAuthStatus.NO)
+	@UserAccessAnnotation(UserAuthStatus.YES)
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd, HttpServletRequest request,
 			HttpServletResponse response) {

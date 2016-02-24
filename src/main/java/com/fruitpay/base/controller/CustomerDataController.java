@@ -105,7 +105,7 @@ public class CustomerDataController {
 	public @ResponseBody Customer addCustomer(@RequestBody Customer customer){
 		
 		//密碼加密
-		customer.setPassword("0000"); //預設0000
+		customer.setPassword("FRUITPAY_DEFUALT"); //預設FRUITPAY_DEFUALT
 		customer.setPassword(Md5Util.getMd5(customer.getPassword())); 
 		customer = customerService.saveCustomer(customer);
 		return customer;
