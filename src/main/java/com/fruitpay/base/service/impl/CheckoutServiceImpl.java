@@ -15,6 +15,7 @@ import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CouponService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
 
@@ -33,6 +34,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 	private CustomerDAO customerDAO;
 	@Inject
 	private OrderStatusDAO orderStatusDAO;
+	
+	@Inject
+	private CouponService couponService;
 
 	@Override
 	@Transactional
@@ -87,7 +91,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 		int totalProductsPrice = customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum();
 		for (int i = 0; i < customerOrder.getCoupons().size(); i++) {
 			Coupon coupon = customerOrder.getCoupons().get(i);
-			totalProductsPrice = (int)(totalProductsPrice * coupon.getDiscountPercentage());
+			totalProductsPrice = couponService.countFinalPrice(coupon, totalProductsPrice);
 		}
 		return totalProductsPrice;
 	}

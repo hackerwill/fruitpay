@@ -37,6 +37,9 @@ public class Coupon extends AbstractDataBean implements Serializable{
 	@Column(name="value")
 	private int value;
 	
+	@Column(name="first_value")
+	private int firstValue;
+	
 	@Column(name="expiry_day")
 	@Temporal(TemporalType.DATE)
 	private Date expiryDay;
@@ -98,6 +101,14 @@ public class Coupon extends AbstractDataBean implements Serializable{
 		this.value = value;
 	}
 
+	public int getFirstValue() {
+		return firstValue;
+	}
+
+	public void setFirstValue(int firstValue) {
+		this.firstValue = firstValue;
+	}
+
 	public Date getExpiryDay() {
 		return expiryDay;
 	}
@@ -146,8 +157,4 @@ public class Coupon extends AbstractDataBean implements Serializable{
 		this.usageIndividually = usageIndividually;
 	}
 	
-	public double getDiscountPercentage(){
-		return (100 - this.value) / 100.0;
-	}
-
 }

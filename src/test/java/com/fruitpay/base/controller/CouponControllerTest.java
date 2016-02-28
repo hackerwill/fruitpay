@@ -1,5 +1,6 @@
 package com.fruitpay.base.controller;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -52,7 +53,7 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 	@Rollback(true)
 	@Transactional
 	public void addCouponGetByCouponName() throws Exception {
-		Coupon coupon = dataUtil.getCoupon();
+		Coupon coupon = dataUtil.getByPercentageCoupon(10);
 		
 		//add
 		this.mockMvc.perform(post("/couponCtrl/coupon")
@@ -60,7 +61,7 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 				.content(TestUtil.convertObjectToJsonBytes(coupon)))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getCoupon().getCouponName())))
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getByPercentageCoupon(10).getCouponName())))
 	   		.andExpect(jsonPath("$.value", is(coupon.getValue())));
 		
 		//find
@@ -71,12 +72,99 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 		
 	}
 	
+	@Test
+	@Rollback(true)
+	@Transactional
+	public void testCouponByAmount100Calculation() throws Exception {
+		Coupon coupon = dataUtil.getByAmountCoupon(100);
+		int price = 400;
+		
+		double discountPercentage = couponService.countDiscountPercentage(coupon, price);
+		Assert.assertEquals(0.75, discountPercentage, 0.0001);
+		
+		double discountPercentOff = couponService.countDiscountPercentOff(coupon, price);
+		Assert.assertEquals(0.25, discountPercentOff, 0.0001);
+		
+		int discountAmount = couponService.countDiscountAmount(coupon, price);
+		Assert.assertEquals(100, discountAmount);
+		
+		int finalPrice = couponService.countFinalPrice(coupon, price);
+		Assert.assertEquals(300, finalPrice);
+		
+		
+	}
+	
+	@Test
+	@Rollback(true)
+	@Transactional
+	public void testCouponByAmount88Calculation() throws Exception {
+		Coupon coupon = dataUtil.getByAmountCoupon(88);
+		int price = 499;
+		
+		double discountPercentage = couponService.countDiscountPercentage(coupon, price);
+		Assert.assertEquals(0.82, discountPercentage, 0.0001);
+		
+		double discountPercentOff = couponService.countDiscountPercentOff(coupon, price);
+		Assert.assertEquals(0.18, discountPercentOff, 0.0001);
+		
+		int discountAmount = couponService.countDiscountAmount(coupon, price);
+		Assert.assertEquals(88, discountAmount);
+		
+		int finalPrice = couponService.countFinalPrice(coupon, price);
+		Assert.assertEquals(411, finalPrice);
+		
+		
+	}
+	
+	@Test
+	@Rollback(true)
+	@Transactional
+	public void testCouponByPercetage10Calculation() throws Exception {
+		Coupon coupon = dataUtil.getByPercentageCoupon(10);
+		int price = 400;
+		
+		double discountPercentage = couponService.countDiscountPercentage(coupon, price);
+		Assert.assertEquals(0.9, discountPercentage, 0.0001);
+		
+		double discountPercentOff = couponService.countDiscountPercentOff(coupon, price);
+		Assert.assertEquals(0.1, discountPercentOff, 0.0001);
+		
+		int discountAmount = couponService.countDiscountAmount(coupon, price);
+		Assert.assertEquals(40, discountAmount);
+		
+		int finalPrice = couponService.countFinalPrice(coupon, price);
+		Assert.assertEquals(360, finalPrice);
+		
+	}
+	
+	@Test
+	@Rollback(true)
+	@Transactional
+	public void testCouponByPercetage12Calculation() throws Exception {
+		Coupon coupon = dataUtil.getByPercentageCoupon(12);
+		int price = 499;
+		
+		double discountPercentage = couponService.countDiscountPercentage(coupon, price);
+		Assert.assertEquals(0.88, discountPercentage, 0.0001);
+		
+		double discountPercentOff = couponService.countDiscountPercentOff(coupon, price);
+		Assert.assertEquals(0.12, discountPercentOff, 0.0001);
+		
+		int discountAmount = couponService.countDiscountAmount(coupon, price);
+		Assert.assertEquals(60, discountAmount);
+		
+		int finalPrice = couponService.countFinalPrice(coupon, price);
+		Assert.assertEquals(439, finalPrice);
+	}
+	
+	
+	
 	/*@Test
 	@Rollback(true)
 	@Transactional*/
 	public void addCouponAndUpdateAndDelete() throws Exception {
 		
-		Coupon coupon = dataUtil.getCoupon();
+		Coupon coupon = dataUtil.getByPercentageCoupon(10);
 		
 		//add
 		this.mockMvc.perform(post("/couponCtrl/coupon")
@@ -84,8 +172,8 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 				.content(TestUtil.convertObjectToJsonBytes(coupon)))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getCoupon().getCouponName())))
-	   		.andExpect(jsonPath("$.value", is(dataUtil.getCoupon().getValue())));
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getByPercentageCoupon(10).getCouponName())))
+	   		.andExpect(jsonPath("$.value", is(dataUtil.getByPercentageCoupon(10).getValue())));
 		
 		//findall
 		this.mockMvc.perform(get("/couponCtrl/coupons"))
@@ -104,7 +192,7 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.couponName", is(updateOne.getCouponName())))
-	   		.andExpect(jsonPath("$.value", is(dataUtil.getCoupon().getValue())));
+	   		.andExpect(jsonPath("$.value", is(dataUtil.getByPercentageCoupon(10).getValue())));
 		
 		//delete
 		this.mockMvc.perform(delete("/couponCtrl/coupon")
@@ -118,4 +206,5 @@ public class CouponControllerTest extends AbstractSpringJnitTest{
    		.andExpect(jsonPath("$", hasSize(0)));
 		
 	}
+	
 }

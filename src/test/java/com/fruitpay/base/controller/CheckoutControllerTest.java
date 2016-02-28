@@ -108,13 +108,13 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 		//add
 		this.mockMvc.perform(post("/couponCtrl/coupon")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCoupon())))
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getByPercentageCoupon(10))))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getCoupon().getCouponName())))
-	   		.andExpect(jsonPath("$.value", is(dataUtil.getCoupon().getValue())));
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getByPercentageCoupon(10).getCouponName())))
+	   		.andExpect(jsonPath("$.value", is(dataUtil.getByPercentageCoupon(10).getValue())));
 		
-		Coupon coupon = couponService.findByCouponName(dataUtil.getCoupon().getCouponName());
+		Coupon coupon = couponService.findByCouponName(dataUtil.getByPercentageCoupon(10).getCouponName());
 		List<Coupon> coupons = new ArrayList<Coupon>() ;
 		coupons.add(coupon);
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();

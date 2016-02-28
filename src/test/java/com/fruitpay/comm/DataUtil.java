@@ -34,12 +34,12 @@ public class DataUtil {
 	
 	public List<Coupon> getCouponList(){
 		List<Coupon> coupons = new ArrayList<Coupon>();
-		coupons.add(getCoupon());
+		coupons.add(getByPercentageCoupon(10));
 		return coupons;
 	}
 	
 	
-	public Coupon getCoupon(){
+	public Coupon getByPercentageCoupon(int discount){
 		Constant couponTypes = staticDataService.getConstant(8);
 		Constant yesOrNo = staticDataService.getConstant(7);
 		
@@ -48,7 +48,22 @@ public class DataUtil {
 		coupon.setCouponDesc("測試資料");
 		coupon.setCouponType(couponTypes.getConstOptions().get(0));
 		coupon.setExpiryDay(new Date());
-		coupon.setValue(10);
+		coupon.setValue(discount);
+		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
+		
+		return coupon;
+	}
+	
+	public Coupon getByAmountCoupon(int amount){
+		Constant couponTypes = staticDataService.getConstant(8);
+		Constant yesOrNo = staticDataService.getConstant(7);
+		
+		Coupon coupon = new Coupon();
+		coupon.setCouponName("test");
+		coupon.setCouponDesc("測試資料");
+		coupon.setCouponType(couponTypes.getConstOptions().get(3));
+		coupon.setExpiryDay(new Date());
+		coupon.setValue(amount);
 		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
 		
 		return coupon;

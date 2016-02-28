@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.service.CouponService;
 
@@ -33,6 +35,15 @@ public class CouponController {
 	public @ResponseBody Coupon getCoupon(@PathVariable Integer couponId){
 		Coupon coupon = couponService.findById(couponId);
 		return coupon;
+	}
+	
+	@RequestMapping(value = "/coupon/{couponId}/discountAmount/{price}", method = RequestMethod.GET)
+	public @ResponseBody Integer getCoupon(@PathVariable Integer couponId, @PathVariable Integer price){
+		Coupon coupon = couponService.findById(couponId);
+		if(coupon == null)
+			throw new HttpServiceException(ReturnMessageEnum.Coupon.CouponNotFound.getReturnMessage());
+	
+		return couponService.countDiscountAmount(coupon, price);
 	}
 	
 	@RequestMapping(value = "/coupon/name/{couponName}", method = RequestMethod.GET)
