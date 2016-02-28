@@ -50,6 +50,6 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	@Test
 	public void findAllTowerships() throws Exception {
 		List<PostalCode> postCodes = staticDataService.getAllPostalCodes();
-		Assert.assertEquals(367, postCodes.size());
+		Assert.assertEquals(368, postCodes.size());
 	}
 }
