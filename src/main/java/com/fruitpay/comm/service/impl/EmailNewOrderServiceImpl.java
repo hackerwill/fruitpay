@@ -61,16 +61,16 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 	
 	private int getRealPrice(CustomerOrder order){
 		int price = order.getOrderProgram().getPrice();
-		return price - getCouponDiscount(order.getCoupons(), price);
+		return getFinalPrice(order.getCoupons(), price);
 	}
 	
-	private int getCouponDiscount(List<Coupon> coupons, int price){
+	private int getFinalPrice(List<Coupon> coupons, int price){
 		if(coupons.isEmpty())
 			return price;
 		
 		for (Iterator<Coupon> iterator = coupons.iterator(); iterator.hasNext();) {
 			Coupon coupon = iterator.next();
-			price -= couponService.countDiscountAmount(coupon, price);
+			price = couponService.countFinalPrice(coupon, price);
 		}
 		
 		return price;
