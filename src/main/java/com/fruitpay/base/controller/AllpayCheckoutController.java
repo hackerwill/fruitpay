@@ -95,9 +95,9 @@ public class AllpayCheckoutController {
 	}
 	
 	
-	@RequestMapping(value = "/thanks/{orderId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/thanks", method = RequestMethod.POST)
 	public void checkoutCreditCardSuccess( 
-			@PathVariable String orderId, HttpServletRequest request, HttpServletResponse response){
+			@RequestParam String orderId, HttpServletRequest request, HttpServletResponse response){
 
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + orderId);
