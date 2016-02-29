@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,10 +80,10 @@ public class AllpayCheckoutController {
 	@PostConstruct
 	public void init() throws Exception{
 		ORDER_RESULT_URL = httpUtil.getDomainURL() + "allpayCtrl/callback";
-		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/checkoutCreditCardSuccess";
+		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/thanks";
 		PERIOD_RETURN_URL = httpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
 		SHOW_ORDER_URL = httpUtil.getDomainURL() + "app/user/orders";
-		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/checkoutCreditCardSuccess";
+		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/thanks";
 	}
 	
 	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
@@ -94,9 +95,9 @@ public class AllpayCheckoutController {
 	}
 	
 	
-	@RequestMapping(value = "/checkoutCreditCardSuccess", method = RequestMethod.POST)
+	@RequestMapping(value = "/thanks/{orderId}", method = RequestMethod.POST)
 	public void checkoutCreditCardSuccess( 
-			HttpServletRequest request, HttpServletResponse response){
+			@PathVariable String orderId, HttpServletRequest request, HttpServletResponse response){
 
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL);
@@ -266,8 +267,8 @@ public class AllpayCheckoutController {
 			oPayment.MerchantID = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
 			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
-			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL;
-			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL;
+			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
+			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;

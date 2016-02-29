@@ -128,8 +128,7 @@ public class LoginController {
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public @ResponseBody Customer SignupAsOneCustomer(@RequestBody Customer customer) {
 
-		if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword(), customer.getFirstName(),
-				customer.getLastName())) {
+		if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword())) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
 
