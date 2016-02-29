@@ -268,7 +268,7 @@ public class AllpayCheckoutController {
 			/* 基本參數 */
 			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
 			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL + "?id=" + orderId;
-			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "?id" + orderId;
+			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "?id=" + orderId;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
