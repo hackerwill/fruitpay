@@ -80,7 +80,7 @@ public class AllpayCheckoutController {
 	@PostConstruct
 	public void init() throws Exception{
 		ORDER_RESULT_URL = httpUtil.getDomainURL() + "allpayCtrl/callback";
-		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/thanks";
+		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/orderSuccess";
 		PERIOD_RETURN_URL = httpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
 		SHOW_ORDER_URL = httpUtil.getDomainURL() + "app/user/orders";
 		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/thanks";
@@ -95,12 +95,12 @@ public class AllpayCheckoutController {
 	}
 	
 	
-	@RequestMapping(value = "/thanks", method = RequestMethod.POST)
+	@RequestMapping(value = "/orderSuccess/{id}", method = RequestMethod.POST)
 	public void checkoutCreditCardSuccess( 
-			@RequestParam String orderId, HttpServletRequest request, HttpServletResponse response){
+			@PathVariable String id, HttpServletRequest request, HttpServletResponse response){
 
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + orderId);
+		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + id);
 	}
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
@@ -267,8 +267,8 @@ public class AllpayCheckoutController {
 			oPayment.MerchantID = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
 			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
-			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL + "?id=" + orderId;
-			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "?id=" + orderId;
+			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
+			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
