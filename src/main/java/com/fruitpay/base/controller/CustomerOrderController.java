@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
@@ -27,6 +28,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
@@ -75,6 +77,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.YES)
 	public @ResponseBody CustomerOrder getOrder(@PathVariable Integer orderId){
 		
 		if(AssertUtils.isEmpty(orderId))

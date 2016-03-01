@@ -40,6 +40,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Override
 	public List<CustomerOrder> getCustomerOrdersByCustomerId(Integer customerId) {
 		Customer customer = customerDAO.findOne(customerId);
+		if(customer == null)
+			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomer(customer);
 		if(customerOrders.isEmpty())
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());

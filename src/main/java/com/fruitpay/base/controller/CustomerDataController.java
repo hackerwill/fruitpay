@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.AuthenticationUtil;
 import com.fruitpay.comm.utils.Md5Util;
@@ -140,6 +142,15 @@ public class CustomerDataController {
 	@RequestMapping(value = "/customerByOrderId/{orderId}", method = RequestMethod.POST) 
 	public @ResponseBody Customer customerByOrderId(@PathVariable Integer orderId){
 		return customerService.findByOrderId(orderId);
+	}
+	
+	@RequestMapping(value = "/customer/{customerId}/orders", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.YES)
+	public @ResponseBody List<CustomerOrder> orders(@PathVariable int customerId){
+	
+		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customerId);
+		
+		return customerOrders;
 	}
 	
 }

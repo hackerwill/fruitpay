@@ -20,7 +20,7 @@
 		<mysql.version>5.1.6</mysql.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<c3p0.version>0.9.1.2</c3p0.version>
-		<jackson.version>2.2.3</jackson.version>
+		<jackson.version>2.7.2</jackson.version>
 		<build.profile.id>dev</build.profile.id>
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
 		<jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
@@ -233,6 +233,13 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate5</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
 
 		<!-- lang utils -->
 		<dependency>

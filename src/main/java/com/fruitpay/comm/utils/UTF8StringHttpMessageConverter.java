@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.http.HttpOutputMessage;  
 import org.springframework.http.MediaType;  
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;  
 /** 
  * 用于?理中文????： Spring bug - 

@@ -80,7 +80,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
 

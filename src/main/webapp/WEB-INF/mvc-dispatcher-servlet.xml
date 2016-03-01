@@ -27,17 +27,31 @@
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"> 
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.fruitpay" />		
+	<context:component-scan base-package="com.fruitpay" />	
 	
-	<jpa:repositories base-package="com.fruitpay" />
-	
+	<!-- Jackson Mapper -->
+	<bean id="myObjectMapper" class="com.fruitpay.comm.utils.HibernateAwareObjectMapper" />
+	<bean
+	    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	    <property name="targetObject" ref="myObjectMapper" />
+	    <property name="targetMethod" value="configure" />
+	    <property name="arguments">
+	        <list>
+	            <value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+	            <value>false</value>
+	        </list>
+	    </property>
+	</bean>
 	<mvc:annotation-driven >
 		<mvc:message-converters register-defaults="true">  
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		        <property name="objectMapper" ref="myObjectMapper"></property>
+		    </bean>
     		<bean class="com.fruitpay.comm.utils.UTF8StringHttpMessageConverter"/>  
   		</mvc:message-converters>
-	</mvc:annotation-driven>
+	</mvc:annotation-driven>	
 	<mvc:resources mapping="/**" location="/build/" />
-	
+		
 	<mvc:cors>
 		<mvc:mapping path="/**"
 			allowed-origins="*"
@@ -45,6 +59,9 @@
 			allow-credentials="false"
 			max-age="3600" />
 	</mvc:cors>
+	
+	<jpa:repositories base-package="com.fruitpay" />
+	
 	<aop:aspectj-autoproxy/>
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
 	<task:executor id="myExecutor" pool-size="5" />
