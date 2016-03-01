@@ -1,6 +1,8 @@
 package com.fruitpay.base.controller;
 
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,7 +115,6 @@ public class StaticDataController {
 			List<ConstantOption> options = constant.getConstOptions().stream()
 					.filter(option -> "1".equals(option.getValidFlag()))
 					.collect(Collectors.toList());
-				constant.setConstOptions(options);
 		}
 		return constants;
 	}
@@ -124,6 +125,14 @@ public class StaticDataController {
 		List<ConstantOption> options = constant.getConstOptions().stream()
 			.filter(option -> "1".equals(option.getValidFlag()))
 			.collect(Collectors.toList());
+
+		options.sort(new Comparator<ConstantOption>() {
+					@Override
+					public int compare(ConstantOption o1, ConstantOption o2) {
+						return o2.getOrderNo() - o2.getOrderNo();
+					}
+				});
+		
 		constant.setConstOptions(options);
 		return constant;
 	}
