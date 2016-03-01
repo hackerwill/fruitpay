@@ -125,11 +125,11 @@ public class StaticDataController {
 		List<ConstantOption> options = constant.getConstOptions().stream()
 			.filter(option -> "1".equals(option.getValidFlag()))
 			.collect(Collectors.toList());
-
+		//排序
 		options.sort(new Comparator<ConstantOption>() {
 					@Override
 					public int compare(ConstantOption o1, ConstantOption o2) {
-						return o2.getOrderNo() - o2.getOrderNo();
+						return Integer.compare(o1.getOrderNo(), o2.getOrderNo());
 					}
 				});
 		
