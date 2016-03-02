@@ -107,9 +107,9 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(customerOrder.getReceiverCellphone())));
 		
-		this.mockMvc.perform(post("/orderCtrl/getOrders"))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		//因為只有後台可以登入，因此會是MethodNotAllowed的狀態
+		this.mockMvc.perform(post("/orderCtrl/orders"))
+	   		.andExpect(status().isMethodNotAllowed());
 		
 	}
 	
