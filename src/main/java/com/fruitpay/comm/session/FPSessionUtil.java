@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.comm.auth.FPAuthentication;
 import com.fruitpay.comm.auth.LoginConst;
+import com.fruitpay.comm.model.Role;
 import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.session.model.FPSessionInfo;
 import com.fruitpay.comm.utils.StringUtil;
@@ -55,15 +56,15 @@ public class FPSessionUtil {
 		return locale;
 	}
 
-	public static String logonGetToken(Customer pCustomer, HttpServletRequest request, String loginStyle) {
+	public static String logonGetToken(Role role, HttpServletRequest request, String loginStyle) {
 		String FPToken = null;
 		try {
 			if (!StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))) {
 				
 				/*****check LogonMap: clean user others token**********/
-				removeUserToken(pCustomer.getCustomerId().toString());				
+				removeUserToken(role.getUserId());				
 				
-				FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
+				FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
 
 				if (StringUtil.isEmptyOrSpace(FPToken) || "null".equalsIgnoreCase(FPToken)) {
 					FPToken = FPAuthentication.generateFPToken(fpSessionInfo);
@@ -73,7 +74,7 @@ public class FPSessionUtil {
 				logger.debug("The currency Token:" + FPToken);
 				// Put FPToken into FPSessionMap
 				FPSessionFactory.getInstance().putFPToken(FPToken, fpSessionInfo);
-				FPSessionFactory.getInstance().putLogonMap(pCustomer.getCustomerId().toString()//fpSessionInfo.getSessionId(),
+				FPSessionFactory.getInstance().putLogonMap(role.getUserId().toString()//fpSessionInfo.getSessionId(),
 						,fpSessionInfo.getLogonAddress() + ";" + FPToken);
 				logger.debug("FPSessionMap[" + FPSessionFactory.getInstance().getFPSessionMap().entrySet() + "]");
 				/********put FPToken into session********/
@@ -94,9 +95,9 @@ public class FPSessionUtil {
 		return FPToken;
 	}
 
-	public static boolean getInfoAndVlidateToken(Customer pCustomer, HttpServletRequest request, String loginStyle)
+	public static boolean getInfoAndVlidateToken(Role role, HttpServletRequest request, String loginStyle)
 			throws Exception {
-		FPSessionInfo fpSessionInfo = getFPSessionInfo(pCustomer, request, loginStyle);
+		FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
 		boolean validated = false;
 		logger.debug(getHeader(request, LoginConst.LOGIN_UID));
 		logger.debug(getHeader(request, LoginConst.LOGIN_AUTHORIZATION));
@@ -110,7 +111,7 @@ public class FPSessionUtil {
 		return validated;
 	}
 
-	private static FPSessionInfo getFPSessionInfo(Customer pCustomer, HttpServletRequest request, String loginStyle) {
+	private static FPSessionInfo getFPSessionInfo(Role role, HttpServletRequest request, String loginStyle) {
 		FPSessionInfo fpSessionInfo = null;
 		Locale locale = null;
 		try {
@@ -120,9 +121,9 @@ public class FPSessionUtil {
 			/**
 			 * Set User Information
 			 */
-			fpSessionInfo.setUserName(pCustomer.getFirstName());
+			fpSessionInfo.setUserName(role.getUserName());
 			logger.debug("The UserName:" + fpSessionInfo.getUserName());
-			fpSessionInfo.setUserId(Integer.toString(pCustomer.getCustomerId()));
+			fpSessionInfo.setUserId(role.getUserId());
 			logger.debug("The UserId:" + fpSessionInfo.getUserId());
 			locale = Locale.getDefault();
 			logger.debug("Locale: " + locale);

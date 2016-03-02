@@ -20,6 +20,7 @@ import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.auth.LoginConst;
 import com.fruitpay.comm.auth.UserAccessAnnotation;
+import com.fruitpay.comm.model.Role;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
@@ -64,7 +65,7 @@ public class LoginController {
 			/*** normal login: create user token ***/
 			if (returnCustomer != null) {
 				try {
-					String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.NORMAL);
+					String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
 					returnCustomer.setToken(token);
 				} catch (Exception e) {
 					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
@@ -85,7 +86,8 @@ public class LoginController {
 		try {
 			boolean validate = false;
 			try {
-				validate = FPSessionUtil.getInfoAndVlidateToken(customer, request, LoginConst.LOGINBYID);
+				
+				validate = FPSessionUtil.getInfoAndVlidateToken(new Role(customer), request, LoginConst.LOGINBYID);
 			} catch (Exception e) {
 				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
 			}
@@ -116,7 +118,7 @@ public class LoginController {
 		Customer returnCustomer = loginService.fbLogin(customer);
 		if (returnCustomer != null) {
 			try {
-				String token = FPSessionUtil.logonGetToken(returnCustomer, request, LoginConst.NORMAL);
+				String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
 				returnCustomer.setToken(token);
 			} catch (Exception e) {
 				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
@@ -184,7 +186,7 @@ public class LoginController {
 			HttpServletResponse response) {
 		boolean validate = false;
 		try {
-			validate = FPSessionUtil.getInfoAndVlidateToken(customer, request, LoginConst.LOGINBYID);
+			validate = FPSessionUtil.getInfoAndVlidateToken(new Role(customer), request, LoginConst.LOGINBYID);
 		} catch (Exception e) {
 			logger.debug("LoginController.validateToken failed");
 		}

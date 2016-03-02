@@ -7,6 +7,7 @@ public class Manager implements Serializable {
 	private String managerId;
 	private String roleId;
 	private String password;
+	private String token;
 	
 	public String getManagerId() {
 		return managerId;
@@ -25,6 +26,12 @@ public class Manager implements Serializable {
 	}
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 }

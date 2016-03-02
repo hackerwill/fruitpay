@@ -72,7 +72,8 @@ public class CustomerDataController {
 		return customerService.isEmailExisted(email.trim());
 	}
 	
-	@RequestMapping(value = "/customers", method = RequestMethod.POST)
+	@RequestMapping(value = "/customers", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody Page<Customer> getAllCustomer(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){

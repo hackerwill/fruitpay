@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.service.CouponService;
+import com.fruitpay.comm.auth.UserAccessAnnotation;
 
 @Controller
 @RequestMapping("couponCtrl")
@@ -24,6 +26,7 @@ public class CouponController {
 	private CouponService couponService;
 	
 	@RequestMapping(value = "/coupons", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody Page<Coupon> getAllCoupons(			
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){

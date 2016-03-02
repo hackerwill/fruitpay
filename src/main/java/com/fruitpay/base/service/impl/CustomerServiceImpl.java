@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Page<Customer> findAllCustomer(int page , int size) {
-		PageRequest pageRequest = new PageRequest(page, size);
-		Page<Customer> customers = customerDAO.findAll(pageRequest);
+		Page<Customer> customers = customerDAO.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "customerId")));
 		return customers;
 	}
 

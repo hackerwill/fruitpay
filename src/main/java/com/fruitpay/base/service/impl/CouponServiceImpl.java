@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +39,7 @@ public class CouponServiceImpl implements CouponService {
 
 	@Override
 	public Page<Coupon> findAll(int page ,int size) {
-		PageRequest pageRequest = new PageRequest(page, size);
-		Page<Coupon> coupons = couponDAO.findAll(pageRequest);
+		Page<Coupon> coupons = couponDAO.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "couponId")));
 		return coupons;
 	}
 

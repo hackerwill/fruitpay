@@ -100,7 +100,8 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 	
-	@RequestMapping(value = "/getOrders", method = RequestMethod.POST)
+	@RequestMapping(value = "/orders", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody Page<CustomerOrder> orders(			
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){

@@ -70,7 +70,7 @@ public class FPAuthentication {
 		}
 		else{
 			/** token is null **/
-			isValidate =false;
+			isValidate = false;
 		}
 		return isValidate ;
 	}
@@ -116,7 +116,7 @@ public class FPAuthentication {
 		}
 		else{
 			/** token is null **/
-			isValidate =true;
+			isValidate = false;
 		}
 		return isValidate ;
 	}

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +69,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public Page<CustomerOrder> getAllCustomerOrder(int page , int size) {
-		Page<CustomerOrder> customerOrders = customerOrderDAO.findAll(new PageRequest(page, size));
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}
 
