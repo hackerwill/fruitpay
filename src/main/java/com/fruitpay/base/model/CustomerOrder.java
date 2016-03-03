@@ -50,7 +50,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="receiver_house_phone")
 	private String receiverHousePhone;
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String remark;
 
 	@Column(name="tax_id")
@@ -147,7 +147,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="total_price")
 	private int totalPrice;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	  @JoinTable(
 	      name="CouponRecord",
 	      joinColumns={@JoinColumn(name="order_id", referencedColumnName="order_id")},

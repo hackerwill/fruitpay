@@ -70,9 +70,8 @@ public class CustomerOrderController {
 		
 		if(customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-	
+
 		customerOrder = customerOrderService.updateCustomerOrder(customerOrder);
-		
 		return customerOrder;
 	}
 	
