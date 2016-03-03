@@ -147,7 +147,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="total_price")
 	private int totalPrice;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@ManyToMany(fetch = FetchType.EAGER)
 	  @JoinTable(
 	      name="CouponRecord",
 	      joinColumns={@JoinColumn(name="order_id", referencedColumnName="order_id")},
