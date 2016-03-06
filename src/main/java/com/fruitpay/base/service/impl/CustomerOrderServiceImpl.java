@@ -1,5 +1,6 @@
 package com.fruitpay.base.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.Shipment;
 import com.fruitpay.base.service.CustomerOrderService;
 
 @Service
@@ -55,6 +57,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		CustomerOrder origin = customerOrderDAO.findOne(customerOrder.getOrderId());
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
+	
 		BeanUtils.copyProperties(customerOrder, origin);
 		origin = customerOrderDAO.save(origin);
 		return origin;

@@ -50,7 +50,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="receiver_house_phone")
 	private String receiverHousePhone;
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String remark;
 
 	@Column(name="tax_id")

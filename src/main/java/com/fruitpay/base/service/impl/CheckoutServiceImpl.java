@@ -74,7 +74,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
-		customerOrderDAO.saveAndFlush(customerOrder);
+		customerOrderDAO.save(customerOrder);
 		
 		return customerOrder;
 	}

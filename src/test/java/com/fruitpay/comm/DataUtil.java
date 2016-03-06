@@ -162,6 +162,7 @@ public class DataUtil {
 		customerOrder.setProgramNum(1);
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
+		customerOrder.setRemark("test");
 		
 		int shippingCost = paymentMode.getPaymentExtraPrice();
 		int totalPrice = orderProgram.getPrice() * customerOrder.getProgramNum() + shippingCost;	
