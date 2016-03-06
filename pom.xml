@@ -71,14 +71,14 @@
 			<version>4.2.3.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>cglib</groupId>
-		    <artifactId>cglib</artifactId>
-		    <version>2.2</version>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2</version>
 		</dependency>
-		<dependency>  
-		    <groupId>org.aspectj</groupId>
-		    <artifactId>aspectjweaver</artifactId>
-		    <version>1.8.5</version>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -233,7 +233,7 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-hibernate5</artifactId>
@@ -258,21 +258,35 @@
 			<artifactId>allpay</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<!-- Excel utils -->
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
 			<version>2.6.12</version>
 		</dependency>
-		
+
 		<!-- Apache Common utils -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.2</version>
 		</dependency>
-		
+
+		<!-- Apache poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.13</version>
+		</dependency>
+		<!-- Apache poi ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>	
+
+
 	</dependencies>
 
 	<profiles>
