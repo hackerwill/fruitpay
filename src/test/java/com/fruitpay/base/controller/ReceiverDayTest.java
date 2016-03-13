@@ -67,7 +67,7 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
 		cal.set(2015, 11, 20, 0, 0);
 		cal.getTime();
 		String nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
-		Assert.assertEquals("12-30", nextReceiveDay);
+		Assert.assertEquals("12-23", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 21, 0, 0);
