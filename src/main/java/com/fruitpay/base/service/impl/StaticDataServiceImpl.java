@@ -175,12 +175,12 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	@Override
 	public String getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
-		//規則 : 提前四天，若出貨日是2016/01/06，只要時間早於4天前的凌晨0:00，也就是說2016/01/02 00:00，都會延到下一周
+		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
 		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		//下一個收貨日
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
 		//提前的天數
-		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(4);
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(2);
 		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
 		
 		boolean greaterThanNow = compareTimeGreaterThanNow(
