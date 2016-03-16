@@ -94,6 +94,21 @@ public class CustomerOrderController {
 		return customerOrder;
 	}
 
+	@RequestMapping(value = "/orders", method = RequestMethod.DELETE)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
+	public @ResponseBody Boolean deleteOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody List<CustomerOrder> customerOrders) {
+
+		if(customerOrders.isEmpty())
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
+			CustomerOrder customerOrder = iterator.next();
+			customerOrderService.deleteOrder(customerOrder);
+		}
+
+		return true;
+	}
+	
 	@RequestMapping(value = "/order", method = RequestMethod.DELETE)
 	public @ResponseBody CustomerOrder deleteOrder(@RequestBody CustomerOrder customerOrder) {
 
@@ -117,7 +132,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/exportOrders", method = RequestMethod.POST)
-	@UserAccessAnnotation(UserAuthStatus.YES)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,@RequestBody  List<CustomerOrder> customerOrders) {
 		if(customerOrders.size()<=0){
 			customerOrders = customerOrderDAO.findAll();
