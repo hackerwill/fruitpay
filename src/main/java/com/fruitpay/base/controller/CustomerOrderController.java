@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,8 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.model.OrderExcelBean;
+import com.fruitpay.comm.service.EmailSendService;
+import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.ExcelUtil;
@@ -51,6 +54,8 @@ public class CustomerOrderController {
 	private StaticDataService staticDataService;
 	@Inject
 	CustomerOrderDAO customerOrderDAO;
+	@Inject
+	private EmailSendService emailSendService;
 
 	@RequestMapping(value = "/order", method = RequestMethod.POST)
 	public @ResponseBody CustomerOrder addOrder(@RequestBody CheckoutPostBean checkoutPostBean) {
@@ -90,6 +95,22 @@ public class CustomerOrderController {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+
+		return customerOrder;
+	}
+	
+	@RequestMapping(value = "/orderSendEmail/{orderId}", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.YES)
+	public @ResponseBody CustomerOrder getOrderAndSendEmail(@PathVariable Integer orderId) {
+
+		if (AssertUtils.isEmpty(orderId))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+		
+		if(customerOrder!= null && AssertUtils.hasValue(customerOrder.getCustomer().getEmail())){
+			emailSendService.sendTo(MailType.NEW_ORDER, customerOrder.getCustomer().getEmail(), customerOrder);	
+		}
 
 		return customerOrder;
 	}

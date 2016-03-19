@@ -2,22 +2,14 @@ package com.fruitpay.base.controller;
 
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,17 +21,11 @@ import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CheckoutPostBean;
-import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CheckoutService;
-import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.service.EmailSendService;
-import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
-import com.fruitpay.comm.utils.AssertUtils;
-import com.fruitpay.comm.utils.RadomValueUtil;
 
 @Controller
 @RequestMapping("checkoutCtrl")
@@ -51,10 +37,6 @@ public class checkoutController {
 	private CheckoutService checkoutService;
 	@Inject
 	private StaticDataService staticDataService;
-	@Inject
-	private CustomerService customerService;
-	@Inject
-	private EmailSendService emailSendService;
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public @ResponseBody CustomerOrder checkout(
@@ -81,12 +63,6 @@ public class checkoutController {
 		}
 		
 		customerOrder = checkoutService.checkoutOrder(customer, customerOrder);
-		
-		if(customerOrder!= null && AssertUtils.hasValue(customerOrder.getCustomer().getEmail())){
-			CustomerOrder sendCustomerOrder = new CustomerOrder();
-			BeanUtils.copyProperties(customerOrder, sendCustomerOrder);
-			emailSendService.sendTo(MailType.NEW_ORDER, sendCustomerOrder.getCustomer().getEmail(), sendCustomerOrder);	
-		}
 		
 		return customerOrder;
 	}
