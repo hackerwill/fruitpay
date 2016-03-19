@@ -154,6 +154,9 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	      inverseJoinColumns={@JoinColumn(name="coupon_id", referencedColumnName="coupon_id")})
 	private List<Coupon> coupons;
 	
+	@Column(name="valid_flag")
+	private int validFlag;
+	
 
 	public CustomerOrder() {
 	}
@@ -458,6 +461,14 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	public Coupon removeCoupon(Coupon coupon) {
 		getCoupons().remove(coupon);
 		return coupon;
+	}
+
+	public int getValidFlag() {
+		return validFlag;
+	}
+
+	public void setValidFlag(int validFlag) {
+		this.validFlag = validFlag;
 	}
 	
 }

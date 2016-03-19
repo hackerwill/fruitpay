@@ -140,14 +140,37 @@ public class CustomerOrderController {
 
 		return customerOrder;
 	}
+	
+	@RequestMapping(value = "/trash", method = RequestMethod.PUT)
+	public @ResponseBody Boolean moveToTrash(@RequestBody List<CustomerOrder> customerOrders) {
+
+		if(customerOrders.isEmpty())
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		customerOrderService.moveToTrash(customerOrders);
+
+		return true;
+	}
+	
+	@RequestMapping(value = "/recover", method = RequestMethod.PUT)
+	public @ResponseBody Boolean recover(@RequestBody List<CustomerOrder> customerOrders) {
+
+		if(customerOrders.isEmpty())
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		customerOrderService.recover(customerOrders);
+
+		return true;
+	}
 
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
 	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody Page<CustomerOrder> orders(
+			@RequestParam(value = "validFlag", required = false, defaultValue = "0") int validFlag,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
-		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(page, size);
+		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(validFlag, page, size);
 
 		return customerOrders;
 	}

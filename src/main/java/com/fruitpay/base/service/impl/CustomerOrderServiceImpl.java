@@ -1,6 +1,7 @@
 package com.fruitpay.base.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -13,13 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
-import com.fruitpay.base.model.Shipment;
 import com.fruitpay.base.service.CustomerOrderService;
 
 @Service
@@ -45,7 +46,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		Customer customer = customerDAO.findOne(customerId);
 		if(customer == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
-		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomer(customer);
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomerAndValidFlag(customer, CommConst.VALID_FLAG.VALID.value());
 		if(customerOrders.isEmpty())
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
 		return customerOrders;
@@ -71,9 +72,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
-	public Page<CustomerOrder> getAllCustomerOrder(int page , int size) {
-		Page<CustomerOrder> customerOrders = customerOrderDAO.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+	public Page<CustomerOrder> getAllCustomerOrder(int validFlag, int page , int size) {
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findByValidFlag(validFlag, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+		
 		return customerOrders;
+	}
+	
+	@Override
+	@Transactional
+	public void deleteOrder(List<CustomerOrder> customerOrders) {
+		
+		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
+			CustomerOrder customerOrder = iterator.next();
+			customerOrderDAO.delete(customerOrder);
+		}
 	}
 
 	@Override
@@ -81,6 +93,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public void deleteOrder(CustomerOrder customerOrder) {
 		
 		customerOrderDAO.delete(customerOrder);
+	}
+
+	@Override
+	@Transactional
+	public void moveToTrash(List<CustomerOrder> customerOrders) {
+		customerOrders.forEach(order -> customerOrderDAO.findOne(order.getOrderId()).setValidFlag(CommConst.VALID_FLAG.INVALID.value()));
+	}
+
+	@Override
+	@Transactional
+	public void recover(List<CustomerOrder> customerOrders) {
+		customerOrders.forEach(order -> customerOrderDAO.findOne(order.getOrderId()).setValidFlag(CommConst.VALID_FLAG.VALID.value()));
 	}
 
 }
