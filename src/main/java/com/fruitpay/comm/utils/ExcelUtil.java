@@ -25,8 +25,8 @@ public class ExcelUtil {
 		List<ExcelColumn> colList = new LinkedList<ExcelColumn>();
 		
 		for(Entry<Order, String> entry : EnumMapOrder.getOrderColEnumMap().entrySet()) {	
-		colList.add(new ExcelColumn(String.valueOf(entry.getKey()),(String)entry.getValue()));
-		  }		
+			colList.add(new ExcelColumn(String.valueOf(entry.getKey()),(String)entry.getValue()));
+		}		
 		xlsService.createSheet("order", "", colList, list);
 		xlsService.write(output);
 		output.close();

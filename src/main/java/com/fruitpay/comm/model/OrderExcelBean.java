@@ -1,6 +1,7 @@
 package com.fruitpay.comm.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,84 +52,94 @@ public class OrderExcelBean implements Serializable {
 	private String receiptVatNumber;	//統一編號
 	private String allowForeignFruit;	//是否要進口水果
 	private String orderStatus;	//訂單狀態
+	private String unlike; //不吃水果
+	private String payOnReceive; //貨到付款
 	private Map<String, Object> orderExcelMap;
 	
 	public OrderExcelBean(CustomerOrder customerOrder){
 		setOrderExcelMap(new HashMap<String,Object>());
-		this.programId = String.valueOf(customerOrder.getOrderProgram().getProgramId());
-		orderExcelMap.put(String.valueOf(Order.programId), programId);
-		this.periodName = customerOrder.getShipmentPeriod().getPeriodName();
-		orderExcelMap.put(String.valueOf(Order.periodName), periodName);
-		this.shipmentCount = 0;
-		orderExcelMap.put(String.valueOf(Order.shipmentCount), 0);
+		
 		this.programName = customerOrder.getOrderProgram().getProgramName();
 		orderExcelMap.put(String.valueOf(Order.programName), programName);
-		this.paymentModeName = customerOrder.getPaymentMode().getPaymentModeName();
-		orderExcelMap.put(String.valueOf(Order.paymentModeName), paymentModeName);
+		
+		this.periodName = customerOrder.getShipmentPeriod().getPeriodName();
+		orderExcelMap.put(String.valueOf(Order.periodName), periodName);
+		
 		this.platformName = customerOrder.getOrderPlatform().getPlatformName();
 		orderExcelMap.put(String.valueOf(Order.platformName), platformName);
+		
 		this.orderDate = customerOrder.getOrderDate();
-		orderExcelMap.put(String.valueOf(Order.orderDate), orderDate);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy年M月dd日");
+		orderExcelMap.put(String.valueOf(Order.orderDate), format.format(orderDate));
+		
 		this.orderId = String.valueOf(customerOrder.getOrderId());
 		orderExcelMap.put(String.valueOf(Order.orderId), orderId);
-		this.shipmentTime = customerOrder.getShipmentTime().getOptionName();
+		
+		this.shipmentTime = String.valueOf(customerOrder.getShipmentTime().getOptionId() - 4); //轉成要的數字格式
 		orderExcelMap.put(String.valueOf(Order.shipmentTime), shipmentTime);
-		this.preferences = toPreferenceStirng(customerOrder.getOrderPreferences());
-		orderExcelMap.put(String.valueOf(Order.preferences), preferences);
+		
+		this.unlike = getUnlikeStr(customerOrder.getOrderPreferences());
+		orderExcelMap.put(String.valueOf(Order.unlike), unlike);
+		
 		this.receiveWay = customerOrder.getReceiveWay().getOptionName();
 		orderExcelMap.put(String.valueOf(Order.receiveWay), receiveWay);
+		
 		this.remark = customerOrder.getRemark();
 		orderExcelMap.put(String.valueOf(Order.remark), remark);
+		
+		this.payOnReceive = getPayOnReceiveStr(customerOrder);
+		orderExcelMap.put(String.valueOf(Order.payOnReceive), payOnReceive);
+		
 		this.receiverName = customerOrder.getReceiverLastName() + customerOrder.getReceiverFirstName();
 		orderExcelMap.put(String.valueOf(Order.receiverName), receiverName);
-		this.receiverPostalCode = customerOrder.getPostalCode().getFullName();
-		orderExcelMap.put(String.valueOf(Order.receiverPostalCode), receiverPostalCode);
-		this.receiverTowership = customerOrder.getPostalCode().getTowershipName();
-		orderExcelMap.put(String.valueOf(Order.receiverTowership), receiverTowership);
-		this.receiverAddress = customerOrder.getReceiverAddress();
+		
+		this.receiverAddress = customerOrder.getPostalCode().getFullName() + customerOrder.getReceiverAddress();
 		orderExcelMap.put(String.valueOf(Order.receiverAddress), receiverAddress);
+		
 		this.receiverCellphone = customerOrder.getReceiverCellphone();
 		orderExcelMap.put(String.valueOf(Order.receiverCellphone), receiverCellphone);
+		
 		this.receiverHousePhone = customerOrder.getReceiverHousePhone();
 		orderExcelMap.put(String.valueOf(Order.receiverHousePhone), receiverHousePhone);
+		
 		this.email = StringUtil.isEmptyOrSpace(customerOrder.getCustomer().getEmail())?"":customerOrder.getCustomer().getEmail();
 		orderExcelMap.put(String.valueOf(Order.email), email);
-		this.programNum = customerOrder.getProgramNum();
-		orderExcelMap.put(String.valueOf(Order.programNum), programNum);
-		this.coupons = toCouponStirng(customerOrder.getCoupons());
-		orderExcelMap.put(String.valueOf(Order.coupons), coupons);
-		this.shippingCost = customerOrder.getShippingCost();
-		orderExcelMap.put(String.valueOf(Order.shippingCost), shippingCost);
+		
 		this.totalPrice = customerOrder.getTotalPrice();
 		orderExcelMap.put(String.valueOf(Order.totalPrice), totalPrice);
-		this.customerReponse = "";
-		orderExcelMap.put(String.valueOf(Order.customerReponse), "");
-		this.cancelReason = "";
-		orderExcelMap.put(String.valueOf(Order.cancelReason), "");
-		this.comingFrom = customerOrder.getComingFrom().getOptionName();
+		
+		this.comingFrom = customerOrder.getComingFrom().getOptionDesc();
 		orderExcelMap.put(String.valueOf(Order.comingFrom), comingFrom);
+		
 		this.name = customerOrder.getCustomer().getLastName() + customerOrder.getCustomer().getFirstName();
 		orderExcelMap.put(String.valueOf(Order.name), name);
-		this.postalCode = customerOrder.getPostalCode().getCountyName();
-		orderExcelMap.put(String.valueOf(Order.postalCode), postalCode);
-		this.Towership = customerOrder.getPostalCode().getTowershipName();
-		orderExcelMap.put(String.valueOf(Order.Towership), Towership);
-		this.address = customerOrder.getCustomer().getAddress();
-		orderExcelMap.put(String.valueOf(Order.address), address);
+		
 		this.cellphone = customerOrder.getCustomer().getCellphone();
 		orderExcelMap.put(String.valueOf(Order.cellphone), cellphone);
+		
 		this.housePhone = customerOrder.getCustomer().getHousePhone();
 		orderExcelMap.put(String.valueOf(Order.housePhone), housePhone);
-		this.receiptWay = customerOrder.getReceiptWay().getOptionName();
-		orderExcelMap.put(String.valueOf(Order.receiptWay), receiptWay);
-		this.receiptTitle = customerOrder.getReceiptTitle();
-		orderExcelMap.put(String.valueOf(Order.receiptTitle), receiptTitle);
-		this.receiptVatNumber = customerOrder.getReceiptVatNumber();
-		orderExcelMap.put(String.valueOf(Order.receiptVatNumber), receiptVatNumber);
-		this.allowForeignFruit = customerOrder.getAllowForeignFruits();
-		orderExcelMap.put(String.valueOf(Order.allowForeignFruit), allowForeignFruit);
-		this.orderStatus = customerOrder.getOrderStatus().getOrderStatusName();
-		orderExcelMap.put(String.valueOf(Order.orderStatus), orderStatus);
+		
+		this.customerReponse = "";
+		orderExcelMap.put(String.valueOf(Order.customerReponse), "");
+	}
+	
+	private String getPayOnReceiveStr(CustomerOrder customerOrder){
+		String str= "";
+		if(customerOrder.getPaymentMode().getPaymentExtraPrice() > 0)
+			str = String.valueOf(customerOrder.getTotalPrice());
+		return str;
+	}
+	
+	private String getUnlikeStr(List<OrderPreference> list){
+		StringBuilder str = new StringBuilder();
+		for (Iterator<OrderPreference> iterator = list.iterator(); iterator.hasNext();) {
+			OrderPreference orderPreference = iterator.next();
+			if(orderPreference.getLikeDegree() == 0){
+				str.append(orderPreference.getProduct().getProductName() + "." );
+			}
+		}
+		return str.toString();
 	}
 	
 	private String toCouponStirng(List<Coupon> list){
@@ -136,17 +147,6 @@ public class OrderExcelBean implements Serializable {
 		for (Iterator<Coupon> iterator = list.iterator(); iterator.hasNext();) {
 			Coupon coupon = iterator.next();
 			str.append(coupon.getCouponDesc() +  "," );
-		}
-		return str.toString();
-	}
-	
-	private String toPreferenceStirng(List<OrderPreference> list){
-		StringBuilder str = new StringBuilder();
-		for (Iterator<OrderPreference> iterator = list.iterator(); iterator.hasNext();) {
-			OrderPreference orderPreference = iterator.next();
-			if(orderPreference.getLikeDegree() != 3){
-				str.append(orderPreference.getProduct().getProductName() + ":" + orderPreference.getLikeDegree() + "," );
-			}
 		}
 		return str.toString();
 	}
@@ -374,6 +374,14 @@ public class OrderExcelBean implements Serializable {
 	}
 	public void setOrderStatus(String orderStatus) {
 		this.orderStatus = orderStatus;
+	}
+
+	public String getUnlike() {
+		return unlike;
+	}
+
+	public void setUnlike(String unlike) {
+		this.unlike = unlike;
 	}
 
 	public Map<String, Object> getOrderExcelMap() {
