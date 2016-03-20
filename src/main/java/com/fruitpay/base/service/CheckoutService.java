@@ -16,7 +16,7 @@ public interface CheckoutService {
 	 * 更新某筆訂單的狀態
 	 * 
 	 * */
-	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus);
+	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus, int allpayRtnCode);
 	
 	/**
 	 * 增加顧客，並且增加訂單

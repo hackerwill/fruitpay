@@ -47,9 +47,10 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 	@Override
 	@Transactional
-	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus) {
+	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus, int allpayRtnCode) {
 		CustomerOrder customerOrder = customerOrderDAO.getOne(orderId);
 		customerOrder.setOrderStatus(orderStatusDAO.getOne(orderStatus.getStatus()));
+		customerOrder.setAllpayRtnCode(allpayRtnCode);
 		return true;
 	}
 

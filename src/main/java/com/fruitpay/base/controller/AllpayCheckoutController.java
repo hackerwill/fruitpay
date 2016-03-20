@@ -90,7 +90,7 @@ public class AllpayCheckoutController {
 	public void callbackTest( 
 			HttpServletRequest request, HttpServletResponse response){
 		Integer orderId = 11;
-		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful);
+		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful, 0);
 		
 	}
 	
@@ -112,6 +112,7 @@ public class AllpayCheckoutController {
 
 		List<String> enErrors = new ArrayList<String>();
 		String szMerchantTradeNo = "";
+		String szRtnCode = "";
 		try {
 			out = response.getWriter();
 			AllInOne oPayment = new AllInOne();
@@ -128,7 +129,6 @@ public class AllpayCheckoutController {
 			String szPaymentDate = "";
 			String szPaymentType = "";
 			String szPaymentTypeChargeFee = "";
-			String szRtnCode = "";
 			String szRtnMsg = "";
 			String szSimulatePaid = "";
 			String szTradeAmt = "";
@@ -212,11 +212,11 @@ public class AllpayCheckoutController {
 		} finally { 
 			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful);
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, Integer.valueOf(szRtnCode));
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed);
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, Integer.valueOf(szRtnCode));
 				response.setHeader("Location", httpUtil.getDomainURL());
 				out.println("0|" + enErrors);
 			}
