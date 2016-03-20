@@ -212,11 +212,11 @@ public class AllpayCheckoutController {
 		} finally { 
 			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, Integer.valueOf(szRtnCode));
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, szRtnCode);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, Integer.valueOf(szRtnCode));
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, szRtnCode);
 				response.setHeader("Location", httpUtil.getDomainURL());
 				out.println("0|" + enErrors);
 			}

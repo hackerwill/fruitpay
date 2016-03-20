@@ -158,7 +158,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private int validFlag;
 	
 	@Column(name="allpay_rtn_code")
-	private int allpayRtnCode;
+	private String allpayRtnCode;
 	
 
 	public CustomerOrder() {
@@ -474,11 +474,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.validFlag = validFlag;
 	}
 
-	public int getAllpayRtnCode() {
+	public String getAllpayRtnCode() {
 		return allpayRtnCode;
 	}
 
-	public void setAllpayRtnCode(int allpayRtnCode) {
+	public void setAllpayRtnCode(String allpayRtnCode) {
 		this.allpayRtnCode = allpayRtnCode;
 	}
 	
