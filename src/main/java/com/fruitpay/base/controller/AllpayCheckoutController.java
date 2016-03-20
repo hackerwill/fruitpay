@@ -90,7 +90,7 @@ public class AllpayCheckoutController {
 	public void callbackTest( 
 			HttpServletRequest request, HttpServletResponse response){
 		Integer orderId = 11;
-		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful, 0);
+		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful, "0");
 		
 	}
 	
