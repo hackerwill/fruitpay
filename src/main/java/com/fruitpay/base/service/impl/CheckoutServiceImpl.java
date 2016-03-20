@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
@@ -74,6 +75,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 		
 		logger.debug("add a customerOrder, email is " + customerOrder.getCustomer().getEmail());
 		
+		customerOrder.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		customerOrderDAO.save(customerOrder);
 		
 		return customerOrder;

@@ -67,6 +67,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Override
 	@Transactional
 	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		customerOrder.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		customerOrder = customerOrderDAO.saveAndFlush(customerOrder);
 		return customerOrder;
 	}
