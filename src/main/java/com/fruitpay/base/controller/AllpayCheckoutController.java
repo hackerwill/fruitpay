@@ -209,7 +209,7 @@ public class AllpayCheckoutController {
 			allpayOrder.setRtnMessage(szRtnMsg);
 			allpayOrder.setPaymentDate(szPaymentDate);
 			// 回覆成功訊息。
-			if (enErrors.size() == 0) {
+			if (enErrors.size() == 0 && "1".equals(allpayOrder.getRtnCode())) {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, allpayOrder);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
