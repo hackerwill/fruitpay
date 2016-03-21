@@ -21,12 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.AllpayOrder;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.ConfigMap;
 import com.fruitpay.comm.utils.HttpUtil;
@@ -54,6 +58,7 @@ public class AllpayCheckoutController {
 	private String PERIOD_RETURN_URL = null;
 	private String SHOW_ORDER_URL = null;
 	private String SHOW_ORDER_SUCCESS_URL = null;
+	private String SHOW_ORDER_FAILED_URL = null;
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
@@ -85,6 +90,7 @@ public class AllpayCheckoutController {
 		PERIOD_RETURN_URL = httpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
 		SHOW_ORDER_URL = httpUtil.getDomainURL() + "app/user/orders";
 		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/thanks";
+		SHOW_ORDER_FAILED_URL = httpUtil.getDomainURL() + "app/orderFailed";
 	}
 	
 	
@@ -92,8 +98,18 @@ public class AllpayCheckoutController {
 	public void checkoutCreditCardSuccess( 
 			@PathVariable String id, HttpServletRequest request, HttpServletResponse response){
 
+		if(AssertUtils.isEmpty(id)){
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + id);
+		
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrdersByValidFlag(Integer.valueOf(id), CommConst.VALID_FLAG.VALID.value());
+		if(customerOrder != null && customerOrder.getOrderStatus().equals(OrderStatus.CreditPaySuccessful)){
+			response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + id);
+		}else{
+			response.setHeader("Location", SHOW_ORDER_FAILED_URL + "?id=" + id);
+		}
 	}
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)

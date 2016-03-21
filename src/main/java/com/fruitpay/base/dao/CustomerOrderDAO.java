@@ -17,4 +17,6 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public List<CustomerOrder> findByValidFlag(int validFlag);
 	
+	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
+	
 }

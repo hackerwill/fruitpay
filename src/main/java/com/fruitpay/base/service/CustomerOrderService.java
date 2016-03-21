@@ -18,6 +18,8 @@ public interface CustomerOrderService {
 	
 	public List<CustomerOrder> getCustomerOrdersByCustomerId(Integer customerId);
 	
+	public CustomerOrder getCustomerOrdersByValidFlag(Integer orderId, int validFlag);
+	
 	public void deleteOrder(CustomerOrder customerOrder);
 	
 	public void deleteOrder(List<CustomerOrder> customerOrders);

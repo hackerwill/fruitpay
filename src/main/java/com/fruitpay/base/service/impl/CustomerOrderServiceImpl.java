@@ -108,4 +108,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		customerOrders.forEach(order -> customerOrderDAO.findOne(order.getOrderId()).setValidFlag(CommConst.VALID_FLAG.VALID.value()));
 	}
 
+	@Override
+	public CustomerOrder getCustomerOrdersByValidFlag(Integer orderId, int validFlag) {
+		CustomerOrder customerOrder =  customerOrderDAO.findByOrderIdAndValidFlag(orderId, validFlag);
+		return customerOrder;
+	}
+
 }
