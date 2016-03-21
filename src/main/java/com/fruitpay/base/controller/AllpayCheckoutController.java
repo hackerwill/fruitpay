@@ -105,7 +105,7 @@ public class AllpayCheckoutController {
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrdersByValidFlag(Integer.valueOf(id), CommConst.VALID_FLAG.VALID.value());
-		if(customerOrder != null && customerOrder.getOrderStatus().equals(OrderStatus.CreditPaySuccessful)){
+		if(customerOrder != null && customerOrder.getOrderStatus().getOrderStatusId()== OrderStatus.CreditPaySuccessful.getStatus()){
 			response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + id);
 		}else{
 			response.setHeader("Location", SHOW_ORDER_FAILED_URL + "?id=" + id);
