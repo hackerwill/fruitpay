@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.model.AllpayOrder;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -86,14 +87,6 @@ public class AllpayCheckoutController {
 		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/thanks";
 	}
 	
-	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
-	public void callbackTest( 
-			HttpServletRequest request, HttpServletResponse response){
-		Integer orderId = 11;
-		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful, "0");
-		
-	}
-	
 	
 	@RequestMapping(value = "/orderSuccess/{id}", method = RequestMethod.POST)
 	public void checkoutCreditCardSuccess( 
@@ -112,7 +105,9 @@ public class AllpayCheckoutController {
 
 		List<String> enErrors = new ArrayList<String>();
 		String szMerchantTradeNo = "";
+		String szPaymentDate = "";
 		String szRtnCode = "";
+		String szRtnMsg = "";
 		try {
 			out = response.getWriter();
 			AllInOne oPayment = new AllInOne();
@@ -126,10 +121,8 @@ public class AllpayCheckoutController {
 			String name[] = key.toArray(new String[key.size()]);
 			/* 支付後的回傳的基本參數 */
 			String szMerchantID = "";
-			String szPaymentDate = "";
 			String szPaymentType = "";
 			String szPaymentTypeChargeFee = "";
-			String szRtnMsg = "";
 			String szSimulatePaid = "";
 			String szTradeAmt = "";
 			String szTradeDate = "";
@@ -210,13 +203,18 @@ public class AllpayCheckoutController {
 		} catch (Exception e) {
 			enErrors.add(e.getMessage());
 		} finally { 
+			
+			AllpayOrder allpayOrder = new AllpayOrder();
+			allpayOrder.setRtnCode(szRtnCode);
+			allpayOrder.setRtnMessage(szRtnMsg);
+			allpayOrder.setPaymentDate(szPaymentDate);
 			// 回覆成功訊息。
 			if (enErrors.size() == 0) {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, szRtnCode);
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, allpayOrder);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, szRtnCode);
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, allpayOrder);
 				response.setHeader("Location", httpUtil.getDomainURL());
 				out.println("0|" + enErrors);
 			}

@@ -160,6 +160,9 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="allpay_rtn_code")
 	private String allpayRtnCode;
 	
+	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@JoinColumn(name="allpay_order_id")
+	private AllpayOrder allpayOrder;
 
 	public CustomerOrder() {
 	}
@@ -480,6 +483,14 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setAllpayRtnCode(String allpayRtnCode) {
 		this.allpayRtnCode = allpayRtnCode;
+	}
+
+	public AllpayOrder getAllpayOrder() {
+		return allpayOrder;
+	}
+
+	public void setAllpayOrder(AllpayOrder allpayOrder) {
+		this.allpayOrder = allpayOrder;
 	}
 	
 }

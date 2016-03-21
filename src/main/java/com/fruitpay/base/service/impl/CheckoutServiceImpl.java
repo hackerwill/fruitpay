@@ -12,6 +12,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
+import com.fruitpay.base.model.AllpayOrder;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
@@ -47,11 +48,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 	@Override
 	@Transactional
-	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus, String allpayRtnCode) {
+	public CustomerOrder updateOrderStatus(int orderId, OrderStatus orderStatus, AllpayOrder allpayOrder) {
 		CustomerOrder customerOrder = customerOrderDAO.getOne(orderId);
 		customerOrder.setOrderStatus(orderStatusDAO.getOne(orderStatus.getStatus()));
-		customerOrder.setAllpayRtnCode(allpayRtnCode);
-		return true;
+		customerOrder.setAllpayOrder(allpayOrder);
+		return customerOrder;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.fruitpay.base.service;
 
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.model.AllpayOrder;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 
@@ -16,7 +17,7 @@ public interface CheckoutService {
 	 * 更新某筆訂單的狀態
 	 * 
 	 * */
-	public Boolean updateOrderStatus(Integer orderId, OrderStatus orderStatus, String allpayRtnCode);
+	public CustomerOrder updateOrderStatus(int orderId, OrderStatus orderStatus, AllpayOrder allpayOrder);
 	
 	/**
 	 * 增加顧客，並且增加訂單
