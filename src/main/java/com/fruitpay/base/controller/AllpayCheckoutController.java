@@ -215,8 +215,13 @@ public class AllpayCheckoutController {
 			// 回覆錯誤訊息。
 			} else {
 				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, allpayOrder);
-				response.setHeader("Location", httpUtil.getDomainURL());
-				out.println("0|" + enErrors);
+				String outMessage = "";
+				if(enErrors.isEmpty()){
+					outMessage = allpayOrder.getRtnMessage();
+				}else{
+					outMessage = enErrors.toString();
+				}					
+				out.println("0|" + outMessage);
 			}
 
 		}
