@@ -29,7 +29,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	
 	@Column(name="order_date")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
 
 	@Column(name="receiver_address")

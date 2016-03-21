@@ -46,7 +46,14 @@ public class checkoutController {
 		CustomerOrder customerOrder = checkoutPostBean.getCustomerOrder();
 		
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
-		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
+		//貨到付款
+		if(customerOrder.getPaymentMode().getPaymentModeId() == 2){
+			customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
+		//信用卡
+		}else{
+			customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.CreditPayFailed.getStatus()));
+		}
+		
 		//前一天
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(
 				getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
