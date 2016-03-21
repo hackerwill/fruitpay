@@ -10,6 +10,7 @@ public class EnumMapOrder {
 	public static Map<Order, String> getOrderColEnumMap() {
 		Map<Order, String> map = new EnumMap<Order, String>(Order.class);
 
+		map.put(Order.orderStatus, "訂單狀態");
 		map.put(Order.programName, "品名");
 		map.put(Order.periodName, "週期");
 		map.put(Order.platformName, "平台");

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -179,7 +180,7 @@ public class CustomerOrderController {
 	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,@RequestBody  List<CustomerOrder> customerOrders) {
 		if(customerOrders.size()<=0){
-			customerOrders = customerOrderDAO.findAll();
+			customerOrders = customerOrderDAO.findByValidFlag(CommConst.VALID_FLAG.VALID.value());
 		}
 		else{
 			for(int i=0; i<customerOrders.size(); i++){
