@@ -59,7 +59,7 @@ public class OrderExcelBean implements Serializable {
 	public OrderExcelBean(CustomerOrder customerOrder){
 		setOrderExcelMap(new HashMap<String,Object>());
 		
-		this.orderStatus = customerOrder.getOrderStatus().getOrderStatusDesc();
+		this.orderStatus = customerOrder.getOrderStatus().getOrderStatusName();
 		orderExcelMap.put(String.valueOf(Order.orderStatus), orderStatus);
 		
 		this.programName = customerOrder.getOrderProgram().getProgramName();
