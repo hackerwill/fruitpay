@@ -81,7 +81,7 @@ public class OrderExcelBean implements Serializable {
 		this.shipmentTime = String.valueOf(customerOrder.getShipmentTime().getOptionId() - 4); //轉成要的數字格式
 		orderExcelMap.put(String.valueOf(Order.shipmentTime), shipmentTime);
 		
-		this.unlike = getUnlikeStr(customerOrder.getOrderPreferences());
+		this.unlike = getUnlikeStr(customerOrder, customerOrder.getOrderPreferences());
 		orderExcelMap.put(String.valueOf(Order.unlike), unlike);
 		
 		this.receiveWay = customerOrder.getReceiveWay().getOptionName();
@@ -134,8 +134,13 @@ public class OrderExcelBean implements Serializable {
 		return str;
 	}
 	
-	private String getUnlikeStr(List<OrderPreference> list){
+	private String getUnlikeStr(CustomerOrder customerOrder, List<OrderPreference> list){
 		StringBuilder str = new StringBuilder();
+		
+		if("N".equals(customerOrder.getAllowForeignFruits())){
+			str.append("進口水果.");
+		}
+		
 		for (Iterator<OrderPreference> iterator = list.iterator(); iterator.hasNext();) {
 			OrderPreference orderPreference = iterator.next();
 			if(orderPreference.getLikeDegree() == 0){
