@@ -11,8 +11,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.dao.CouponDAO;
+import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -44,6 +48,12 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	private DataUtil dataUtil;
 	
 	private MockMvc mockMvc;
+	
+	@Inject
+	private CustomerOrderDAO customerOrderDAO;
+	
+	@Inject
+	private CouponDAO couponDAO;
 	
 	@Before
     public void setup() {
@@ -180,8 +190,6 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
 		
 	}
-	
-	
-	
+
 	
 }

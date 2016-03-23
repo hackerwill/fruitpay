@@ -2,6 +2,7 @@ package com.fruitpay.base.controller;
 
 import java.io.OutputStream;
 import java.time.DayOfWeek;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
@@ -165,13 +167,19 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
-	@UserAccessAnnotation(UserAuthStatus.ADMIN)
 	public @ResponseBody Page<CustomerOrder> orders(
-			@RequestParam(value = "validFlag", required = false, defaultValue = "0") int validFlag,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "1") int validFlag,
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "startDate", required = false) Date startDate,
+			@RequestParam(value = "endDate", required = false) Date endDate,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
-		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(validFlag, page, size);
+		name = name.toLowerCase();
+		
+		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate);
+		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;
 	}

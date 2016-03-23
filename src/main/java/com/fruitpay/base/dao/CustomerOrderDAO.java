@@ -1,11 +1,15 @@
 package com.fruitpay.base.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 
@@ -19,4 +23,10 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
 	
+	@Query("FROM CustomerOrder o where CAST(o.orderId as string) LIKE %:orderId% "
+			+ "AND ( lower(o.receiverLastName) LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "
+			+ "AND o.orderDate >= :startDate ")
+	public Page<CustomerOrder> findByConditions(
+			@Param("name") String name, @Param("orderId") String orderId, @Param("startDate") Date startDate, Pageable pageable);
+
 }

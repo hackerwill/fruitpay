@@ -21,6 +21,7 @@ import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.service.CustomerOrderService;
 
 @Service
@@ -112,6 +113,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public CustomerOrder getCustomerOrdersByValidFlag(Integer orderId, int validFlag) {
 		CustomerOrder customerOrder =  customerOrderDAO.findByOrderIdAndValidFlag(orderId, validFlag);
 		return customerOrder;
+	}
+
+	@Override
+	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page, int size) {
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
+				orderCondition.getName(), 
+				orderCondition.getOrderId(), 
+				orderCondition.getStartDate(),
+				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+		return customerOrders;
 	}
 
 }

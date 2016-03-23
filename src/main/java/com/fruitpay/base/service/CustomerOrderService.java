@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderCondition;
 
 public interface CustomerOrderService {
 
@@ -27,5 +28,7 @@ public interface CustomerOrderService {
 	public void moveToTrash(List<CustomerOrder> customerOrders);
 	
 	public void recover(List<CustomerOrder> customerOrders);
+	
+	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page , int size);
 
 }
