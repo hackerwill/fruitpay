@@ -46,11 +46,12 @@ public class SearchOrderControllerTest extends AbstractSpringJnitTest{
 		String url = "/orderCtrl/orders";
 		
 		this.mockMvc.perform(get(url)
-				.param("orderId", orderId)
-				.param("name", name)
+				//.param("orderId", orderId)
+				//.param("name", name)
 				.param("page", page)
 				.param("size", size)
-				.param("startDate", startDate))
+				//.param("startDate", startDate)
+				)
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
 	}

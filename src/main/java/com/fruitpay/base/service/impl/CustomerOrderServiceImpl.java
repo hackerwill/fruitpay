@@ -121,6 +121,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getName(), 
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
+				orderCondition.getEndDate(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}

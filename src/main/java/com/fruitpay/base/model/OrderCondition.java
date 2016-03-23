@@ -14,7 +14,7 @@ public class OrderCondition implements Serializable {
 		super();
 		
 		if(startDate == null){
-			startDate = new Date(Long.MIN_VALUE);
+			startDate = new Date(0L);
 		}
 		
 		if(endDate == null){
@@ -22,7 +22,7 @@ public class OrderCondition implements Serializable {
 		}
 		
 		this.orderId = orderId;
-		this.name = name;
+		this.name = name.toLowerCase();
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
