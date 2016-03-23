@@ -21,6 +21,9 @@ public class PostalCode extends AbstractDataBean implements Serializable {
 	@Id
 	@Column(name="post_id")
 	private int postId;
+	
+	@Column(name="post_code")
+	private String postCode;
 
 	@Column(name="county_name")
 	private String countyName;
@@ -80,6 +83,14 @@ public class PostalCode extends AbstractDataBean implements Serializable {
 	@Override
 	public String toString(){
 		return this.fullName;
+	}
+
+	public String getPostCode() {
+		return postCode;
+	}
+
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
 	}
 
 }
