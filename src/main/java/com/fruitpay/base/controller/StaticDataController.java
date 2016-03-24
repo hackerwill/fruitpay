@@ -38,6 +38,9 @@ public class StaticDataController {
 	@RequestMapping(value = "/getAllPostalCodes", method = RequestMethod.GET)
 	public @ResponseBody List<PostalCode> getAllPostalCodes(){
 		List<PostalCode> postCodes = staticDataService.getAllPostalCodes();
+		postCodes = postCodes.stream()
+				.filter(p -> "Y".equals(p.getAllowShipment()))
+				.collect(Collectors.toList());;
 		return postCodes;
 	}
 	

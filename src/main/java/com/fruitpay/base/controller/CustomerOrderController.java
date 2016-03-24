@@ -180,7 +180,7 @@ public class CustomerOrderController {
 		name = name.toLowerCase();
 		
 		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate);
-		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
+		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(CommConst.VALID_FLAG.VALID.value(), page, size);
 
 		return customerOrders;
 	}
