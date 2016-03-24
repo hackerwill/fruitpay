@@ -169,7 +169,8 @@ public class CustomerOrderController {
 
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
 	public @ResponseBody Page<CustomerOrder> orders(
-			@RequestParam(value = "validFlag", required = false, defaultValue = "1") int validFlag,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
+			@RequestParam(value = "allowForeignFruits", required = false, defaultValue = "") String allowForeignFruits,
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
@@ -179,8 +180,8 @@ public class CustomerOrderController {
 
 		name = name.toLowerCase();
 		
-		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate);
-		Page<CustomerOrder> customerOrders = customerOrderService.getAllCustomerOrder(CommConst.VALID_FLAG.VALID.value(), page, size);
+		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits);
+		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;
 	}

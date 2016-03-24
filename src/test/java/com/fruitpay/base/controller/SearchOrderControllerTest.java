@@ -42,15 +42,19 @@ public class SearchOrderControllerTest extends AbstractSpringJnitTest{
 		String page = "0";
 		String size = "10000";
 		String startDate = "1990-01-01 00:00:00";
+		String endDate = "2090-01-01 00:00:00";
+		String validFlag = "1";
+		String allowFreignFruits = "Y";
 		
 		String url = "/orderCtrl/orders";
 		
 		this.mockMvc.perform(get(url)
-				//.param("orderId", orderId)
-				//.param("name", name)
+				.param("orderId", orderId)
+				.param("name", name)
 				.param("page", page)
 				.param("size", size)
-				//.param("startDate", startDate)
+				.param("startDate", startDate)
+				.param("endDate", endDate)
 				)
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
