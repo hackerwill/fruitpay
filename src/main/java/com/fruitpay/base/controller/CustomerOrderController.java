@@ -169,18 +169,19 @@ public class CustomerOrderController {
 
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
 	public @ResponseBody Page<CustomerOrder> orders(
-			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
 			@RequestParam(value = "allowForeignFruits", required = false, defaultValue = "") String allowForeignFruits,
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
+			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
 		name = name.toLowerCase();
 		
-		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits);
+		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId);
 		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;

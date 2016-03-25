@@ -122,8 +122,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
 				orderCondition.getEndDate(),
-				Integer.valueOf(orderCondition.getValidFlag()),
+				orderCondition.getValidFlag(),
 				orderCondition.getAllowForeignFruits(),
+				orderCondition.getOrderStatusId(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}

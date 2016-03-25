@@ -45,6 +45,7 @@ public class SearchOrderControllerTest extends AbstractSpringJnitTest{
 		String endDate = "2090-01-01 00:00:00";
 		String validFlag = "1";
 		String allowFreignFruits = "Y";
+		String orderStatusId = "2";
 		
 		String url = "/orderCtrl/orders";
 		
@@ -55,6 +56,7 @@ public class SearchOrderControllerTest extends AbstractSpringJnitTest{
 				.param("size", size)
 				.param("startDate", startDate)
 				.param("endDate", endDate)
+				.param("orderStatusId", orderStatusId)
 				)
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));

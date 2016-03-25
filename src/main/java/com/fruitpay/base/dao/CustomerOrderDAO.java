@@ -25,15 +25,17 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	@Query("FROM CustomerOrder o where CAST(o.orderId as string) LIKE %:orderId% "
 			+ " AND ( o.receiverLastName LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "
 			+ " AND o.orderDate BETWEEN :startDate AND :endDate "
-			+ " AND o.validFlag = :validFlag " 
-			+ " AND o.allowForeignFruits like %:allowForeignFruits% ")
+			+ " AND STR(o.validFlag) like %:validFlag% " 
+			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
+			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% ")
 	public Page<CustomerOrder> findByConditions(
 			@Param("name") String name, 
 			@Param("orderId") String orderId, 
 			@Param("startDate") Date startDate, 
 			@Param("endDate") Date endDate,
-			@Param("validFlag") int validFlag, 
+			@Param("validFlag") String validFlag, 
 			@Param("allowForeignFruits") String allowForeignFruits,
+			@Param("orderStatusId") String orderStatusId,
 			Pageable pageable);
 
 }
