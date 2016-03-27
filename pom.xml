@@ -336,6 +336,9 @@
 										<delete file="${project.build.outputDirectory}/config.properties" />
 										<copy file="profiles/${build.profile.id}/config.properties"
 											tofile="${project.build.outputDirectory}/config.properties" />
+										<delete file="${project.build.outputDirectory}/log4j.properties" />
+										<copy file="profiles/${build.profile.id}/log4j.properties"
+											tofile="${project.build.outputDirectory}/log4j.properties" />
 									</tasks>
 								</configuration>
 							</execution>
