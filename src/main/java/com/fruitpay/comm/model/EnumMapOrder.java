@@ -32,6 +32,10 @@ public class EnumMapOrder {
 		map.put(Order.name, "訂購人");
 		map.put(Order.cellphone, "訂購人手機");
 		map.put(Order.housePhone, "訂購人電話");
+		map.put(Order.coupons, "優惠券");
+		map.put(Order.receiptType, "發票類型");
+		map.put(Order.receiptTitle, "統編抬頭");
+		map.put(Order.receiptVatNumber, "統編");
 		
 		return map;
 	}

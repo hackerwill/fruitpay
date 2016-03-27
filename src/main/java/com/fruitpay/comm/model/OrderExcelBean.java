@@ -54,6 +54,7 @@ public class OrderExcelBean implements Serializable {
 	private String orderStatus;	//訂單狀態
 	private String unlike; //不吃水果
 	private String payOnReceive; //貨到付款
+	private String receiptType; //收據類型
 	private Map<String, Object> orderExcelMap;
 	
 	public OrderExcelBean(CustomerOrder customerOrder){
@@ -125,6 +126,29 @@ public class OrderExcelBean implements Serializable {
 		
 		this.customerReponse = "";
 		orderExcelMap.put(String.valueOf(Order.customerReponse), "");
+		
+		this.coupons = toCouponStirng(customerOrder);
+		orderExcelMap.put(String.valueOf(Order.coupons), coupons);
+		
+		this.receiptType = customerOrder.getReceiptWay().getOptionDesc();
+		orderExcelMap.put(String.valueOf(Order.receiptType), receiptType);
+		
+		this.receiptVatNumber = customerOrder.getReceiptVatNumber();
+		orderExcelMap.put(String.valueOf(Order.receiptVatNumber), receiptVatNumber);
+		
+		this.receiptTitle = customerOrder.getReceiptTitle();
+		orderExcelMap.put(String.valueOf(Order.receiptTitle), receiptTitle);
+		
+	}
+	
+	
+	private String toCouponStirng(CustomerOrder customerOrder){
+		StringBuilder str = new StringBuilder();
+		for (Iterator<Coupon> iterator = customerOrder.getCoupons().iterator(); iterator.hasNext();) {
+			Coupon coupon = iterator.next();
+			str.append(coupon.getCouponDesc() + ".");
+		}
+		return str.toString();
 	}
 	
 	private String getPayOnReceiveStr(CustomerOrder customerOrder){
@@ -150,15 +174,22 @@ public class OrderExcelBean implements Serializable {
 		return str.toString();
 	}
 	
-	private String toCouponStirng(List<Coupon> list){
-		StringBuilder str = new StringBuilder();
-		for (Iterator<Coupon> iterator = list.iterator(); iterator.hasNext();) {
-			Coupon coupon = iterator.next();
-			str.append(coupon.getCouponDesc() +  "," );
-		}
-		return str.toString();
+	public String getPayOnReceive() {
+		return payOnReceive;
 	}
-	
+
+	public void setPayOnReceive(String payOnReceive) {
+		this.payOnReceive = payOnReceive;
+	}
+
+	public String getReceiptType() {
+		return receiptType;
+	}
+
+	public void setReceiptType(String receiptType) {
+		this.receiptType = receiptType;
+	}
+
 	public String getProgramId() {
 		return programId;
 	}
