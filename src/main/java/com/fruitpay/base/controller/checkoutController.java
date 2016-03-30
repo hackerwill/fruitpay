@@ -26,6 +26,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.utils.DateUtil;
 
 @Controller
 @RequestMapping("checkoutCtrl")
@@ -56,7 +57,7 @@ public class checkoutController {
 		
 		//前一天
 		customerOrder.setShipmentDay(staticDataService.getShipmentDay(
-				getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
+				DateUtil.getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
 		customerOrder.setShippingCost(customerOrder.getPaymentMode().getPaymentExtraPrice());
 		customerOrder.setTotalPrice(checkoutService.getTotalPrice(customerOrder));
 		
@@ -73,14 +74,7 @@ public class checkoutController {
 		
 		return customerOrder;
 	}
-	
-	private int getPreviousDayInt(int day){
-		if(day == 1)
-			return 7;
-		else
-			return day - 1;
-	}
-	
+
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public @ResponseBody Integer getTotalPrice(){
 		

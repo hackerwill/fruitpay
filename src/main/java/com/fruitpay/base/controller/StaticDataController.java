@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Constant;
@@ -26,6 +27,7 @@ import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.auth.UserAccessAnnotation;
 
 @Controller
 @RequestMapping("staticDataCtrl")
@@ -128,6 +130,23 @@ public class StaticDataController {
 		List<ConstantOption> options = constant.getConstOptions().stream()
 			.filter(option -> "1".equals(option.getValidFlag()))
 			.collect(Collectors.toList());
+		//排序
+		options.sort(new Comparator<ConstantOption>() {
+					@Override
+					public int compare(ConstantOption o1, ConstantOption o2) {
+						return Integer.compare(o1.getOrderNo(), o2.getOrderNo());
+					}
+				});
+		
+		constant.setConstOptions(options);
+		return constant;
+	}
+	
+	@RequestMapping(value = "/adminConstants/{constId}", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.ADMIN)
+	public @ResponseBody Constant getAdminConstants(@PathVariable Integer constId){
+		Constant constant = staticDataService.getConstant(constId);
+		List<ConstantOption> options = constant.getConstOptions();
 		//排序
 		options.sort(new Comparator<ConstantOption>() {
 					@Override

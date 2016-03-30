@@ -43,6 +43,7 @@ import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.comm.utils.ExcelUtil;
 import com.fruitpay.comm.utils.StringUtil;
 
@@ -67,8 +68,10 @@ public class CustomerOrderController {
 		Customer customer = checkoutPostBean.getCustomer();
 
 		customerOrder.setCustomer(customer);
-		customerOrder.setShipmentDay(staticDataService.getShipmentDay(DayOfWeek.TUESDAY.getValue()));
-
+		//前一天
+		customerOrder.setShipmentDay(staticDataService.getShipmentDay(
+				DateUtil.getPreviousDayInt(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()))));
+		
 		if (customer == null || customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 
