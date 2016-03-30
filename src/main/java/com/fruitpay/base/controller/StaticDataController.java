@@ -144,19 +144,9 @@ public class StaticDataController {
 	
 	@RequestMapping(value = "/adminConstants/{constId}", method = RequestMethod.GET)
 	@UserAccessAnnotation(UserAuthStatus.ADMIN)
-	public @ResponseBody Constant getAdminConstants(@PathVariable Integer constId){
-		Constant constant = staticDataService.getConstant(constId);
-		List<ConstantOption> options = constant.getConstOptions();
-		//排序
-		options.sort(new Comparator<ConstantOption>() {
-					@Override
-					public int compare(ConstantOption o1, ConstantOption o2) {
-						return Integer.compare(o1.getOrderNo(), o2.getOrderNo());
-					}
-				});
-		
-		constant.setConstOptions(options);
-		return constant;
+	public @ResponseBody List<Constant> getAllAdminConstants(){
+		List<Constant> constants = staticDataService.getAllConstants();
+		return constants;
 	}
 	
 	@RequestMapping(value = "/exceptionHandleTest", method = RequestMethod.GET)

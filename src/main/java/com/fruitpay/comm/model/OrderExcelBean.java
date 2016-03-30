@@ -55,6 +55,7 @@ public class OrderExcelBean implements Serializable {
 	private String unlike; //不吃水果
 	private String payOnReceive; //貨到付款
 	private String receiptType; //收據類型
+	private String deliveryDay; //出貨時間
 	private Map<String, Object> orderExcelMap;
 	
 	public OrderExcelBean(CustomerOrder customerOrder){
@@ -138,6 +139,9 @@ public class OrderExcelBean implements Serializable {
 		
 		this.receiptTitle = customerOrder.getReceiptTitle();
 		orderExcelMap.put(String.valueOf(Order.receiptTitle), receiptTitle);
+		
+		this.deliveryDay = customerOrder.getDeliveryDay().getOptionDesc();
+		orderExcelMap.put(String.valueOf(Order.deliveryDay), deliveryDay);
 		
 	}
 	
@@ -429,6 +433,16 @@ public class OrderExcelBean implements Serializable {
 
 	public void setOrderExcelMap(Map<String, Object> orderExcelMap) {
 		this.orderExcelMap = orderExcelMap;
+	}
+
+
+	public String getDeliveryDay() {
+		return deliveryDay;
+	}
+
+
+	public void setDeliveryDay(String deliveryDay) {
+		this.deliveryDay = deliveryDay;
 	}
 
 }

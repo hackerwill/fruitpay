@@ -36,6 +36,7 @@ public class EnumMapOrder {
 		map.put(Order.receiptType, "發票類型");
 		map.put(Order.receiptTitle, "統編抬頭");
 		map.put(Order.receiptVatNumber, "統編");
+		map.put(Order.deliveryDay, "出貨日");
 		
 		return map;
 	}
