@@ -58,6 +58,11 @@ public class Customer extends AbstractDataBean implements Serializable {
 	
 	@Transient
 	private String token;
+	
+	@ManyToOne
+	@JoinColumn(name="register_from")
+	@JsonProperty("registerFrom")
+	private ConstantOption registerFrom;
 
 	//bi-directional many-to-one association to CreditCardInfo
 	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
@@ -83,6 +88,10 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
+	
+	@Column(name="create_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDate;
 
 	public Customer() {
 	}
@@ -274,5 +283,22 @@ public class Customer extends AbstractDataBean implements Serializable {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
+	public ConstantOption getRegisterFrom() {
+		return registerFrom;
+	}
+
+	public void setRegisterFrom(ConstantOption registerFrom) {
+		this.registerFrom = registerFrom;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 
 }

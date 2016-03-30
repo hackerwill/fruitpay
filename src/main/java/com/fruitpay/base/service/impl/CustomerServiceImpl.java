@@ -111,5 +111,10 @@ public class CustomerServiceImpl implements CustomerService {
 		return names.toString();
 	
 	}
+
+	@Override
+	public List<Customer> findall() {
+		return customerDAO.findAll();
+	}
 	
 }

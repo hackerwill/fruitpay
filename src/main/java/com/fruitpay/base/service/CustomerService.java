@@ -1,5 +1,7 @@
 package com.fruitpay.base.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.model.Customer;
@@ -30,5 +32,7 @@ public interface CustomerService {
 	 * 如"王大明(101), 陳志朋(102)"  
 	 * */
 	public String getCustomerNamesStr();
+	
+	public List<Customer> findall();
 
 }
