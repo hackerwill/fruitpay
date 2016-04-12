@@ -65,7 +65,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private ConstantOption registerFrom;
 
 	//bi-directional many-to-one association to CreditCardInfo
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<CreditCardInfo> creditCardInfos;
 
@@ -76,7 +76,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private Customer customer;
 
 	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<Customer> customers;
 

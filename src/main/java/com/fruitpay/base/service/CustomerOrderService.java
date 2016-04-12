@@ -30,5 +30,9 @@ public interface CustomerOrderService {
 	public void recover(List<CustomerOrder> customerOrders);
 	
 	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page , int size);
+	
+	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition);
+	
+	public CustomerOrder findOneIncludingOrderPreference(Integer orderId);
 
 }

@@ -19,9 +19,11 @@ import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
+import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
+import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 
 @Service
@@ -33,6 +35,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	CustomerOrderDAO customerOrderDAO;
 	@Inject 
 	CustomerDAO customerDAO;
+	@Inject 
+	OrderPreferenceDAO orderPreferenceDAO;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -116,6 +120,25 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
+	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition) {
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
+				orderCondition.getName(), 
+				orderCondition.getOrderId(), 
+				orderCondition.getStartDate(),
+				orderCondition.getEndDate(),
+				orderCondition.getValidFlag(),
+				orderCondition.getAllowForeignFruits(),
+				orderCondition.getOrderStatusId());
+		
+		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
+			CustomerOrder customerOrder = iterator.next();
+			//只抓0的出來，為了效能的關係
+			customerOrder.setOrderPreferences(orderPreferenceDAO.findByCustomerOrderAndLikeDegree(customerOrder, (byte)0));
+		}
+		return customerOrders;
+	}
+	
+	@Override
 	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page, int size) {
 		Page<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
@@ -127,6 +150,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getOrderStatusId(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
+	}
+
+	@Override
+	public CustomerOrder findOneIncludingOrderPreference(Integer orderId) {
+		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
+		customerOrder.setOrderPreferences(orderPreferenceDAO.findByCustomerOrder(customerOrder));
+		return customerOrder;
 	}
 
 }

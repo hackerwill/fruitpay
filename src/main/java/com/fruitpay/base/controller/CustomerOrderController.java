@@ -1,10 +1,8 @@
 package com.fruitpay.base.controller;
 
 import java.io.OutputStream;
-import java.time.DayOfWeek;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -45,7 +42,6 @@ import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.comm.utils.ExcelUtil;
-import com.fruitpay.comm.utils.StringUtil;
 
 @Controller
 @RequestMapping("orderCtrl")
@@ -57,8 +53,6 @@ public class CustomerOrderController {
 	private CustomerOrderService customerOrderService;
 	@Inject
 	private StaticDataService staticDataService;
-	@Inject
-	CustomerOrderDAO customerOrderDAO;
 	@Inject
 	private EmailSendService emailSendService;
 
@@ -192,14 +186,23 @@ public class CustomerOrderController {
 
 	@RequestMapping(value = "/exportOrders", method = RequestMethod.POST)
 	@UserAccessAnnotation(UserAuthStatus.ADMIN)
-	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,@RequestBody  List<CustomerOrder> customerOrders) {
+	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody  List<CustomerOrder> customerOrders,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
+			@RequestParam(value = "allowForeignFruits", required = false, defaultValue = "") String allowForeignFruits,
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
+			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId) {
 		if(customerOrders.size()<=0){
-			customerOrders = customerOrderDAO.findByValidFlag(CommConst.VALID_FLAG.VALID.value());
+			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId);
+			customerOrders = customerOrderService.findAllByConditions(orderCondition);
 		}
 		else{
 			for(int i=0; i<customerOrders.size(); i++){
 				CustomerOrder tempOrder = customerOrders.get(i);
-				customerOrders.set(i, customerOrderDAO.findOne(tempOrder.getOrderId()));
+				customerOrders.set(i, customerOrderService.findOneIncludingOrderPreference(tempOrder.getOrderId()));
 			}
 		}
 		List<Map<String, Object>> customerExcelBeans = new LinkedList<Map<String, Object>>();
