@@ -33,6 +33,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
+import com.fruitpay.base.service.OrderPreferenceService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.model.OrderExcelBean;
@@ -49,6 +50,8 @@ public class CustomerOrderController {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+	@Inject
+	private OrderPreferenceService orderPreferenceService;
 	@Inject
 	private CustomerOrderService customerOrderService;
 	@Inject
@@ -231,6 +234,18 @@ public class CustomerOrderController {
 
 		return response;
 
+	}
+	
+	@RequestMapping(value = "/orderPreferences/{orderId}", method = RequestMethod.GET)
+	@UserAccessAnnotation(UserAuthStatus.YES)
+	public @ResponseBody List<OrderPreference> getOrderPreferences(@PathVariable Integer orderId) {
+
+		if (AssertUtils.isEmpty(orderId))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		List<OrderPreference> OrderPreferences = orderPreferenceService.findByCustomerOrder(orderId);
+
+		return OrderPreferences;
 	}
 
 }
