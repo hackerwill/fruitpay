@@ -17,11 +17,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fruitpay.base.dao.ConstantDAO;
+import com.fruitpay.base.dao.ConstantOptionDAO;
 import com.fruitpay.base.dao.OrderPlatformDAO;
 import com.fruitpay.base.dao.OrderProgramDAO;
 import com.fruitpay.base.dao.OrderStatusDAO;
@@ -31,6 +33,7 @@ import com.fruitpay.base.dao.ProductDAO;
 import com.fruitpay.base.dao.ShipmentDayDAO;
 import com.fruitpay.base.dao.ShipmentPeriodDAO;
 import com.fruitpay.base.model.Constant;
+import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.OrderStatus;
@@ -44,24 +47,26 @@ import com.fruitpay.comm.model.SelectOption;
 @Service
 public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDataService {
 
-	@Autowired
-	PostalCodeDAO postalCodeDAO;
-	@Autowired
-	ProductDAO productDAO;
-	@Autowired
-	OrderPlatformDAO orderPlatformDAO;
-	@Autowired
-	OrderProgramDAO orderProgramDAO;
-	@Autowired
-	OrderStatusDAO orderStatusDAO;
-	@Autowired
-	PaymentModeDAO paymentModeDAO;
-	@Autowired
-	ShipmentPeriodDAO shipmentPeriodDAO;
-	@Autowired
-	ConstantDAO constantDAO;
-	@Autowired
-	ShipmentDayDAO shipmentDayDAO;
+	@Inject
+	private PostalCodeDAO postalCodeDAO;
+	@Inject
+	private ProductDAO productDAO;
+	@Inject
+	private OrderPlatformDAO orderPlatformDAO;
+	@Inject
+	private OrderProgramDAO orderProgramDAO;
+	@Inject
+	private OrderStatusDAO orderStatusDAO;
+	@Inject
+	private PaymentModeDAO paymentModeDAO;
+	@Inject
+	private ShipmentPeriodDAO shipmentPeriodDAO;
+	@Inject
+	private ConstantDAO constantDAO;
+	@Inject
+	private ShipmentDayDAO shipmentDayDAO;
+	@Inject
+	private ConstantOptionDAO constantOptionDAO;
 	
 	List<Constant> consantList = null;
 	List<SelectOption> countList = null;
@@ -174,7 +179,7 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	}
 	
 	@Override
-	public String getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
+	public String getNextReceiveDayStr(Date nowTime, DayOfWeek dayOfWeek){
 		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
 		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		//下一個收貨日
@@ -192,6 +197,23 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 		return receiveDayOfThisWeek.format(formatter);
 	}
 	
+	public LocalDate getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
+		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
+		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		//下一個收貨日
+		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
+		//提前的天數
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(2);
+		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
+		
+		boolean greaterThanNow = compareTimeGreaterThanNow(
+				Date.from(stopDayTimeOfThisWeek.atZone(ZoneId.systemDefault()).toInstant()), 
+				nowTime);
+		if(!greaterThanNow)
+			receiveDayOfThisWeek = receiveDayOfThisWeek.with(TemporalAdjusters.next(dayOfWeek));
+		return receiveDayOfThisWeek;
+	}
+	
 	private boolean compareTimeGreaterThanNow(Date compareDate, Date now){
 		long nowTime = now.getTime();
 		long compare = compareDate.getTime();
@@ -199,6 +221,13 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 			return true;
 		else 
 			return false;
+	}
+
+
+	@Override
+	public ConstantOption getConstantOptionByName(String optionName) {
+		ConstantOption constantOption = constantOptionDAO.findByOptionName(optionName);
+		return constantOption;
 	}
 
 }

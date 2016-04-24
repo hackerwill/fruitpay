@@ -27,7 +27,8 @@ public class ReturnMessageEnum{
 		Success(new ReturnMessage(Status.Success.getStatus())),
 		RequiredFieldsIsEmpty(new ReturnMessage(Status.Failed.getStatus(), "必要欄位還沒有填寫", HttpStatus.METHOD_NOT_ALLOWED)),
 		AuthenticationFailed(new ReturnMessage(Status.REDIRECT_TO_LOGIN.getStatus(), "認證錯誤，請您重新登入", HttpStatus.FORBIDDEN)),
-		UnexpectedError(new ReturnMessage(Status.Failed.getStatus(), "未知錯誤發生", HttpStatus.INTERNAL_SERVER_ERROR));
+		UnexpectedError(new ReturnMessage(Status.Failed.getStatus(), "未知錯誤發生", HttpStatus.INTERNAL_SERVER_ERROR)),
+		NotFound(new ReturnMessage(Status.REDIRECT_TO_LOGIN.getStatus(), "找不到資料，請確認資料是否正確", HttpStatus.NOT_FOUND));
 		
 		private ReturnMessage rm;
 		Common(ReturnMessage rm){

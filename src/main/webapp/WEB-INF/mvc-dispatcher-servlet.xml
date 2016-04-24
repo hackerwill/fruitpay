@@ -30,9 +30,8 @@
 	<context:component-scan base-package="com.fruitpay" />	
 	
 	<!-- Jackson Mapper -->
-	<bean id="myObjectMapper" class="com.fruitpay.comm.utils.HibernateAwareObjectMapper" />
-	<bean
-	    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	<bean id="myObjectMapper" class="com.fruitpay.comm.utils.HibernateAwareAndJsonFormatObjectMapper" />
+	<bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="targetObject" ref="myObjectMapper" />
 	    <property name="targetMethod" value="configure" />
 	    <property name="arguments">

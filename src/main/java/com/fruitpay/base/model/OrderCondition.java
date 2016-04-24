@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.fruitpay.comm.utils.DateUtil;
+
 public class OrderCondition implements Serializable {
 	
 	private String orderId;
@@ -23,19 +25,7 @@ public class OrderCondition implements Serializable {
 			startDate = new Date(0L);
 		}
 		
-		if(endDate == null){
-			// only to make sure it's the maxima date
-			Date date = null;
-			String string = "3000-01-01";
-			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				date = format.parse(string);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			endDate = date;
-		}
+		if(endDate == null) endDate = DateUtil.getMaxDate();
 		
 		this.orderId = orderId;
 		this.name = name.toLowerCase();

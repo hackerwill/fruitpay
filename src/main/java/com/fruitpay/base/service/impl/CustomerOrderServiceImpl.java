@@ -1,5 +1,7 @@
 package com.fruitpay.base.service.impl;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +27,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
+import com.fruitpay.base.service.StaticDataService;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -32,11 +35,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Inject 
-	CustomerOrderDAO customerOrderDAO;
+	private CustomerOrderDAO customerOrderDAO;
 	@Inject 
-	CustomerDAO customerDAO;
+	private CustomerDAO customerDAO;
 	@Inject 
-	OrderPreferenceDAO orderPreferenceDAO;
+	private OrderPreferenceDAO orderPreferenceDAO;
+	@Inject 
+	private StaticDataService staticDataService;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -157,6 +162,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
 		customerOrder.setOrderPreferences(orderPreferenceDAO.findByCustomerOrder(customerOrder));
 		return customerOrder;
+	}
+
+	@Override
+	public LocalDate findOrderFirstDeliveryDate(int orderId) {
+		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
+		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), 
+				DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName())));
+		return firstDeliveryDate;
 	}
 
 }

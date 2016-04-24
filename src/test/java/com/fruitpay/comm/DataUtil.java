@@ -22,6 +22,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
@@ -31,6 +32,22 @@ public class DataUtil {
 	
 	@Inject
 	StaticDataService staticDataService;
+	
+	public ShipmentChange getShipmentChangeWithPulse(){
+		Constant couponTypes = staticDataService.getConstant(11);
+		return getShipmentChange(couponTypes.getConstOptions().get(0));
+	}
+	
+	public ShipmentChange getShipmentChangeWithCancel(){
+		Constant couponTypes = staticDataService.getConstant(11);
+		return getShipmentChange(couponTypes.getConstOptions().get(1));
+	}
+	
+	public ShipmentChange getShipmentChange(ConstantOption ShipmentChangeType){
+		ShipmentChange shipmentChange = new ShipmentChange();
+		shipmentChange.setShipmentChangeType(ShipmentChangeType);
+		return shipmentChange;
+	}
 	
 	public List<Coupon> getCouponList(){
 		List<Coupon> coupons = new ArrayList<Coupon>();
@@ -114,12 +131,22 @@ public class DataUtil {
 	}
 	
 	public CustomerOrder getCustomerOrder(){
+		return getCustomerOrder(7);
+	}
+	
+	public CustomerOrder getCustomerOrder(int shipmentDuration){
 		
 		PostalCode postalCode = staticDataService.getPostalCode(100);
 		OrderPlatform orderPlatform = staticDataService.getOrderPlatform(1);
 		OrderProgram orderProgram = staticDataService.getOrderProgram(1);
 		PaymentMode paymentMode = staticDataService.getPaymentMode(1);
-		ShipmentPeriod shipmentPeriod = staticDataService.getShipmentPeriod(1);
+		ShipmentPeriod shipmentPeriod;
+		if(shipmentDuration == 7){
+			shipmentPeriod = staticDataService.getShipmentPeriod(1);
+		}else{
+			shipmentPeriod = staticDataService.getShipmentPeriod(2);
+		}
+			
 		ShipmentDay shipmentDay = staticDataService.getShipmentDay(2);
 		List<Product> products = staticDataService.getAllProducts();
 		

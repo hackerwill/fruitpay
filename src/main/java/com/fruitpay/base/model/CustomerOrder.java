@@ -116,6 +116,10 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JsonManagedReference
 	private List<OrderPreference> orderPreferences;
 	
+	//bi-directional many-to-one association to Shipment
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY)
+	private List<ShipmentChange> shipmentExchanges;
+	
 	@ManyToOne
 	@JoinColumn(name="receive_way")
 	@JsonProperty("receiveWay")
@@ -491,6 +495,14 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 
 	public void setAllpayOrder(AllpayOrder allpayOrder) {
 		this.allpayOrder = allpayOrder;
+	}
+
+	public List<ShipmentChange> getShipmentExchanges() {
+		return shipmentExchanges;
+	}
+
+	public void setShipmentExchanges(List<ShipmentChange> shipmentExchanges) {
+		this.shipmentExchanges = shipmentExchanges;
 	}
 	
 }

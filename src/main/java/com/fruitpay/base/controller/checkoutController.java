@@ -102,7 +102,7 @@ public class checkoutController {
 	@RequestMapping(value = "/getReceiveDay/{dayOfWeek}", method = RequestMethod.GET)
 	public @ResponseBody DateStr getReceiveDay(@PathVariable int dayOfWeek){
 		
-		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDay(Calendar.getInstance().getTime(), DayOfWeek.of(dayOfWeek)));
+		DateStr dateStr = new DateStr(staticDataService.getNextReceiveDayStr(Calendar.getInstance().getTime(), DayOfWeek.of(dayOfWeek)));
 		return dateStr;
 	}
 	

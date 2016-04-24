@@ -1,5 +1,6 @@
 package com.fruitpay.base.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -34,5 +35,7 @@ public interface CustomerOrderService {
 	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition);
 	
 	public CustomerOrder findOneIncludingOrderPreference(Integer orderId);
+	
+	public LocalDate findOrderFirstDeliveryDate(int orderId);
 
 }

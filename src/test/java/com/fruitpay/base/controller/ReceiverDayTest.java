@@ -66,49 +66,49 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 11, 20, 0, 0);
 		cal.getTime();
-		String nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
+		String nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
 		Assert.assertEquals("12-23", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 21, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
 		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 22, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
 		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 25, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
 		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2016, 00, 03, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.WEDNESDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
 		Assert.assertEquals("01-06", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2016, 00, 03, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.MONDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.MONDAY);
 		Assert.assertEquals("01-11", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 31, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.MONDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.MONDAY);
 		Assert.assertEquals("01-04", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 30, 0, 0);
 		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime(), DayOfWeek.MONDAY);
+		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.MONDAY);
 		Assert.assertEquals("01-04", nextReceiveDay);
 		
 	}
