@@ -118,7 +118,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	
 	//bi-directional many-to-one association to Shipment
 	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY)
-	private List<ShipmentChange> shipmentExchanges;
+	private List<ShipmentChange> shipmentChanges;
 	
 	@ManyToOne
 	@JoinColumn(name="receive_way")
@@ -497,12 +497,12 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.allpayOrder = allpayOrder;
 	}
 
-	public List<ShipmentChange> getShipmentExchanges() {
-		return shipmentExchanges;
+	public List<ShipmentChange> getShipmentChanges() {
+		return shipmentChanges;
 	}
 
-	public void setShipmentExchanges(List<ShipmentChange> shipmentExchanges) {
-		this.shipmentExchanges = shipmentExchanges;
+	public void setShipmentChanges(List<ShipmentChange> shipmentChanges) {
+		this.shipmentChanges = shipmentChanges;
 	}
 	
 }
