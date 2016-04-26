@@ -21,6 +21,7 @@ import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.DateUtil;
 
 @Controller
 @RequestMapping("shipmentCtrl")
@@ -58,7 +59,14 @@ public class ShipmentChangeController {
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
 			
-		if (AssertUtils.isEmpty(orderId) || AssertUtils.isEmpty(startDate) || AssertUtils.isEmpty(endDate))
+		if(AssertUtils.isEmpty(startDate)){
+			startDate = DateUtil.toDate("2016-04-26", "YYYY-MM-DD");
+		}
+		//現在開始下三個月
+		if(AssertUtils.isEmpty(endDate)){
+			endDate = DateUtil.toDate(DateUtil.toLocalDate(new Date()).plusMonths(3));
+		}
+		if (AssertUtils.isEmpty(orderId))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		
 		if(endDate.before(startDate))
