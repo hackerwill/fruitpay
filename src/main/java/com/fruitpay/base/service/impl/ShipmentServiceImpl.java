@@ -14,9 +14,14 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
@@ -61,14 +66,18 @@ public class ShipmentServiceImpl implements ShipmentService {
 	public List<ShipmentChange> findByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
-		List<ShipmentChange> ShipmentChanges = shipmentChangeDAO.findByCustomerOrder(customerOrder);
+		List<ShipmentChange> ShipmentChanges = shipmentChangeDAO.findByCustomerOrderAndValidFlag(
+				customerOrder, CommConst.VALID_FLAG.VALID.value());
 		return ShipmentChanges;
 	}
 
 	@Override
 	@Transactional
 	public ShipmentChange add(ShipmentChange shipmentChange) {
-		shipmentChange.setCreateDate(new Date());
+		Date date = new Date();
+		shipmentChange.setCreateDate(date);
+		shipmentChange.setUpdateDate(date);
+		shipmentChange.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		shipmentChange = shipmentChangeDAO.save(shipmentChange);
 		return shipmentChange;
 	}
@@ -76,13 +85,27 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	@Transactional
 	public ShipmentChange update(ShipmentChange shipmentChange) {
+		
 		ShipmentChange origin = shipmentChangeDAO.findOne(shipmentChange.getId());
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
 		
+		shipmentChange.setUpdateDate(new Date());
 		BeanUtils.copyProperties(shipmentChange, origin);
 		
 		return origin;
+	}
+	
+	@Override
+	@Transactional
+	public ShipmentChange updateValidFlag(ShipmentChange shipmentChange, CommConst.VALID_FLAG validFlag) {
+		
+		if(validFlag == null)
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		shipmentChange.setValidFlag(validFlag.value());
+		
+		return update(shipmentChange);
 	}
 
 	@Override
@@ -200,6 +223,13 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}
 		
 		return shipmentDeliver; 
+	}
+
+	@Override
+	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size) {
+		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByValidFlag(
+				validFlag.value(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
+		return shipmentChanges;
 	}
 
 }
