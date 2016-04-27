@@ -111,13 +111,13 @@ public class ShipmentServiceImpl implements ShipmentService {
 			startDate = DateUtil.toDate(firstDeliveryDate);
 		
 		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
-		ShipmentDeliveryStatus first = getFirst(firstDeliveryDate, shipmentChanges);
+		ShipmentDeliveryStatus first = getFirst(firstDeliveryDate, shipmentChanges, duration);
 		do {
 			deliveryStatuses.add(first);
 			//若該次已經取消, 則是最後一次
 			if(ShipmentStatus.shipmentCancel.toString().equals(first.getShipmentChangeType().getOptionName()))
 				break;
-			first = getNext(first, duration, shipmentChanges);
+			first = getNext(first, shipmentChanges, duration);
 		} while (!first.getApplyDate().after(endDate));
 		
 		//過濾掉僅從查詢開始日期算
@@ -128,20 +128,54 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return deliveryStatuses;
 	}
 	
-	private ShipmentDeliveryStatus getFirst(LocalDate fristDeliveryDate, List<ShipmentChange> shipmentChanges){
+	private ShipmentDeliveryStatus getFirst(LocalDate fristDeliveryLocalDate, List<ShipmentChange> shipmentChanges, int duration){
+		//若日期小於今天, 到資料庫查詢是否有已配送紀錄, 若是今天以後的日期, 則為待配送狀態
+		Date firstDeliveryDate = DateUtil.toDate(fristDeliveryLocalDate);
+		Date today = new Date();
+		if(firstDeliveryDate.before(today)){
+			//沒有配送過且也沒有暫停取消的, 則跳過該次
+			if(!hasRecord(firstDeliveryDate, shipmentChanges)){
+				return getFirst(fristDeliveryLocalDate.plusDays(duration), shipmentChanges, duration);
+			}
+		}
+		
 		ShipmentDeliveryStatus status = new ShipmentDeliveryStatus();
-		status.setApplyDate(DateUtil.toDate(fristDeliveryDate));
+		status.setApplyDate(DateUtil.toDate(fristDeliveryLocalDate));
 		status.setShipmentChangeType(setChageType(status, shipmentChanges));
 		return status;
 	}
 	
-	private ShipmentDeliveryStatus getNext(ShipmentDeliveryStatus status, int duration, List<ShipmentChange> shipmentChanges){
+	private ShipmentDeliveryStatus getNext(ShipmentDeliveryStatus status, List<ShipmentChange> shipmentChanges, int duration){
+		//若日期小於今天, 到資料庫查詢是否有已配送紀錄, 若是今天以後的日期, 則為待配送狀態
+		Date today = new Date();
+		if(status.getApplyDate().before(today)){
+			//沒有配送過且也沒有暫停取消的, 則跳過該次
+			if(!hasRecord(status.getApplyDate(), shipmentChanges)){
+				return getNext(status, shipmentChanges, duration);
+			}
+		}
+		
 		ShipmentDeliveryStatus nextStatus = new ShipmentDeliveryStatus();
 		int nextDuration = setNextDuration(status, duration);
 		LocalDate nextDate = DateUtil.toLocalDate(status.getApplyDate()).plusDays(nextDuration);
 		nextStatus.setApplyDate(DateUtil.toDate(nextDate));
 		nextStatus.setShipmentChangeType(setChageType(nextStatus, shipmentChanges));
 		return nextStatus;
+	}
+	
+	private boolean hasRecord(Date applyDate, List<ShipmentChange> shipmentChanges){
+		
+		boolean hasRecord = false;
+		
+		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
+			ShipmentChange shipmentChange = iterator.next();
+			if(applyDate.getTime() == shipmentChange.getApplyDate().getTime()){
+				hasRecord = true;
+				break;
+			}
+		}
+		
+		return hasRecord;
 	}
 	
 	private int setNextDuration(ShipmentDeliveryStatus status, int duration){
