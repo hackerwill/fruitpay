@@ -28,6 +28,12 @@ public class ConstantOption extends AbstractDataBean implements Serializable {
 	@Column(name="option_desc")
 	private String optionDesc;
 	
+	@Column(name="valid_flag")
+	private String validFlag;
+
+	@Column(name="order_no")
+	private int orderNo;
+	
 	@ManyToOne
 	@JoinColumn(name="const_id")
 	@JsonBackReference
@@ -60,12 +66,28 @@ public class ConstantOption extends AbstractDataBean implements Serializable {
 		this.optionDesc = optionDesc;
 	}
 
+	public String getValidFlag() {
+		return validFlag;
+	}
+
+	public void setValidFlag(String validFlag) {
+		this.validFlag = validFlag;
+	}
+
 	public Constant getConstant() {
 		return constant;
 	}
 
 	public void setConstant(Constant constant) {
 		this.constant = constant;
+	}
+
+	public int getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
 	}
 
 

@@ -4,7 +4,9 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -51,10 +53,19 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@Column(name="office_phone")
 	private String officePhone;
 
+	@JsonIgnore //僅在deserialization使用, 不在serialization時使用
 	private String password;
+	
+	@Transient
+	private String token;
+	
+	@ManyToOne
+	@JoinColumn(name="register_from")
+	@JsonProperty("registerFrom")
+	private ConstantOption registerFrom;
 
 	//bi-directional many-to-one association to CreditCardInfo
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<CreditCardInfo> creditCardInfos;
 
@@ -65,7 +76,7 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private Customer customer;
 
 	//bi-directional many-to-one association to Customer
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<Customer> customers;
 
@@ -74,9 +85,13 @@ public class Customer extends AbstractDataBean implements Serializable {
 	private PostalCode postalCode;
 
 	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="customer", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
+	
+	@Column(name="create_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDate;
 
 	public Customer() {
 	}
@@ -169,10 +184,12 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.officePhone = officePhone;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return this.password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -259,4 +276,29 @@ public class Customer extends AbstractDataBean implements Serializable {
 		this.postalCode = postalCode;
 	}
 	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public ConstantOption getRegisterFrom() {
+		return registerFrom;
+	}
+
+	public void setRegisterFrom(ConstantOption registerFrom) {
+		this.registerFrom = registerFrom;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+
 }

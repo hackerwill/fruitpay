@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
@@ -36,7 +38,8 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	private CustomerService customerService;
 	@Inject
 	private DataUtil dataUtil;
-	
+	@Inject
+	private LoginService loginService;
 	private MockMvc mockMvc;
 	
 	@Before
@@ -50,8 +53,10 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	
 	@Test
 	public void getAllCustomerList() throws Exception {
-		List<Customer> customers = customerService.findAllCustomer();
-		Assert.assertTrue(customers.size() > 0);
+		int page =0; 
+		int size =10;
+		Page<Customer> customers = customerService.findAllCustomer(page,size);
+		Assert.assertTrue(customers.getContent().size() > 0);
 	}
 	
 	@Test
@@ -65,13 +70,6 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
-		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
 		
 	}
 	
@@ -121,6 +119,32 @@ public class CustomerControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.email", is(customer.getEmail())))
 	   		.andExpect(jsonPath("$.firstName", is(customer.getFirstName())));
+		
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void deleteCustomer() throws Exception {
+		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getSignupCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		
+		this.mockMvc.perform(delete("/customerDataCtrl/deleteCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));		
+		
+
+		Customer loginCustomer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		Assert.assertNull(loginCustomer);
 		
 	}
 

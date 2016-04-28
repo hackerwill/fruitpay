@@ -34,7 +34,7 @@ public class EmailNewMemberFromOrderServiceImpl extends EmailContentService<Cust
 
 	@Override
 	protected String getEmailSubject() {
-		return "果物配新會員通知";
+		return "果物配新會員帳號密碼通知";
 	}
 
 }

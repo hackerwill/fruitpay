@@ -5,22 +5,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.AllpayOrder;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.ConfigMap;
 import com.fruitpay.comm.utils.HttpUtil;
 
 import AllPay.Payment.Integration.AllInOne;
@@ -32,59 +44,91 @@ import AllPay.Payment.Integration.Item;
 import AllPay.Payment.Integration.PaymentMethod;
 import AllPay.Payment.Integration.PaymentMethodItem;
 import AllPay.Payment.Integration.PeriodType;
+import javassist.NotFoundException;
 
 @Controller
 @RequestMapping("allpayCtrl")
 public class AllpayCheckoutController {
 	
-	private boolean DEBUG_MODE = true;
+	
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
-	private final String ORDER_RESULT_URL = "/allpayCtrl/callback";
-	private final String PERIOD_RETURN_URL = "/allpayCtrl/schduleCallback";
-	private final String SHOW_ORDER_URL = "/app/user/orders";
-	private final String SHOW_ORDER_SUCCESS_URL = "/app/checkoutCreditCardSuccess";
+	private String ORDER_RESULT_URL = null;
+	private String SHOW_ORDER_SUCCESS_POST_URL = null;
+	private String PERIOD_RETURN_URL = null;
+	private String SHOW_ORDER_URL = null;
+	private String SHOW_ORDER_SUCCESS_URL = null;
+	private String SHOW_ORDER_FAILED_URL = null;
 	
 	private final String TEST_SERVICE_URL = "http://payment-stage.allpay.com.tw/Cashier/AioCheckOut";
 	private final String TEST_HASH_KEY = "5294y06JbISpM5x9";
 	private final String TEST_HASH_IV = "v77hoKGq4kWxNNIS";
 	private final String TEST_MERCHANT_ID = "2000132";
 	
-	private final String SERVICE_URL = "http://payment.allpay.com.tw/Cashier/AioCheckOut";
+	private final String SERVICE_URL = "https://payment.allpay.com.tw/Cashier/AioCheckOut";
 	private final String HASH_KEY = "gXLhKG6NYxJOosdd";
 	private final String HASH_IV = "z2G1om86YlJ35noj";
 	private final String MERCHANT_ID = "1074763";
 	
 	private final Integer MAX_EXCUTE_TIME = 999;
 	
-	
-	
+	@Inject
+	ConfigMap configMap;
+	@Inject
+	private HttpUtil httpUtil;
 	@Inject
 	private CheckoutService checkoutService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	CustomerOrderService customerOrderService;
 	
-	@RequestMapping(value = "/callbackTest", method = RequestMethod.POST)
-	public void callbackTest( 
-			HttpServletRequest request, HttpServletResponse response){
-		Integer orderId = 11;
-		checkoutService.updateOrderStatus(orderId, OrderStatus.CreditPaySuccessful);
+	@PostConstruct
+	public void init() throws Exception{
+		ORDER_RESULT_URL = httpUtil.getDomainURL() + "allpayCtrl/callback";
+		SHOW_ORDER_SUCCESS_POST_URL = httpUtil.getDomainURL() + "allpayCtrl/orderSuccess";
+		PERIOD_RETURN_URL = httpUtil.getDomainURL() + "allpayCtrl/schduleCallback";
+		SHOW_ORDER_URL = httpUtil.getDomainURL() + "app/user/orders";
+		SHOW_ORDER_SUCCESS_URL = httpUtil.getDomainURL() + "app/thanks";
+		SHOW_ORDER_FAILED_URL = httpUtil.getDomainURL() + "app/orderFailed";
+	}
+	
+	
+	@RequestMapping(value = "/orderSuccess/{id}", method = RequestMethod.POST)
+	public void checkoutCreditCardSuccess( 
+			@PathVariable String id, HttpServletRequest request, HttpServletResponse response){
+
+		if(AssertUtils.isEmpty(id)){
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
 		
+		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+		
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrdersByValidFlag(Integer.valueOf(id), CommConst.VALID_FLAG.VALID.value());
+		if(customerOrder != null && customerOrder.getOrderStatus().getOrderStatusId()== OrderStatus.CreditPaySuccessful.getStatus()){
+			response.setHeader("Location", SHOW_ORDER_SUCCESS_URL + "?id=" + id);
+		}else{
+			response.setHeader("Location", SHOW_ORDER_FAILED_URL + "?id=" + id);
+		}
 	}
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
-	public void allpayCallback(HttpServletRequest request, HttpServletResponse response){
+	public void allpayCallback(HttpServletRequest request, HttpServletResponse response)
+		throws Exception{
 		
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 
 		List<String> enErrors = new ArrayList<String>();
 		String szMerchantTradeNo = "";
+		String szPaymentDate = "";
+		String szRtnCode = "";
+		String szRtnMsg = "";
 		try {
 			out = response.getWriter();
 			AllInOne oPayment = new AllInOne();
-			oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
-			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
+			oPayment.HashKey = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_IV : HASH_IV;
 
 			Hashtable<String, String> htFeedback = new Hashtable<String, String>();
 			enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request));
@@ -93,11 +137,8 @@ public class AllpayCheckoutController {
 			String name[] = key.toArray(new String[key.size()]);
 			/* 支付後的回傳的基本參數 */
 			String szMerchantID = "";
-			String szPaymentDate = "";
 			String szPaymentType = "";
 			String szPaymentTypeChargeFee = "";
-			String szRtnCode = "";
-			String szRtnMsg = "";
 			String szSimulatePaid = "";
 			String szTradeAmt = "";
 			String szTradeDate = "";
@@ -178,16 +219,25 @@ public class AllpayCheckoutController {
 		} catch (Exception e) {
 			enErrors.add(e.getMessage());
 		} finally { 
+			
+			AllpayOrder allpayOrder = new AllpayOrder();
+			allpayOrder.setRtnCode(szRtnCode);
+			allpayOrder.setRtnMessage(szRtnMsg);
+			allpayOrder.setPaymentDate(szPaymentDate);
 			// 回覆成功訊息。
-			if (enErrors.size() == 0) {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful);
-				response.setHeader("Location", HttpUtil.getDomainURL(request) + SHOW_ORDER_SUCCESS_URL);
+			if (enErrors.size() == 0 && "1".equals(allpayOrder.getRtnCode())) {
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPaySuccessful, allpayOrder);
 				out.println("1|OK"); 
 			// 回覆錯誤訊息。
 			} else {
-				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed);
-				response.setHeader("Location", HttpUtil.getDomainURL(request));
-				out.println("0|" + enErrors);
+				checkoutService.updateOrderStatus(Integer.valueOf(szMerchantTradeNo), OrderStatus.CreditPayFailed, allpayOrder);
+				String outMessage = "";
+				if(enErrors.isEmpty()){
+					outMessage = allpayOrder.getRtnMessage();
+				}else{
+					outMessage = enErrors.toString();
+				}					
+				out.println("0|" + outMessage);
 			}
 
 		}
@@ -210,8 +260,6 @@ public class AllpayCheckoutController {
 			@RequestParam("duration") Integer duration,
 			HttpServletRequest request, HttpServletResponse response){
 		
-		String index = HttpUtil.getDomainURL(request);
-		
 		if(AssertUtils.anyIsEmpty(String.valueOf(orderId), String.valueOf(price), 
 				String.valueOf(programId), String.valueOf(duration))){
 			logger.error("OrderId not found");
@@ -232,18 +280,18 @@ public class AllpayCheckoutController {
 			AllInOne oPayment = new AllInOne();
 			/* 服務參數 */
 			oPayment.ServiceMethod = HttpMethod.HttpPOST;
-			oPayment.ServiceURL = DEBUG_MODE ? TEST_SERVICE_URL : SERVICE_URL;
-			oPayment.HashKey = DEBUG_MODE ? TEST_HASH_KEY : HASH_KEY;
-			oPayment.HashIV = DEBUG_MODE ? TEST_HASH_IV : HASH_IV;
-			oPayment.MerchantID = DEBUG_MODE ? TEST_MERCHANT_ID : MERCHANT_ID;
+			oPayment.ServiceURL = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_SERVICE_URL : SERVICE_URL;
+			oPayment.HashKey = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_IV : HASH_IV;
+			oPayment.MerchantID = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_MERCHANT_ID : MERCHANT_ID;
 			/* 基本參數 */
-			oPayment.Send.ReturnURL = index;
-			oPayment.Send.ClientBackURL = index + ORDER_RESULT_URL;
-			oPayment.Send.OrderResultURL = index + ORDER_RESULT_URL;
+			oPayment.Send.ReturnURL = ORDER_RESULT_URL;
+			oPayment.Send.ClientBackURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
+			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
 			oPayment.Send.TotalAmount = price;
-			oPayment.Send.TradeDesc = "no";
+			oPayment.Send.TradeDesc = programName;
 			oPayment.Send.ChoosePayment = PaymentMethod.Credit;
 			oPayment.Send.Remark = "";
 			oPayment.Send.ChooseSubPayment = PaymentMethodItem.None;
@@ -262,7 +310,7 @@ public class AllpayCheckoutController {
 			oPayment.SendExtend.PeriodType = PeriodType.Day;
 			oPayment.SendExtend.Frequency = duration;// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = MAX_EXCUTE_TIME;// "<<執行次數>>";
-			oPayment.SendExtend.PeriodReturnURL = index + PERIOD_RETURN_URL;
+			oPayment.SendExtend.PeriodReturnURL = PERIOD_RETURN_URL;
 			/* 產生訂單 */
 			enErrors.addAll(oPayment.CheckOut(response.getWriter()));
 			/* 產生產生訂單 Html Code 的方法 */

@@ -1,12 +1,9 @@
 package com.fruitpay.base.controller;
 
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -16,22 +13,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
-import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.base.service.CheckoutService;
+import com.fruitpay.base.service.CouponService;
+import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.DataUtil;
 import com.fruitpay.comm.service.EmailSendService;
-import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.TestUtil;
 
-import static org.mockito.Mockito.*;
-import static org.mockito.Matchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -45,8 +44,14 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	
 	@Inject
 	DataUtil dataUtil;
-	@Inject 
-	private StaticDataService staticDataService;
+	@Inject
+	CouponService couponService;
+	@Inject
+	CheckoutService checkoutService;
+	@Inject
+	CustomerService customerService;
+	@Inject
+	private LoginService loginService;
 	
 	private MockMvc mockMvc;
 	
@@ -64,10 +69,21 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void checkout() throws Exception {
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
 		
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getCheckoutCustomer().getEmail());
+		
+		customerOrder.setCoupons(new ArrayList<Coupon>());
 		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
-		checkoutPostBean.setCustomer(dataUtil.getCheckoutCustomer());
-		checkoutPostBean.setCustomerOrder(dataUtil.getCustomerOrder());
+		checkoutPostBean.setCustomer(customer);
+		checkoutPostBean.setCustomerOrder(customerOrder);
 		
 		this.mockMvc.perform(post("/checkoutCtrl/checkout")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -76,41 +92,62 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())));
 		
-		this.mockMvc.perform(post("/loginCtrl/login")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getSignupCustomer())))
-	   		.andExpect(status().isForbidden())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.message", is("信箱與密碼不符")));
-		
 	}
 	
 	@Test
-	public void getReceiveDay() throws Exception {
-		Calendar cal = Calendar.getInstance();
-		cal.set(2015, 11, 20, 0, 0);
-		cal.getTime();
-		String nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12-23", nextReceiveDay);
+	@Transactional
+	@Rollback(true)
+	public void checkoutWithCoupon() throws Exception {
 		
-		cal = Calendar.getInstance();
-		cal.set(2015, 11, 21, 0, 0);
-		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12-30", nextReceiveDay);
+		//add
+		this.mockMvc.perform(post("/couponCtrl/coupon")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getByPercentageCoupon(10))))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.couponName", is(dataUtil.getByPercentageCoupon(10).getCouponName())))
+	   		.andExpect(jsonPath("$.value", is(dataUtil.getByPercentageCoupon(10).getValue())));
 		
-		cal = Calendar.getInstance();
-		cal.set(2015, 11, 22, 0, 0);
-		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12-30", nextReceiveDay);
+		Coupon coupon = couponService.findByCouponName(dataUtil.getByPercentageCoupon(10).getCouponName());
+		List<Coupon> coupons = new ArrayList<Coupon>() ;
+		coupons.add(coupon);
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		customerOrder.setCoupons(coupons);
+		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
 		
-		cal = Calendar.getInstance();
-		cal.set(2015, 11, 25, 0, 0);
-		cal.getTime();
-		nextReceiveDay = staticDataService.getNextReceiveDay(cal.getTime());
-		Assert.assertEquals("12-30", nextReceiveDay);
+		this.mockMvc.perform(post("/customerDataCtrl/addCustomer")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(dataUtil.getCheckoutCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.email", is(dataUtil.getCheckoutCustomer().getEmail())));
+		
+		Customer customer = customerService.findByEmail(dataUtil.getCheckoutCustomer().getEmail());
+		
+		checkoutPostBean.setCustomer(customer);
+		checkoutPostBean.setCustomerOrder(customerOrder);
+		
+		this.mockMvc.perform(post("/checkoutCtrl/checkout")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())))
+	   		.andExpect(jsonPath("$.totalPrice", is(449)));
 		
 	}
+	
+	@Test 
+	public void calculateTotalPriceWithCoupon() throws Exception{
+		
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		customerOrder.setCoupons(dataUtil.getCouponList());
+		
+		this.mockMvc.perform(post("/checkoutCtrl/totalPrice")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(customerOrder)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().string("449"));
+	} 
 
 }
