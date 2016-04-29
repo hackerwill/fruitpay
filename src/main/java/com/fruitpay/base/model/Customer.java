@@ -88,10 +88,6 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
-	
-	@Column(name="create_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDate;
 
 	public Customer() {
 	}
@@ -291,14 +287,5 @@ public class Customer extends AbstractDataBean implements Serializable {
 	public void setRegisterFrom(ConstantOption registerFrom) {
 		this.registerFrom = registerFrom;
 	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
 
 }

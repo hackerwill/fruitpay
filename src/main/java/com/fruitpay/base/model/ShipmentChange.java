@@ -42,14 +42,6 @@ public class ShipmentChange extends AbstractDataBean implements Serializable{
 	
 	@Column(name="valid_flag")
 	private int validFlag;
-	
-	@Column(name="create_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDate;
-	
-	@Column(name="update_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updateDate;
 
 	public int getId() {
 		return id;
@@ -90,22 +82,5 @@ public class ShipmentChange extends AbstractDataBean implements Serializable{
 	public void setValidFlag(int validFlag) {
 		this.validFlag = validFlag;
 	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
-	}
-	
 	
 }

@@ -18,8 +18,8 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
+import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.auth.LoginConst;
-import com.fruitpay.comm.auth.UserAccessAnnotation;
 import com.fruitpay.comm.model.Role;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
@@ -167,7 +167,7 @@ public class LoginController {
 		}
 		return cleanSessionStatus;
 	}
-	@UserAccessAnnotation(UserAuthStatus.YES)
+	@UserAccessValidate(UserAuthStatus.YES)
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd, HttpServletRequest request,
 			HttpServletResponse response) {

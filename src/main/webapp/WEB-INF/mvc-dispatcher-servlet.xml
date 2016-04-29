@@ -90,7 +90,7 @@
 	<bean id="jpaAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
 		p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
-
+		
 	<!--  jpa configure -->
  
  	<bean id="entityManagerFactory"
@@ -109,14 +109,12 @@
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
                 <!--useful for debugging-->
                 <prop key="hibernate.generate_statistics">${hibernate.statistics}</prop>
-			</props>
+           </props>
 		</property>
 
 		<property name="loadTimeWeaver">
 			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
 		</property>
-
-		
 	</bean>
 	<bean id="transactionManager"
 	  class="org.springframework.orm.jpa.JpaTransactionManager"

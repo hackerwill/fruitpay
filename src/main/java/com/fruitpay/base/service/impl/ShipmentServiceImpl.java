@@ -74,9 +74,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	@Transactional
 	public ShipmentChange add(ShipmentChange shipmentChange) {
-		Date date = new Date();
-		shipmentChange.setCreateDate(date);
-		shipmentChange.setUpdateDate(date);
 		shipmentChange.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		shipmentChange = shipmentChangeDAO.save(shipmentChange);
 		return shipmentChange;

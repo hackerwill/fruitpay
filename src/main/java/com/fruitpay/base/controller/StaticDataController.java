@@ -27,7 +27,7 @@ import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.auth.UserAccessAnnotation;
+import com.fruitpay.comm.annotation.UserAccessValidate;
 
 @Controller
 @RequestMapping("staticDataCtrl")
@@ -143,7 +143,7 @@ public class StaticDataController {
 	}
 	
 	@RequestMapping(value = "/adminConstant/{constId}", method = RequestMethod.GET)
-	@UserAccessAnnotation(UserAuthStatus.ADMIN)
+	@UserAccessValidate(UserAuthStatus.ADMIN)
 	public @ResponseBody Constant getAllAdminConstant(@PathVariable Integer constId){
 		Constant constant = staticDataService.getConstant(constId);
 		List<ConstantOption> options = constant.getConstOptions();

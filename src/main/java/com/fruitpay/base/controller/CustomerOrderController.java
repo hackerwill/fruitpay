@@ -35,7 +35,7 @@ import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.OrderPreferenceService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.auth.UserAccessAnnotation;
+import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.model.OrderExcelBean;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
@@ -92,7 +92,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
-	@UserAccessAnnotation(UserAuthStatus.YES)
+	@UserAccessValidate(UserAuthStatus.YES)
 	public @ResponseBody CustomerOrder getOrder(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))
@@ -104,7 +104,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/orderSendEmail/{orderId}", method = RequestMethod.GET)
-	@UserAccessAnnotation(UserAuthStatus.YES)
+	@UserAccessValidate(UserAuthStatus.YES)
 	public @ResponseBody CustomerOrder getOrderAndSendEmail(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))
@@ -120,7 +120,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/orders", method = RequestMethod.DELETE)
-	@UserAccessAnnotation(UserAuthStatus.ADMIN)
+	@UserAccessValidate(UserAuthStatus.ADMIN)
 	public @ResponseBody Boolean deleteOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody List<CustomerOrder> customerOrders) {
 
 		if(customerOrders.isEmpty())
@@ -188,7 +188,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/exportOrders", method = RequestMethod.POST)
-	@UserAccessAnnotation(UserAuthStatus.ADMIN)
+	@UserAccessValidate(UserAuthStatus.ADMIN)
 	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody  List<CustomerOrder> customerOrders,
 			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
@@ -237,7 +237,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/orderPreferences/{orderId}", method = RequestMethod.GET)
-	@UserAccessAnnotation(UserAuthStatus.YES)
+	@UserAccessValidate(UserAuthStatus.YES)
 	public @ResponseBody List<OrderPreference> getOrderPreferences(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))

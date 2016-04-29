@@ -1,4 +1,4 @@
-package com.fruitpay.comm.auth;
+package com.fruitpay.comm.interceptor;
 
 import java.lang.reflect.Method;
 
@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 import com.fruitpay.base.comm.UserAuthStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.comm.annotation.UserAccessValidate;
+import com.fruitpay.comm.auth.FPAuthentication;
+import com.fruitpay.comm.auth.SysContent;
 
 /**
  * Session AOP切面 
@@ -25,7 +28,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 @Aspect
 public class SessionAOP {
 	
-	@Around(value = "@annotation(com.fruitpay.comm.auth.UserAccessAnnotation)")
+	@Around(value = "@annotation(com.fruitpay.comm.annotation.UserAccessValidate)")
 	public Object aroundManager(ProceedingJoinPoint pj) throws Exception {
 		HttpServletRequest request = SysContent.getRequest();
 		HttpServletResponse response = SysContent.getResponse();
@@ -56,9 +59,9 @@ public class SessionAOP {
 		// 獲取切入的 Method
 		MethodSignature joinPointObject = (MethodSignature) pj.getSignature();
 		Method method = joinPointObject.getMethod();
-		boolean flag = method.isAnnotationPresent(UserAccessAnnotation.class);
+		boolean flag = method.isAnnotationPresent(UserAccessValidate.class);
 		if (flag) {
-			UserAccessAnnotation annotation = method.getAnnotation(UserAccessAnnotation.class);
+			UserAccessValidate annotation = method.getAnnotation(UserAccessValidate.class);
 			return annotation.value();
 		}
 		return null;
