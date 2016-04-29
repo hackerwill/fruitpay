@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fruitpay.base.controller.StaticDataController;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.SelectOption;
@@ -49,6 +50,6 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	@Test
 	public void findAllTowerships() throws Exception {
 		List<PostalCode> postCodes = staticDataService.getAllPostalCodes();
-		Assert.assertEquals(367, postCodes.size());
+		Assert.assertEquals(371, postCodes.size());
 	}
 }

@@ -1,6 +1,8 @@
 package com.fruitpay.comm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,8 +10,10 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
+import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPlatform;
@@ -18,6 +22,7 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
@@ -27,6 +32,59 @@ public class DataUtil {
 	
 	@Inject
 	StaticDataService staticDataService;
+	
+	public ShipmentChange getShipmentChangeWithPulse(){
+		Constant couponTypes = staticDataService.getConstant(11);
+		return getShipmentChange(couponTypes.getConstOptions().get(0));
+	}
+	
+	public ShipmentChange getShipmentChangeWithCancel(){
+		Constant couponTypes = staticDataService.getConstant(11);
+		return getShipmentChange(couponTypes.getConstOptions().get(1));
+	}
+	
+	public ShipmentChange getShipmentChange(ConstantOption ShipmentChangeType){
+		ShipmentChange shipmentChange = new ShipmentChange();
+		shipmentChange.setShipmentChangeType(ShipmentChangeType);
+		return shipmentChange;
+	}
+	
+	public List<Coupon> getCouponList(){
+		List<Coupon> coupons = new ArrayList<Coupon>();
+		coupons.add(getByPercentageCoupon(10));
+		return coupons;
+	}
+	
+	
+	public Coupon getByPercentageCoupon(int discount){
+		Constant couponTypes = staticDataService.getConstant(8);
+		Constant yesOrNo = staticDataService.getConstant(7);
+		
+		Coupon coupon = new Coupon();
+		coupon.setCouponName("test");
+		coupon.setCouponDesc("測試資料");
+		coupon.setCouponType(couponTypes.getConstOptions().get(0));
+		coupon.setExpiryDay(new Date());
+		coupon.setValue(discount);
+		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
+		
+		return coupon;
+	}
+	
+	public Coupon getByAmountCoupon(int amount){
+		Constant couponTypes = staticDataService.getConstant(8);
+		Constant yesOrNo = staticDataService.getConstant(7);
+		
+		Coupon coupon = new Coupon();
+		coupon.setCouponName("test");
+		coupon.setCouponDesc("測試資料");
+		coupon.setCouponType(couponTypes.getConstOptions().get(3));
+		coupon.setExpiryDay(new Date());
+		coupon.setValue(amount);
+		coupon.setUsageIndividually(yesOrNo.getConstOptions().get(0));
+		
+		return coupon;
+	}
 	
 	public Customer getSignupCustomer(){
 		Customer customer = new Customer();
@@ -73,12 +131,22 @@ public class DataUtil {
 	}
 	
 	public CustomerOrder getCustomerOrder(){
+		return getCustomerOrder(7);
+	}
+	
+	public CustomerOrder getCustomerOrder(int shipmentDuration){
 		
 		PostalCode postalCode = staticDataService.getPostalCode(100);
 		OrderPlatform orderPlatform = staticDataService.getOrderPlatform(1);
 		OrderProgram orderProgram = staticDataService.getOrderProgram(1);
 		PaymentMode paymentMode = staticDataService.getPaymentMode(1);
-		ShipmentPeriod shipmentPeriod = staticDataService.getShipmentPeriod(1);
+		ShipmentPeriod shipmentPeriod;
+		if(shipmentDuration == 7){
+			shipmentPeriod = staticDataService.getShipmentPeriod(1);
+		}else{
+			shipmentPeriod = staticDataService.getShipmentPeriod(2);
+		}
+			
 		ShipmentDay shipmentDay = staticDataService.getShipmentDay(2);
 		List<Product> products = staticDataService.getAllProducts();
 		
@@ -93,6 +161,9 @@ public class DataUtil {
 		
 		Constant receiptWays =  staticDataService.getConstant(4);
 		ConstantOption receiptWay = receiptWays.getConstOptions().get(0);
+		
+		Constant deliveryDays =  staticDataService.getConstant(6);
+		ConstantOption deliveryDay = deliveryDays.getConstOptions().get(0);
 		
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderPlatform(orderPlatform);
@@ -113,8 +184,12 @@ public class DataUtil {
 		customerOrder.setShipmentTime(shipmentTime);
 		customerOrder.setComingFrom(comingFrom);
 		customerOrder.setReceiptWay(receiptWay);
+		customerOrder.setDeliveryDay(deliveryDay);
 		customerOrder.setAllowForeignFruits("Y");
 		customerOrder.setProgramNum(1);
+		customerOrder.setOrderDate(Calendar.getInstance().getTime());
+		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
+		customerOrder.setRemark("test");
 		
 		int shippingCost = paymentMode.getPaymentExtraPrice();
 		int totalPrice = orderProgram.getPrice() * customerOrder.getProgramNum() + shippingCost;	

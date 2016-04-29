@@ -23,7 +23,7 @@ public class EmailNewMemberServiceImpl extends EmailContentService<Customer> {
 	@Override
 	protected Map<String, String> getConditionMap(Customer customer) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("MESSAGE_TITLE", "新會員通知");
+		map.put("MESSAGE_TITLE", "歡迎您加入果物配");
 		map.put("CUSTOMER_EMAIL", customer.getEmail());
 		map.put("CUSTOMER_LAST_NAME", customer.getLastName());
 		map.put("CUSTOMER_FIRST_NAME", customer.getFirstName());

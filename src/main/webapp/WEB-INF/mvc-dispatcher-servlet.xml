@@ -6,6 +6,8 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -18,43 +20,110 @@
         http://www.springframework.org/schema/task 
         http://www.springframework.org/schema/task/spring-task-3.0.xsd
         http://www.springframework.org/schema/data/jpa
-    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    	http://www.springframework.org/schema/util 
+    	http://www.springframework.org/schema/util/spring-util-3.0.xsd 
+    	http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"> 
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.fruitpay" />
+	<context:component-scan base-package="com.fruitpay" />	
+	
+	<!-- Jackson Mapper -->
+	<bean id="myObjectMapper" class="com.fruitpay.comm.utils.HibernateAwareObjectMapper" />
+	<bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	    <property name="targetObject" ref="myObjectMapper" />
+	    <property name="targetMethod" value="configure" />
+	    <property name="arguments">
+	        <list>
+	            <value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+	            <value>false</value>
+	        </list>
+	    </property>
+	</bean>
+	<mvc:annotation-driven >
+		<mvc:message-converters register-defaults="true">  
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		        <property name="objectMapper" ref="myObjectMapper"></property>
+		    </bean>
+    		<bean class="com.fruitpay.comm.utils.UTF8StringHttpMessageConverter"/>  
+  		</mvc:message-converters>
+	</mvc:annotation-driven>	
+	<mvc:resources mapping="/**" location="/build/" />
+		
+	<mvc:cors>
+		<mvc:mapping path="/**"
+			allowed-origins="*"
+			allowed-methods="GET,POST,PUT,DELETE,OPTIONS"
+			allow-credentials="false"
+			max-age="3600" />
+	</mvc:cors>
 	
 	<jpa:repositories base-package="com.fruitpay" />
 	
-	<mvc:annotation-driven />
-	<mvc:resources mapping="/**" location="/build/" />
-	
-	<mvc:cors>
-
-	<mvc:mapping path="/**"
-		allowed-origins="http://139.162.2.196:8080/fruitpay, http://localhost:8888,, http://payment-stage.allpay.com.tw"
-		allowed-methods="GET, POST, PUT, DELETE, OPTIONS"
-		allow-credentials="false"
-		max-age="3600" />
-
-	</mvc:cors>
-	
+	<aop:aspectj-autoproxy/>
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
 	<task:executor id="myExecutor" pool-size="5" />
 	<task:scheduler id="myScheduler" pool-size="10" />
+	
+	<!-- @PersistenceUnit annotation -->
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+   
+	<!--  classpath*:*.properties-->
+	<context:property-placeholder location="classpath:db.properties,classpath:config.properties" />	
+	
+	<!-- data source with c3p0 -->
+	<bean id="dataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
+        p:driverClass="${jdbc.driverClassName}"
+        p:jdbcUrl="${jdbc.url}"
+        p:user="${jdbc.username}"
+        p:password="${jdbc.password}"
+        p:acquireIncrement="${c3p0.acquire_increment}"
+        p:minPoolSize="${c3p0.min_size}"
+        p:maxPoolSize="${c3p0.max_size}" 
+        p:maxIdleTime="${c3p0.max_idle_time}"
+        p:initialPoolSize="${c3p0.initial_pool_size}"
+        p:unreturnedConnectionTimeout="${c3p0.unreturned_connection_timeout}"/>
+ 	
 
+     <!-- Hibernate as JPA vendor-->
+	<bean id="jpaAdapter"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+		p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
+		
 	<!--  jpa configure -->
-
-	 <bean id="entityManagerFactory"
- 		 class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"
- 		 p:persistenceUnitName="fruitpay" >
- 	</bean>
-
- 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
  
-	 <bean id="transactionManager"
-		  class="org.springframework.orm.jpa.JpaTransactionManager"
- 		  p:entityManagerFactory-ref="entityManagerFactory" />
-  
-	 <tx:annotation-driven transaction-manager="transactionManager" />
+ 	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="dataSource" p:packagesToScan="com.fruitpay"
+		p:jpaVendorAdapter-ref="jpaAdapter">
 
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.connection.autocommit">${hibernate.connection.autocommit}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache}</prop>
+                <prop key="hibernate.cache.use_query_cache">${hibernate.query.cache}</prop>
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+                <!--useful for debugging-->
+                <prop key="hibernate.generate_statistics">${hibernate.statistics}</prop>
+           </props>
+		</property>
+
+		<property name="loadTimeWeaver">
+			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+		</property>
+	</bean>
+	<bean id="transactionManager"
+	  class="org.springframework.orm.jpa.JpaTransactionManager"
+		  p:entityManagerFactory-ref="entityManagerFactory" />
+	
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	 
+	<util:map id="configXmlMap" map-class="java.util.HashMap">
+	    <entry key="DEBUG_MODE" value="${config.debugMode}"/>
+	</util:map>
+	
 </beans>

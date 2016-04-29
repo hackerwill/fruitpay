@@ -1,5 +1,9 @@
 package com.fruitpay.base.service.impl;
 
+import java.util.Calendar;
+
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.Pwd;
 import com.fruitpay.base.service.LoginService;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.Md5Util;
 import com.fruitpay.comm.utils.RadomValueUtil;
 
@@ -19,6 +25,8 @@ public class LoginServiceImpl implements LoginService {
 	private final String FB_PASSWORD = "FB_PASSWORD";
 	@Autowired
 	CustomerDAO customerDAO;
+	@Inject
+	StaticDataService staticDataService;
 	
 
 	@Override
@@ -29,6 +37,12 @@ public class LoginServiceImpl implements LoginService {
 			throw new HttpServiceException(ReturnMessageEnum.Login.EmailAlreadyExisted.getReturnMessage());
 		
 		customer = getEncodedPasswordCustomer(customer);
+		
+		Constant registerFrom = staticDataService.getConstant(10);
+		customer.setRegisterFrom(registerFrom.getConstOptions().get(0));
+
+		customer.setCreateDate(Calendar.getInstance().getTime());
+		
 		customer = customerDAO.saveAndFlush(customer);
 		
 		return customer;
@@ -54,12 +68,10 @@ public class LoginServiceImpl implements LoginService {
 	}
 	
 	@Override
-	public Customer loginByCustomerId(Integer customerId, String password) {
+	public Customer loginByCustomerId(Integer customerId) {
 		Customer customer = customerDAO.findOne(customerId);
 		if(customer == null){
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
-		}else if(!password.equals(customer.getPassword())){
-			throw new HttpServiceException(ReturnMessageEnum.Login.EmailPasswordNotMatch.getReturnMessage());
 		}
 		
 		return customer;
@@ -72,6 +84,12 @@ public class LoginServiceImpl implements LoginService {
 		if(checkcustomer == null){
 			customer.setPassword(FB_PASSWORD);
 			customer = getEncodedPasswordCustomer(customer);
+			
+			Constant registerFrom = staticDataService.getConstant(10);
+			customer.setRegisterFrom(registerFrom.getConstOptions().get(0));
+
+			customer.setCreateDate(Calendar.getInstance().getTime());
+			
 			customer = customerDAO.saveAndFlush(customer); 
 			checkcustomer = customer;
 		}

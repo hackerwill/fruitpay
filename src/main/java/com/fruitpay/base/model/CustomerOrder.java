@@ -25,11 +25,11 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Id
 	@Column(name="order_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer orderId;
+	private int orderId;
 
 	
 	@Column(name="order_date")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
 
 	@Column(name="receiver_address")
@@ -50,7 +50,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@Column(name="receiver_house_phone")
 	private String receiverHousePhone;
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String remark;
 
 	@Column(name="tax_id")
@@ -87,7 +87,7 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private OrderProgram orderProgram;
 	
 	@Column(name="program_num")
-	private Integer programNum;
+	private int programNum;
 
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
@@ -112,9 +112,13 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	private List<Shipment> shipments;
 	
 	//bi-directional many-to-one association to Shipment
-	@OneToMany(mappedBy="customerOrder", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JsonManagedReference
 	private List<OrderPreference> orderPreferences;
+	
+	//bi-directional many-to-one association to Shipment
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY)
+	private List<ShipmentChange> shipmentChanges;
 	
 	@ManyToOne
 	@JoinColumn(name="receive_way")
@@ -136,21 +140,42 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 	@JsonProperty("receiptWay")
 	private ConstantOption receiptWay;
 	
+	@ManyToOne
+	@JoinColumn(name="delivery_day")
+	@JsonProperty("deliveryDay")
+	private ConstantOption deliveryDay;
+	
 	@Column(name="shipping_cost")
-	private Integer shippingCost;
+	private int shippingCost;
 	
 	@Column(name="total_price")
-	private Integer totalPrice;
+	private int totalPrice;
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	  @JoinTable(
+	      name="CouponRecord",
+	      joinColumns={@JoinColumn(name="order_id", referencedColumnName="order_id")},
+	      inverseJoinColumns={@JoinColumn(name="coupon_id", referencedColumnName="coupon_id")})
+	private List<Coupon> coupons;
+	
+	@Column(name="valid_flag")
+	private int validFlag;
+	
+	@Column(name="allpay_rtn_code")
+	private String allpayRtnCode;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@JoinColumn(name="allpay_order_id")
+	private AllpayOrder allpayOrder;
 
 	public CustomerOrder() {
 	}
 
-	public Integer getOrderId() {
+	public int getOrderId() {
 		return this.orderId;
 	}
 
-	public void setOrderId(Integer orderId) {
+	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 
@@ -398,28 +423,86 @@ public class CustomerOrder extends AbstractDataBean  implements Serializable {
 		this.receiptVatNumber = receiptVatNumber;
 	}
 
-	public Integer getShippingCost() {
+	public int getShippingCost() {
 		return shippingCost;
 	}
 
-	public void setShippingCost(Integer shippingCost) {
+	public void setShippingCost(int shippingCost) {
 		this.shippingCost = shippingCost;
 	}
 
-	public Integer getTotalPrice() {
+	public int getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Integer totalPrice) {
+	public void setTotalPrice(int totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-	public Integer getProgramNum() {
+	public int getProgramNum() {
 		return programNum;
 	}
 
-	public void setProgramNum(Integer programNum) {
+	public void setProgramNum(int programNum) {
 		this.programNum = programNum;
 	}
 
+	public ConstantOption getDeliveryDay() {
+		return deliveryDay;
+	}
+
+	public void setDeliveryDay(ConstantOption deliveryDay) {
+		this.deliveryDay = deliveryDay;
+	}
+	
+	public List<Coupon> getCoupons() {
+		return this.coupons;
+	}
+
+	public void setCoupons(List<Coupon> coupons) {
+		this.coupons = coupons;
+	}
+
+	public Coupon addCoupon(Coupon coupon) {
+		getCoupons().add(coupon);
+		return coupon;
+	}
+
+	public Coupon removeCoupon(Coupon coupon) {
+		getCoupons().remove(coupon);
+		return coupon;
+	}
+
+	public int getValidFlag() {
+		return validFlag;
+	}
+
+	public void setValidFlag(int validFlag) {
+		this.validFlag = validFlag;
+	}
+
+	public String getAllpayRtnCode() {
+		return allpayRtnCode;
+	}
+
+	public void setAllpayRtnCode(String allpayRtnCode) {
+		this.allpayRtnCode = allpayRtnCode;
+	}
+
+	public AllpayOrder getAllpayOrder() {
+		return allpayOrder;
+	}
+
+	public void setAllpayOrder(AllpayOrder allpayOrder) {
+		this.allpayOrder = allpayOrder;
+	}
+
+	public List<ShipmentChange> getShipmentChanges() {
+		return shipmentChanges;
+	}
+
+	public void setShipmentChanges(List<ShipmentChange> shipmentChanges) {
+		this.shipmentChanges = shipmentChanges;
+	}
+	
 }

@@ -1,10 +1,14 @@
 package com.fruitpay.base.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +17,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.comm.utils.AssertUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -27,6 +32,8 @@ public class CustomerServiceImpl implements CustomerService {
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
 		
+		if(AssertUtils.isEmpty(customer.getPassword()))
+			customer.setPassword(origin.getPassword());
 		BeanUtils.copyProperties(customer, origin);
 		
 		return origin;
@@ -42,8 +49,8 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> findAllCustomer() {
-		List<Customer> customers = customerDAO.findAll();
+	public Page<Customer> findAllCustomer(int page , int size) {
+		Page<Customer> customers = customerDAO.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "customerId")));
 		return customers;
 	}
 
@@ -66,9 +73,48 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer updateCustomer(Customer customer) {
-		// TODO Auto-generated method stub
-		return null;
+	public void deleteCustomer(Customer customer) {
+		customerDAO.delete(customer);
+	}
+
+	@Override
+	public Customer findByOrderId(Integer orderId) {
+		Customer customer = customerDAO.findByOrderId(orderId);
+		return customer;
+	}
+	
+	@Override
+	public Customer findByFbId(String fbId) {
+		Customer customer = customerDAO.findByFbId(fbId);
+		return customer;
+	}
+	
+	@Override
+	public String getCustomerNamesStr() {
+		List<Customer> customers = customerDAO.findAll();
+		StringBuilder names = new StringBuilder();
+		boolean isFirstOne = true;
+		for (Iterator<Customer> iterator = customers.iterator(); iterator.hasNext();) {
+			Customer customer = iterator.next();
+			String lastName = AssertUtils.isEmpty(customer.getLastName()) ? "" : customer.getLastName();
+			String firstName = AssertUtils.isEmpty(customer.getFirstName()) ? "" : customer.getFirstName();
+			String fullName = lastName + firstName + "(" + customer.getCustomerId() + ")";
+			
+			if(isFirstOne){
+				names.append(fullName);
+				isFirstOne = false;
+			}else{
+				names.append("," + fullName);
+			}
+				
+		}
+		return names.toString();
+	
+	}
+
+	@Override
+	public List<Customer> findall() {
+		return customerDAO.findAll();
 	}
 	
 }

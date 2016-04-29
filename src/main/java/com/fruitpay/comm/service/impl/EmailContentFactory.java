@@ -17,7 +17,8 @@ public class EmailContentFactory {
 		NEW_ORDER,
 		NEW_MEMBER_FROM_ORDER,
 		NEW_MEMBER,
-		FORGET_PASSWORD;
+		FORGET_PASSWORD,
+		NEW_MEMBER_FROM_WORDPRESS;
 	}
 	
 	Map<MailType, EmailContentService> map= null;
@@ -29,6 +30,8 @@ public class EmailContentFactory {
 	EmailForgetPasswordServiceImpl emailForgetPasswordServiceImpl;
 	@Inject
 	EmailNewMemberFromOrderServiceImpl emailNewMemberFromOrderServiceImpl;
+	@Inject
+	EmailNewMemberFromWordpressServiceImpl emailNewMemberFromWordpressServiceImpl;
 	
 	
 	@PostConstruct
@@ -38,6 +41,7 @@ public class EmailContentFactory {
 		map.put(MailType.NEW_MEMBER_FROM_ORDER, emailNewMemberFromOrderServiceImpl);
 		map.put(MailType.NEW_ORDER, emailNewOrderServiceImpl);
 		map.put(MailType.FORGET_PASSWORD, emailForgetPasswordServiceImpl);
+		map.put(MailType.NEW_MEMBER_FROM_WORDPRESS, emailNewMemberFromWordpressServiceImpl);
 	}
 	
 	public <T> EmailContentService<T> getEmailContentServiceImpl(MailType mailType, T t){
