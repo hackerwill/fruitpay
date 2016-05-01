@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="OrderProgram.findAll", query="SELECT o FROM OrderProgram o")
-public class OrderProgram extends AbstractDataBean implements Serializable {
+public class OrderProgram extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

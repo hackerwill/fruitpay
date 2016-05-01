@@ -13,7 +13,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQuery(name="AllpayOrder.findAll", query="SELECT a FROM AllpayOrder a")
 @Cacheable(false)
-public class AllpayOrder implements Serializable {
+public class AllpayOrder extends AbstractEntity implements Serializable {
 	
 	@Id
 	@Column(name="allpay_order_id")

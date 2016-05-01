@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
@@ -73,7 +73,7 @@ public class CustomerDataController {
 	}
 	
 	@RequestMapping(value = "/customers", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.ADMIN)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
 	public @ResponseBody Page<Customer> getAllCustomer(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page ,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size ){
@@ -146,7 +146,7 @@ public class CustomerDataController {
 	}
 	
 	@RequestMapping(value = "/customer/{customerId}/orders", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.YES)
+	@UserAccessValidate(AllowRole.CUSTOMER)
 	public @ResponseBody List<CustomerOrder> orders(@PathVariable int customerId){
 	
 		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customerId);

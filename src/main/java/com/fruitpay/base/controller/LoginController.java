@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
@@ -58,23 +58,22 @@ public class LoginController {
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("LoginController#loginAsOneCustomer email: " + customer.getEmail());	
 		Customer returnCustomer = null;
+		if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword()))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		returnCustomer = loginService.login(customer.getEmail(), customer.getPassword());			
+		
+		if(returnCustomer == null)
+			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
+		
 		try {
-			if (AssertUtils.anyIsEmpty(customer.getEmail(), customer.getPassword()))
-				throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-			returnCustomer = loginService.login(customer.getEmail(), customer.getPassword());			
-			/*** normal login: create user token ***/
-			if (returnCustomer != null) {
-				try {
-					String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
-					returnCustomer.setToken(token);
-				} catch (Exception e) {
-					logger.error("login error when FPSessionUtil.logonGetSession: " + e);
-				}
-			}
-		} catch (HttpServiceException e) {
-			logger.error("login error when LoginController: " + e);
-			throw e;
+			String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
+			returnCustomer.setToken(token);
+		} catch (Exception e) {
+			logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 		}
+		
 		return returnCustomer;
 	}
     
@@ -83,27 +82,23 @@ public class LoginController {
 			HttpServletResponse response) {
 		logger.debug("LoginController#loginAsOneCustomer customerId: " + customer.getCustomerId());		
 		Customer returnCustomer =null;
+		boolean validate = false;
+		
 		try {
-			boolean validate = false;
-			try {
-				
-				validate = FPSessionUtil.getInfoAndVlidateToken(new Role(customer), request, LoginConst.LOGINBYID);
-			} catch (Exception e) {
-				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
-			}
-			
-			if(!validate)
-				throw new HttpServiceException(ReturnMessageEnum.Login.RequiredLogin.getReturnMessage()); 
-			
-			if (AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()))) {
-				throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-			}	
-			returnCustomer = loginService.loginByCustomerId(customer.getCustomerId());			
-			
-		} catch (HttpServiceException e) {
-			logger.error("login error when LoginController: " + e);
-			throw e;
+			validate = FPSessionUtil.getInfoAndValidateToken(new Role(customer), request, LoginConst.LOGINBYID);
+		} catch (Exception e) {
+			logger.error("FPSessionUtil.getInfoAndVlidateToken failed");
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage()); 
 		}
+		
+		if(!validate)
+			throw new HttpServiceException(ReturnMessageEnum.Login.RequiredLogin.getReturnMessage()); 
+		
+		if (AssertUtils.anyIsEmpty(String.valueOf(customer.getCustomerId()))) 
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		returnCustomer = loginService.loginByCustomerId(customer.getCustomerId());	
+		
 		return returnCustomer;
 	}
 
@@ -112,18 +107,21 @@ public class LoginController {
 			HttpServletResponse response) {
 
 		logger.debug("LoginController#fbLoginAsOneCustomer fbId=" + customer.getFbId());
-		if (AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())) {
+		if (AssertUtils.anyIsEmpty(customer.getFbId(), customer.getFirstName())) 
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-		}
+		
 		Customer returnCustomer = loginService.fbLogin(customer);
-		if (returnCustomer != null) {
-			try {
-				String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
-				returnCustomer.setToken(token);
-			} catch (Exception e) {
-				logger.error("login error when FPSessionUtil.logonGetSession: " + e);
-			}
+		if(returnCustomer == null)
+			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
+		
+		try {
+			String token = FPSessionUtil.logonGetToken(new Role(returnCustomer), request, LoginConst.NORMAL);
+			returnCustomer.setToken(token);
+		} catch (Exception e) {
+			logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 		}
+		
 		return returnCustomer;
 	}
 
@@ -159,6 +157,7 @@ public class LoginController {
 			} catch (Exception e) {
 				cleanSessionStatus = false;
 				logger.error("ClearSessionServlet Fail", e);
+				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 			}
 		}
 		else{
@@ -167,7 +166,7 @@ public class LoginController {
 		}
 		return cleanSessionStatus;
 	}
-	@UserAccessValidate(UserAuthStatus.YES)
+	@UserAccessValidate(AllowRole.CUSTOMER)
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public @ResponseBody Customer changePassword(@RequestBody Pwd pwd, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -186,7 +185,7 @@ public class LoginController {
 			HttpServletResponse response) {
 		boolean validate = false;
 		try {
-			validate = FPSessionUtil.getInfoAndVlidateToken(new Role(customer), request, LoginConst.LOGINBYID);
+			validate = FPSessionUtil.getInfoAndValidateToken(new Role(customer), request, LoginConst.LOGINBYID);
 		} catch (Exception e) {
 			logger.debug("LoginController.validateToken failed");
 		}

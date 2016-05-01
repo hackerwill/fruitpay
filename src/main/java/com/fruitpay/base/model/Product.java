@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  */
 @Entity
 @NamedQuery(name="Product.findAll", query="SELECT p FROM Product p")
-public class Product extends AbstractDataBean implements Serializable {
+public class Product extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

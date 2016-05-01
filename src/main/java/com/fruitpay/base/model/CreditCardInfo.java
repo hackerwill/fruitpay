@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  */
 @Entity
 @NamedQuery(name="CreditCardInfo.findAll", query="SELECT c FROM CreditCardInfo c")
-public class CreditCardInfo extends AbstractDataBean implements Serializable {
+public class CreditCardInfo extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

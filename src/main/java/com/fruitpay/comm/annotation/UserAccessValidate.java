@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention; 
 import java.lang.annotation.RetentionPolicy; 
 import java.lang.annotation.Target;
-import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.AllowRole;
 
 
 @Retention(RetentionPolicy.RUNTIME) 
@@ -14,5 +14,5 @@ public @interface UserAccessValidate {
 	 * User has been legal login or not. 
 	 * 
 	 */ 	
-	UserAuthStatus value() default UserAuthStatus.NO; 
+	AllowRole[] value() default AllowRole.CUSTOMER; 
 }

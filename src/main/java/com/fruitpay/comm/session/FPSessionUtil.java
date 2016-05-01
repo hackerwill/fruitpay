@@ -9,15 +9,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.auth.AuthenticationException;
 import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.springframework.http.HttpRequest;
 
+import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.comm.auth.FPAuthentication;
 import com.fruitpay.comm.auth.LoginConst;
+import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.model.Role;
 import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.session.model.FPSessionInfo;
+import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.StringUtil;
+
+import javassist.NotFoundException;
 
 public class FPSessionUtil {
 	private static final Logger logger = Logger.getLogger(FPSessionUtil.class);
@@ -56,57 +65,73 @@ public class FPSessionUtil {
 		return locale;
 	}
 
-	public static String logonGetToken(Role role, HttpServletRequest request, String loginStyle) {
+	public static String logonGetToken(Role role, HttpServletRequest request, String loginStyle) throws Exception {
 		String FPToken = null;
-		try {
-			if (!StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))) {
-				
-				/*****check LogonMap: clean user others token**********/
-				removeUserToken(role.getUserId());				
-				
-				FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
-
-				if (StringUtil.isEmptyOrSpace(FPToken) || "null".equalsIgnoreCase(FPToken)) {
-					FPToken = FPAuthentication.generateFPToken(fpSessionInfo);
-				}
-				// Generate FPToken Key
-				fpSessionInfo.setFPToken(FPToken);
-				logger.debug("The currency Token:" + FPToken);
-				// Put FPToken into FPSessionMap
-				FPSessionFactory.getInstance().putFPToken(FPToken, fpSessionInfo);
-				FPSessionFactory.getInstance().putLogonMap(role.getUserId().toString()//fpSessionInfo.getSessionId(),
-						,fpSessionInfo.getLogonAddress() + ";" + FPToken);
-				logger.debug("FPSessionMap[" + FPSessionFactory.getInstance().getFPSessionMap().entrySet() + "]");
-				/********put FPToken into session********/
-				 HttpSession session = request.getSession(false);
-				 if(session != null){
-				 session.invalidate();
-				 request.getSession().setAttribute(LoginConst.LOGIN_AUTHORIZATION, FPToken);
-				 }
-				 else{
-					 
-				 }
-			} else {
-				System.out.println("The request JSESSIONID is null");
-			}
-		} catch (Exception e) {
-			logger.error("FPAuthorizationService.logon fail", e);
+		
+		if (StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))) {
+			throw new NotFoundException("The request JSESSIONID is null");
 		}
+		
+		/*****check LogonMap: clean user others token**********/
+		removeUserToken(role.getUserId());				
+		
+		FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
+
+		if (StringUtil.isEmptyOrSpace(FPToken) || "null".equalsIgnoreCase(FPToken)) {
+			FPToken = FPAuthentication.generateFPToken(fpSessionInfo);
+		}
+		
+		// Generate FPToken Key
+		fpSessionInfo.setFPToken(FPToken);
+		logger.debug("The currency Token:" + FPToken);
+		
+		// Put FPToken into FPSessionMap
+		FPSessionFactory.getInstance().putFPToken(FPToken, fpSessionInfo);
+		FPSessionFactory.getInstance().putLogonMap(role.getUserId().toString()//fpSessionInfo.getSessionId(),
+				,fpSessionInfo.getLogonAddress() + ";" + FPToken);
+		logger.debug("FPSessionMap[" + FPSessionFactory.getInstance().getFPSessionMap().entrySet() + "]");
+		
+		/********put FPToken into session********/
+		 HttpSession session = request.getSession(false);
+		 if(session != null){
+			 session.invalidate();
+			 request.getSession().setAttribute(LoginConst.LOGIN_AUTHORIZATION, FPToken);
+		 }
+		 
 		return FPToken;
 	}
+	
+	public static FPSessionInfo getFPsessionInfo(HttpServletRequest request) throws AuthenticationException {
+		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	
+		if(AssertUtils.isEmpty(FPToken))
+			throw new AuthenticationException("Authentication failed.");
+		
+		FPSessionInfo fpSessionInfo = FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
+		if(AssertUtils.isEmpty(fpSessionInfo))
+			throw new AuthenticationException("Authentication failed.");
+		
+		return fpSessionInfo;
+	}
 
-	public static boolean getInfoAndVlidateToken(Role role, HttpServletRequest request, String loginStyle)
+	public static boolean getInfoAndValidateToken(Role role, HttpServletRequest request, String loginStyle)
 			throws Exception {
-		FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
 		boolean validated = false;
-		logger.debug(getHeader(request, LoginConst.LOGIN_UID));
-		logger.debug(getHeader(request, LoginConst.LOGIN_AUTHORIZATION));
+		
+		if (StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))
+				|| StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_AUTHORIZATION))) {
+			throw new NotFoundException("The request JSESSIONID is null or request Token is null");
+		}
+
+		FPSessionInfo fpSessionInfo = getFPSessionInfo(role, request, loginStyle);
+		fpSessionInfo.setFPToken(getHeader(request, LoginConst.LOGIN_AUTHORIZATION));
+		
 		if (!StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_UID))
 				&& !StringUtil.isEmptyOrSpace(getHeader(request, LoginConst.LOGIN_AUTHORIZATION))) {
-			fpSessionInfo.setFPToken(getHeader(request, LoginConst.LOGIN_AUTHORIZATION));
-			validated = FPAuthentication.validateFPToken(request);
+			
+			validated = FPAuthentication.validateFPToken(fpSessionInfo);
+			
 		} else {
-			System.out.println("The request JSESSIONID is null or request Token is null");
+			
 		}
 		return validated;
 	}
@@ -117,18 +142,13 @@ public class FPSessionUtil {
 		try {
 			fpSessionInfo = new FPSessionInfo();
 			fpSessionInfo.setSessionId(getHeader(request, LoginConst.LOGIN_UID));
-			logger.debug("The SessionId:" + fpSessionInfo.getSessionId());
 			/**
 			 * Set User Information
 			 */
 			fpSessionInfo.setUserName(role.getUserName());
-			logger.debug("The UserName:" + fpSessionInfo.getUserName());
 			fpSessionInfo.setUserId(role.getUserId());
-			logger.debug("The UserId:" + fpSessionInfo.getUserId());
 			locale = Locale.getDefault();
-			logger.debug("Locale: " + locale);
 			fpSessionInfo.setUserLocale(locale);
-			logger.debug("The UserLocale:" + fpSessionInfo.getUserLocale());
 			fpSessionInfo.setLogonAddress(
 					StringUtil.isEmptyOrSpace(request.getRemoteAddr()) ? "127.0.0.1" : request.getRemoteAddr());
 

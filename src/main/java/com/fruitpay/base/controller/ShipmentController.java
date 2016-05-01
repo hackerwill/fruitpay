@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.service.ShipmentService;
+import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.DateUtil;
 
@@ -35,6 +37,7 @@ public class ShipmentController {
 	private ShipmentService shipmentService;
 	
 	@RequestMapping(value = "/shipmentChange", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
 	public @ResponseBody ShipmentChange addShipmentChange(@RequestBody ShipmentChange shipmentChange) {
 
 		if (AssertUtils.isEmpty(shipmentChange))
@@ -46,6 +49,7 @@ public class ShipmentController {
 	}
 	
 	@RequestMapping(value = "/shipmentChange/invalid", method = RequestMethod.PUT)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody ShipmentChange updateShipmentChange(@RequestBody ShipmentChange shipmentChange) {
 
 		if (AssertUtils.isEmpty(shipmentChange))
@@ -57,6 +61,7 @@ public class ShipmentController {
 	}
 	
 	@RequestMapping(value = "/shipmentChange", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Page<ShipmentChange> getAllShipmentChanges(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -67,6 +72,7 @@ public class ShipmentController {
 	}
 
 	@RequestMapping(value = "/shipmentChange/{orderId}", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody List<ShipmentChange> getShipmentChanges(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))
@@ -78,6 +84,7 @@ public class ShipmentController {
 	}
 	
 	@RequestMapping(value = "/shipmentPeriod/{orderId}", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody List<ShipmentDeliveryStatus> getShipmentChanges(@PathVariable Integer orderId,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {

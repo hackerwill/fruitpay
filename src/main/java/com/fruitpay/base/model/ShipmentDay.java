@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="ShipmentDays")
 @NamedQuery(name="ShipmentDay.findAll", query="SELECT s FROM ShipmentDay s")
-public class ShipmentDay extends AbstractDataBean implements Serializable {
+public class ShipmentDay extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

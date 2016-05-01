@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @NamedQuery(name="ShipmentChange.findAll", query="SELECT o FROM ShipmentChange o")
-public class ShipmentChange extends AbstractDataBean implements Serializable{
+public class ShipmentChange extends AbstractEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id

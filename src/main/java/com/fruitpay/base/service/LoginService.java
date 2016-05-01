@@ -8,7 +8,7 @@ public interface LoginService {
 	/**
      * 註冊
      *
-     * @param  Customer
+     * @param  customer
      *         顧客資訊
      *
      * @return 是否註冊成功，回傳顧客信息

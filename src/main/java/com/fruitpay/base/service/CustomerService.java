@@ -8,6 +8,8 @@ import com.fruitpay.base.model.Customer;
 
 public interface CustomerService {
 	
+	public Customer findOne(int customerId);
+	
 	public Customer update(Customer customer);
 	
 	public Boolean isEmailExisted(String email);

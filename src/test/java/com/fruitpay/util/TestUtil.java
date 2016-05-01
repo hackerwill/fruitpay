@@ -1,11 +1,13 @@
 package com.fruitpay.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import org.springframework.http.MediaType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 public class TestUtil {
 	 
@@ -13,6 +15,13 @@ public class TestUtil {
                                                                         MediaType.APPLICATION_JSON.getSubtype(),                        
                                                                         Charset.forName("utf8")                     
                                                                         );
+    
+    public static byte[] convertObjectToJsonBytesByGson(Object object) throws UnsupportedEncodingException {
+    	
+    	Gson gson = new Gson();
+    	String jsonString = gson.toJson(object);
+    	return jsonString.getBytes("UTF-8");
+    }
     
     public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

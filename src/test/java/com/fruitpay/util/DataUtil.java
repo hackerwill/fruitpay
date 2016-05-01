@@ -1,5 +1,9 @@
-package com.fruitpay.comm;
+package com.fruitpay.util;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,8 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.MockMvc;
 
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.Constant;
@@ -22,16 +29,69 @@ import com.fruitpay.base.model.OrderProgram;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.Role;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
+import com.fruitpay.base.model.UserRole;
+import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.auth.Base64;
+import com.fruitpay.comm.auth.LoginConst;
+import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.Md5Util;
 
 @Component
 public class DataUtil {
 	
 	@Inject
 	StaticDataService staticDataService;
+	@Inject
+	LoginService loginService;
+	
+	public AuthenticationInfo getAuthInfo(MockMvc mockMvc) throws UnsupportedEncodingException, Exception{
+		loginService.signup(this.getSignupCustomer());
+		String uId = this.getUniqueUid(this.getSignupCustomer());
+		MockHttpSession session = new MockHttpSession();
+		
+		HttpSession returnSession = mockMvc.perform(post("/loginCtrl/login")
+				.session(session)
+				.header(LoginConst.LOGIN_UID, uId)
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytesByGson(this.getSignupCustomer())))
+	   		.andExpect(status().isOk())
+	   		.andReturn()
+	   		.getRequest()
+	   		.getSession();
+		
+		String authentication = (String)returnSession.getAttribute(LoginConst.LOGIN_AUTHORIZATION);
+		
+		return new AuthenticationInfo(session, uId, authentication);
+	}
+	
+	public String getUniqueUid(Customer customer){
+		
+		String key = AssertUtils.hasValue(customer.getFbId()) ? 
+				customer.getFbId() : customer.getEmail() + ':' + customer.getPassword();
+		return Md5Util.getMd5(key + ':' + new Date().getTime());
+	}
+	
+	public UserRole getUserRole(Customer customer, Role role){
+		
+		UserRole userRole = new UserRole();	
+		userRole.setCustomer(customer);
+		userRole.setRole(role);
+		
+		return userRole;	
+	}
+	
+	public Role getRole(){
+		Constant roleType = staticDataService.getConstant(12);
+		
+		Role role = new Role();
+		role.setRoleType(roleType.getConstOptions().get(0));
+		return role;	
+	}
 	
 	public ShipmentChange getShipmentChangeWithPulse(){
 		Constant couponTypes = staticDataService.getConstant(11);

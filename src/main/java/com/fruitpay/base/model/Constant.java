@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @NamedQuery(name="Constant.findAll", query="SELECT c FROM Constant c")
-public class Constant extends AbstractDataBean implements Serializable {
+public class Constant extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

@@ -57,8 +57,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		if(customer == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByCustomerAndValidFlag(customer, CommConst.VALID_FLAG.VALID.value());
-		if(customerOrders.isEmpty())
-			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
+		
 		return customerOrders;
 	}
 

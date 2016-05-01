@@ -20,9 +20,9 @@ import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CouponService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.LoginService;
-import com.fruitpay.comm.DataUtil;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.util.AbstractSpringJnitTest;
+import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
 
 import static org.hamcrest.Matchers.*;

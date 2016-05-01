@@ -10,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @NamedQuery(name="Unit.findAll", query="SELECT u FROM Unit u")
-public class Unit extends AbstractDataBean implements Serializable {
+public class Unit extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

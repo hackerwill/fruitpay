@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @NamedQuery(name="CustomerOrder.findAll", query="SELECT c FROM CustomerOrder c")
 @Cacheable(false)
-public class CustomerOrder extends AbstractDataBean  implements Serializable {
+public class CustomerOrder extends AbstractEntity  implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

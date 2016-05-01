@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Constant;
@@ -143,7 +143,7 @@ public class StaticDataController {
 	}
 	
 	@RequestMapping(value = "/adminConstant/{constId}", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.ADMIN)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
 	public @ResponseBody Constant getAllAdminConstant(@PathVariable Integer constId){
 		Constant constant = staticDataService.getConstant(constId);
 		List<ConstantOption> options = constant.getConstOptions();

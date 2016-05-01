@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.CommConst;
-import com.fruitpay.base.comm.UserAuthStatus;
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerOrderDAO;
@@ -60,6 +60,7 @@ public class CustomerOrderController {
 	private EmailSendService emailSendService;
 
 	@RequestMapping(value = "/order", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder addOrder(@RequestBody CheckoutPostBean checkoutPostBean) {
 		CustomerOrder customerOrder = checkoutPostBean.getCustomerOrder();
 		Customer customer = checkoutPostBean.getCustomer();
@@ -82,6 +83,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/order", method = RequestMethod.PUT)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder updateOrder(@RequestBody CustomerOrder customerOrder) {
 
 		if (customerOrder == null)
@@ -92,7 +94,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.YES)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder getOrder(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))
@@ -104,7 +106,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/orderSendEmail/{orderId}", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.YES)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder getOrderAndSendEmail(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))
@@ -120,7 +122,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/orders", method = RequestMethod.DELETE)
-	@UserAccessValidate(UserAuthStatus.ADMIN)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Boolean deleteOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody List<CustomerOrder> customerOrders) {
 
 		if(customerOrders.isEmpty())
@@ -135,6 +137,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/order", method = RequestMethod.DELETE)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder deleteOrder(@RequestBody CustomerOrder customerOrder) {
 
 		if (customerOrder == null || AssertUtils.isEmpty(customerOrder.getOrderId()))
@@ -146,6 +149,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/trash", method = RequestMethod.PUT)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Boolean moveToTrash(@RequestBody List<CustomerOrder> customerOrders) {
 
 		if(customerOrders.isEmpty())
@@ -157,6 +161,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/recover", method = RequestMethod.PUT)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Boolean recover(@RequestBody List<CustomerOrder> customerOrders) {
 
 		if(customerOrders.isEmpty())
@@ -168,6 +173,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Page<CustomerOrder> orders(
 			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
 			@RequestParam(value = "allowForeignFruits", required = false, defaultValue = "") String allowForeignFruits,
@@ -188,7 +194,7 @@ public class CustomerOrderController {
 	}
 
 	@RequestMapping(value = "/exportOrders", method = RequestMethod.POST)
-	@UserAccessValidate(UserAuthStatus.ADMIN)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody HttpServletResponse exportOrder(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody  List<CustomerOrder> customerOrders,
 			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
@@ -237,7 +243,7 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/orderPreferences/{orderId}", method = RequestMethod.GET)
-	@UserAccessValidate(UserAuthStatus.YES)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody List<OrderPreference> getOrderPreferences(@PathVariable Integer orderId) {
 
 		if (AssertUtils.isEmpty(orderId))

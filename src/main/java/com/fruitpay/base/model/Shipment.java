@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="Shipment.findAll", query="SELECT s FROM Shipment s")
-public class Shipment extends AbstractDataBean implements Serializable {
+public class Shipment extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

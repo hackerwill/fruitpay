@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="ShipmentPeriod.findAll", query="SELECT s FROM ShipmentPeriod s")
-public class ShipmentPeriod extends AbstractDataBean implements Serializable {
+public class ShipmentPeriod extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

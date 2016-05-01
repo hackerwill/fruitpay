@@ -27,9 +27,9 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.DataUtil;
 import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
+import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
 
 import static org.hamcrest.Matchers.*;

@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="PaymentMode.findAll", query="SELECT p FROM PaymentMode p")
-public class PaymentMode extends AbstractDataBean implements Serializable {
+public class PaymentMode extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

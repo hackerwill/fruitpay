@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -26,6 +27,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.utils.DateUtil;
 
 @Controller
@@ -40,6 +42,7 @@ public class checkoutController {
 	private StaticDataService staticDataService;
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody CustomerOrder checkout(
 			@RequestBody CheckoutPostBean checkoutPostBean,
 			HttpServletRequest request, HttpServletResponse response){
@@ -73,12 +76,6 @@ public class checkoutController {
 		customerOrder = checkoutService.checkoutOrder(customer, customerOrder);
 		
 		return customerOrder;
-	}
-
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public @ResponseBody Integer getTotalPrice(){
-		
-		return 10;
 	}
 	
 	@RequestMapping(value = "/totalPrice", method = RequestMethod.POST)

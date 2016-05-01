@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
 @Cacheable(false)
-public class Customer extends AbstractDataBean implements Serializable {
+public class Customer extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -88,6 +88,9 @@ public class Customer extends AbstractDataBean implements Serializable {
 	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
 	@JsonManagedReference("customer")
 	private List<CustomerOrder> customerOrders;
+	
+	@OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
+	private List<UserRole> userRoles;
 
 	public Customer() {
 	}

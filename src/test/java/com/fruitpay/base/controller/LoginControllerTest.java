@@ -14,8 +14,8 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.service.LoginService;
-import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
+import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
 import org.junit.Assert;
 

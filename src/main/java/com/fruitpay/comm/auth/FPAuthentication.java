@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.auth.AuthenticationException;
 
 import com.fruitpay.comm.service.RoleService;
 import com.fruitpay.comm.session.FPSessionUtil;
@@ -32,19 +33,14 @@ public class FPAuthentication {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String generateFPToken(FPSessionInfo FPToken) throws Exception {
+	public static String generateFPToken(FPSessionInfo FPToken) throws Exception{
 		String encodeKey = null;
-		try {
-			String orignalKey = FPToken.getLogonAddress() + ";" + FPToken.getUserName() + ";" + FPToken.getSessionId();
-			encodeKey = FPEnDeCryption.encryptCipher(orignalKey);
-			encodeKey = encodeKey.replaceAll(" ", ":");
-			encodeKey = encodeKey.replaceAll("[+]", ":");
-			encodeKey = encodeKey.replaceAll("=", ":");
-		} catch (Exception e) {
-			log.error("Generate FPToken fail", e);
-			e.printStackTrace();
-			throw e;
-		}
+		String orignalKey = FPToken.getLogonAddress() + ";" + FPToken.getUserName() + ";" + FPToken.getSessionId();
+		encodeKey = FPEnDeCryption.encryptCipher(orignalKey);
+		encodeKey = encodeKey.replaceAll(" ", ":");
+		encodeKey = encodeKey.replaceAll("[+]", ":");
+		encodeKey = encodeKey.replaceAll("=", ":");
+		
 		return encodeKey;
 	}
 
@@ -55,42 +51,25 @@ public class FPAuthentication {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean validateFPToken(HttpServletRequest request) throws Exception {
+	public static boolean validateFPToken(FPSessionInfo clientInfo) throws Exception {
 		boolean isValidate = false;
 		/*** get user token from Header **/
-		String FPToken = FPSessionUtil.getHeader(request, LoginConst.LOGIN_AUTHORIZATION);	    
-		if (!StringUtil.isEmptyOrSpace(FPToken)) {
-			try {			
-				isValidate =StringUtil.isEmptyOrSpace(FPSessionFactory.getInstance().getFPSessionMap().get(FPToken))?false:true;
-			} catch (Exception e) {
-				isValidate = false;
-				e.printStackTrace();
-				log.error("validateFPToken Fail", e);
-			}
-		}
-		else{
-			/** token is null **/
+		
+		String FPToken = clientInfo.getFPToken();
+		try {			
+			FPSessionInfo serverInfo = FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
+			isValidate = serverInfo.getSessionId().equals(clientInfo.getSessionId())
+					&& serverInfo.getUserId().equals(clientInfo.getUserId())
+					&& serverInfo.getUserName().equals(clientInfo.getUserName());
+		} catch (Exception e) {
 			isValidate = false;
+			log.error("validateFPToken Fail", e);
+			throw new AuthenticationException("Validation not passed");
 		}
+		
 		return isValidate ;
 	}
-//		try {
-//			String originalKey = fpToken.getLogonAddress() + ";" + fpToken.getUserName() + ";" + fpToken.getSessionId();
-//			String deKey = FPEnDeCryption.encryptCipher(originalKey);
-//			deKey = deKey.replaceAll(" ", ":");
-//			deKey = deKey.replaceAll("[+]", ":");
-//			deKey = deKey.replaceAll("=", ":");
-//			if (null != deKey && deKey.length() > 0) {
-//				if (deKey.equalsIgnoreCase(fpToken.getFPToken()))
-//					isValidate = true;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			log.error("validateFPToken fail", e);
-//			throw e;
-//		}
-//		return isValidate;
-//	}
+	
 	/**
 	 * Validate Admin User By Referer of request
 	 * 

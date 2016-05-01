@@ -45,6 +45,7 @@ public class AdminLoginController {
 			manager.setToken(token);
 		} catch (Exception e) {
 			logger.error("login error when FPSessionUtil.logonGetSession: " + e);
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 		}
 		
 		return manager;
@@ -57,9 +58,10 @@ public class AdminLoginController {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		boolean validate = false;
 		try {
-			validate = FPSessionUtil.getInfoAndVlidateToken(new Role(manager), request, LoginConst.LOGINBYID);
+			validate = FPSessionUtil.getInfoAndValidateToken(new Role(manager), request, LoginConst.LOGINBYID);
 		} catch (Exception e) {
 			logger.debug("LoginController.validateToken failed");
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 		}
 		return validate;
 	}
@@ -82,6 +84,7 @@ public class AdminLoginController {
 			} catch (Exception e) {
 				cleanSessionStatus = false;
 				logger.error("ClearSessionServlet Fail", e);
+				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 			}
 		}
 		else{

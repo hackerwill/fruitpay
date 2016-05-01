@@ -14,8 +14,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.service.CouponService;
-import com.fruitpay.comm.DataUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
+import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
 
 import static org.hamcrest.Matchers.*;
