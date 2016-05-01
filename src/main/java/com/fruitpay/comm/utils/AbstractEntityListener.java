@@ -47,7 +47,7 @@ public class AbstractEntityListener {
 			FPSessionInfo fpSessionInfo = FPSessionUtil.getFPsessionInfo(request);
 			int userId = Integer.valueOf(fpSessionInfo.getUserId());
 			user = customerService.findOne(userId);
-		}catch(AuthenticationException e){
+		}catch(NullPointerException | AuthenticationException e){
 			//可能是在註冊的時候才會遇到這個問題
 			if (abstractEntity instanceof Customer) {
 				user = (Customer)abstractEntity;
