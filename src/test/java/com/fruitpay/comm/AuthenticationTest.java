@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.comm.auth.LoginConst;
 import com.fruitpay.comm.model.Role;
@@ -45,6 +46,8 @@ public class AuthenticationTest extends AbstractSpringJnitTest{
 	private DataUtil dataUtil;
 	@Inject
 	private LoginService loginService;
+	@Inject
+	private CustomerService customerService;
 	
 	@Before
     public void setup() {
@@ -106,7 +109,7 @@ public class AuthenticationTest extends AbstractSpringJnitTest{
 				.header(LoginConst.LOGIN_UID, uId)
 				.header(LoginConst.LOGIN_AUTHORIZATION, authentication)
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytesByGson(dataUtil.getSignupCustomer())))
+				.content(TestUtil.convertObjectToJsonBytes(loginCustomer)))
 	   		.andExpect(status().isOk())
 	   		.andReturn()
 	   		.getResponse()
@@ -122,12 +125,14 @@ public class AuthenticationTest extends AbstractSpringJnitTest{
 		
 		AuthenticationInfo auth = dataUtil.getAuthInfo(mockMvc);
 		
+		Customer customer = customerService.findByEmail(dataUtil.getSignupCustomer().getEmail());
+		
 		String conetent = this.mockMvc.perform(post("/loginCtrl/validateToken")
 				.session(auth.getSession())
 				.header(LoginConst.LOGIN_UID, auth.getuId())
 				.header(LoginConst.LOGIN_AUTHORIZATION, auth.getAuthentication())
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytesByGson(dataUtil.getSignupCustomer())))
+				.content(TestUtil.convertObjectToJsonBytes(customer)))
 	   		.andExpect(status().isOk())
 	   		.andReturn()
 	   		.getResponse()

@@ -166,7 +166,6 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		
 	}
 	
-	@Test(expected = HttpServiceException.class )
 	@Transactional
 	@Rollback(true)
 	public void deleteOrder() throws Exception {
@@ -196,7 +195,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
 		
 		customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
-		
+		Assert.assertEquals(customerOrders.size(), 0);
 	}
 	
 	@Test
