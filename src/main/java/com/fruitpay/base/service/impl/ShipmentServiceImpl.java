@@ -1,7 +1,9 @@
 package com.fruitpay.base.service.impl;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -27,10 +29,12 @@ import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.ShipmentChangeDAO;
+import com.fruitpay.base.dao.ShipmentRecordDAO;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
@@ -47,6 +51,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private CustomerOrderService customerOrderService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	private ShipmentRecordDAO shipmentRecordDAO;
 	
 	//if one delivery day is pulse, the next delivery day plus day amount
 	private final int JUMP_DAY = 7;
@@ -54,16 +60,18 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption shipmentPulse = null;
 	private ConstantOption shipmentDeliver = null;
 	private ConstantOption shipmentCancel = null;
+	private ConstantOption shipmentDelivered = null;
 	
 	@PostConstruct
 	public void init(){
+		shipmentDelivered = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDelivered.toString());
 		shipmentDeliver = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDeliver.toString());
 		shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 
 		shipmentCancel = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentCancel.toString()); 
 	}
 	
 	@Override
-	public List<ShipmentChange> findByOrderId(int orderId) {
+	public List<ShipmentChange> findChangesByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
 		List<ShipmentChange> ShipmentChanges = shipmentChangeDAO.findByCustomerOrderAndValidFlag(
@@ -118,7 +126,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 		if(customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
 		
-		List<ShipmentChange> shipmentChanges = this.findByOrderId(orderId);
 		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), 
 				DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName())));
 		int duration = customerOrder.getShipmentPeriod().getDuration();
@@ -130,103 +137,110 @@ public class ShipmentServiceImpl implements ShipmentService {
 		if(startDate.before(DateUtil.toDate(firstDeliveryDate)))
 			startDate = DateUtil.toDate(firstDeliveryDate);
 		
+		LocalDate date = DateUtil.toLocalDate(startDate);
+		List<ShipmentChange> shipmentChanges = this.findChangesByOrderId(orderId);
+		List<ShipmentRecord> shipmentRecords = this.findRecordsByOrderId(orderId);
 		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
-		ShipmentDeliveryStatus first = getFirst(firstDeliveryDate, shipmentChanges, duration);
-		do {
-			deliveryStatuses.add(first);
-			//若該次已經取消, 則是最後一次
-			if(ShipmentStatus.shipmentCancel.toString().equals(first.getShipmentChangeType().getOptionName()))
-				break;
-			first = getNext(first, shipmentChanges, duration);
-		} while (!first.getApplyDate().after(endDate));
 		
-		//過濾掉僅從查詢開始日期算
-		final Date searchStateDate = startDate;
-		deliveryStatuses = deliveryStatuses.stream().filter(status -> {
-			return !status.getApplyDate().before(searchStateDate);
-		}).collect(Collectors.toList());
+		while(!date.isAfter(DateUtil.toLocalDate(endDate))){
+			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, duration);
+			if(shipmentChangeType != null){
+				ShipmentDeliveryStatus deliveryStatus = new ShipmentDeliveryStatus();
+				deliveryStatus.setApplyDate(DateUtil.toDate(date));
+				deliveryStatus.setShipmentChangeType(shipmentChangeType);
+				deliveryStatuses.add(deliveryStatus);
+			}
+			
+			date = date.plusDays(1);
+		}
 		return deliveryStatuses;
 	}
 	
-	private ShipmentDeliveryStatus getFirst(LocalDate fristDeliveryLocalDate, List<ShipmentChange> shipmentChanges, int duration){
-		//若日期小於今天, 到資料庫查詢是否有已配送紀錄, 若是今天以後的日期, 則為待配送狀態
-		Date firstDeliveryDate = DateUtil.toDate(fristDeliveryLocalDate);
-		Date today = new Date();
-		if(firstDeliveryDate.before(today)){
-			//沒有配送過且也沒有暫停取消的, 則跳過該次
-			if(!hasRecord(firstDeliveryDate, shipmentChanges)){
-				return getFirst(fristDeliveryLocalDate.plusDays(duration), shipmentChanges, duration);
+	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate, 
+			List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords, int duration){
+		
+		if(isShipped(searchDate, shipmentRecords)){
+			return shipmentDelivered;
+		}else if(isCancel(searchDate, shipmentChanges)) {
+			return shipmentCancel;
+		}else if(isPulse(searchDate, shipmentChanges)) {
+			return shipmentPulse;
+		}
+		
+		if(searchDate.isBefore(LocalDate.now()) || searchDate.isBefore(incrementDate))
+			return null;
+		
+		if(ChronoUnit.DAYS.between(searchDate, incrementDate) % JUMP_DAY != 0)
+			return null;
+		
+		if(searchDate.equals(incrementDate)) {
+			return shipmentDeliver;
+		//若已經取消, 不需要再配送
+		}else if(isCancel(incrementDate, shipmentChanges)) {
+			return null;
+		//固定加上一個禮拜的時間
+		}else if(isPulse(incrementDate, shipmentChanges)) {
+			return getDateStatus(searchDate, incrementDate.plusDays(JUMP_DAY), shipmentChanges, shipmentRecords, duration);
+		}else {
+			return getDateStatus(searchDate, incrementDate.plusDays(duration), shipmentChanges, shipmentRecords, duration);
+		}
+		
+	}
+	
+	private boolean isShipped(LocalDate date, List<ShipmentRecord> shipmentRecords) {
+		
+		for (Iterator<ShipmentRecord> iterator = shipmentRecords.iterator(); iterator.hasNext();) {
+			ShipmentRecord shipmentRecord = iterator.next();
+			if(date.equals(DateUtil.toLocalDate(shipmentRecord.getDate()))
+					&& ShipmentStatus.shipmentDelivered.toString().equals(shipmentRecord.getShipmentType().getOptionName())){
+				return true;
 			}
 		}
 		
-		ShipmentDeliveryStatus status = new ShipmentDeliveryStatus();
-		status.setApplyDate(DateUtil.toDate(fristDeliveryLocalDate));
-		status.setShipmentChangeType(setChageType(status, shipmentChanges));
-		return status;
+		return false;
 	}
 	
-	private ShipmentDeliveryStatus getNext(ShipmentDeliveryStatus status, List<ShipmentChange> shipmentChanges, int duration){
-		//若日期小於今天, 到資料庫查詢是否有已配送紀錄, 若是今天以後的日期, 則為待配送狀態
-		Date today = new Date();
-		if(status.getApplyDate().before(today)){
-			//沒有配送過且也沒有暫停取消的, 則跳過該次
-			if(!hasRecord(status.getApplyDate(), shipmentChanges)){
-				return getNext(status, shipmentChanges, duration);
-			}
-		}
-		
-		ShipmentDeliveryStatus nextStatus = new ShipmentDeliveryStatus();
-		int nextDuration = setNextDuration(status, duration);
-		LocalDate nextDate = DateUtil.toLocalDate(status.getApplyDate()).plusDays(nextDuration);
-		nextStatus.setApplyDate(DateUtil.toDate(nextDate));
-		nextStatus.setShipmentChangeType(setChageType(nextStatus, shipmentChanges));
-		return nextStatus;
-	}
-	
-	private boolean hasRecord(Date applyDate, List<ShipmentChange> shipmentChanges){
-		
-		boolean hasRecord = false;
+	private boolean isCancel(LocalDate date, List<ShipmentChange> shipmentChanges){
 		
 		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
 			ShipmentChange shipmentChange = iterator.next();
-			if(applyDate.getTime() == shipmentChange.getApplyDate().getTime()){
-				hasRecord = true;
-				break;
+			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
+					&& ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
+				return true;
 			}
 		}
 		
-		return hasRecord;
+		return false;
 	}
 	
-	private int setNextDuration(ShipmentDeliveryStatus status, int duration){
-		if(ShipmentStatus.shipmentPulse.toString().equals(status.getShipmentChangeType().getOptionName())){
-			return JUMP_DAY;
-		}else{
-			return duration;
-		}
-	}
-	
-	private ConstantOption setChageType(ShipmentDeliveryStatus status, List<ShipmentChange> shipmentChanges){
+	private boolean isPulse(LocalDate date, List<ShipmentChange> shipmentChanges){
 		
 		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
 			ShipmentChange shipmentChange = iterator.next();
-			if(DateUtils.isSameDay(shipmentChange.getApplyDate(), status.getApplyDate())){
-				if(ShipmentStatus.shipmentPulse.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
-					return shipmentPulse;
-				}else if(ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
-					return shipmentCancel;
-				}
+			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
+					&& ShipmentStatus.shipmentPulse.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
+				return true;
 			}
 		}
 		
-		return shipmentDeliver; 
+		return false;
 	}
+	
+	
 
 	@Override
 	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size) {
 		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByValidFlag(
 				validFlag.value(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
 		return shipmentChanges;
+	}
+
+	@Override
+	public List<ShipmentRecord> findRecordsByOrderId(int orderId) {
+		CustomerOrder customerOrder = new CustomerOrder();
+		customerOrder.setOrderId(orderId);
+		List<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
+		return shipmentRecords;
 	}
 
 }

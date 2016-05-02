@@ -9,12 +9,15 @@ import org.springframework.data.domain.Pageable;
 import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentRecord;
 
 public interface ShipmentService {
 	
 	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size);
 	
-	public List<ShipmentChange> findByOrderId(int orderId);
+	public List<ShipmentChange> findChangesByOrderId(int orderId);
+	
+	public List<ShipmentRecord> findRecordsByOrderId(int orderId);
 
 	public ShipmentChange add(ShipmentChange shipmentChange);
 	

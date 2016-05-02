@@ -78,7 +78,7 @@ public class ShipmentController {
 		if (AssertUtils.isEmpty(orderId))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 
-		List<ShipmentChange> shipmentChanges = shipmentService.findByOrderId(orderId);
+		List<ShipmentChange> shipmentChanges = shipmentService.findChangesByOrderId(orderId);
 
 		return shipmentChanges;
 	}
