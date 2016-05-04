@@ -17,7 +17,7 @@ public class Product extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="product_id")
-	private int productId;
+	private Integer productId;
 	
 	@Column(name="product_english_name")
 	private String productEnglishName;
@@ -55,11 +55,11 @@ public class Product extends AbstractEntity implements Serializable {
 		this.imageLink = imageLink;
 	}
 
-	public int getProductId() {
+	public Integer getProductId() {
 		return this.productId;
 	}
 
-	public void setProductId(int productId) {
+	public void setProductId(Integer productId) {
 		this.productId = productId;
 	}
 

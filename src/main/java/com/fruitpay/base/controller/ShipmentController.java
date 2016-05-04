@@ -17,12 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.DateUtil;
@@ -35,6 +40,10 @@ public class ShipmentController {
 	
 	@Inject
 	private ShipmentService shipmentService;
+	@Inject
+	private CustomerOrderService customerOrderService;
+	@Inject
+	private StaticDataService staticDataService;
 	
 	@RequestMapping(value = "/shipmentChange", method = RequestMethod.POST)
 	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
@@ -45,6 +54,12 @@ public class ShipmentController {
 
 		shipmentChange = shipmentService.add(shipmentChange);
 		
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(shipmentChange.getCustomerOrder().getOrderId());
+		if(shipmentChange.getShipmentChangeType().getOptionName().equals(ShipmentStatus.shipmentCancel.toString())){
+			customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreayCancel.getStatus()));
+			customerOrderService.updateCustomerOrder(customerOrder);
+		}
+		
 		return shipmentChange;
 	}
 	
@@ -54,8 +69,12 @@ public class ShipmentController {
 
 		if (AssertUtils.isEmpty(shipmentChange))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
-
+		
 		shipmentChange = shipmentService.updateValidFlag(shipmentChange, CommConst.VALID_FLAG.INVALID);
+		
+		if(shipmentChange.getShipmentChangeType().getOptionName().equals(ShipmentStatus.shipmentCancel.toString())){
+			customerOrderService.recoverTaskStatus(shipmentChange.getCustomerOrder().getOrderId());
+		}
 		
 		return shipmentChange;
 	}

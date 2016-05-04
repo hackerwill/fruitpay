@@ -18,7 +18,7 @@ public class UserRole extends AbstractEntity implements Serializable {
 	@Id
 	@Column(name="user_role_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int userRoleId;
+	private Integer userRoleId;
 	
 	@ManyToOne
 	@JoinColumn(name="customer_id")
@@ -28,11 +28,11 @@ public class UserRole extends AbstractEntity implements Serializable {
 	@JoinColumn(name="role_id")
 	private Role role;
 
-	public int getUserRoleId() {
+	public Integer getUserRoleId() {
 		return userRoleId;
 	}
 
-	public void setUserRoleId(int userRoleId) {
+	public void setUserRoleId(Integer userRoleId) {
 		this.userRoleId = userRoleId;
 	}
 

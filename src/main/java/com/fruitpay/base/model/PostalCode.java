@@ -20,7 +20,7 @@ public class PostalCode extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="post_id")
-	private int postId;
+	private Integer postId;
 	
 	@Column(name="post_code")
 	private String postCode;
@@ -40,11 +40,11 @@ public class PostalCode extends AbstractEntity implements Serializable {
 	public PostalCode() {
 	}
 
-	public int getPostId() {
+	public Integer getPostId() {
 		return postId;
 	}
 
-	public void setPostId(int postId) {
+	public void setPostId(Integer postId) {
 		this.postId = postId;
 	}
 

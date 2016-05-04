@@ -19,7 +19,7 @@ public class OrderStatus extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="order_status_id")
-	private int orderStatusId;
+	private Integer orderStatusId;
 
 	@Column(name="order_status_desc")
 	private String orderStatusDesc;
@@ -30,11 +30,11 @@ public class OrderStatus extends AbstractEntity implements Serializable {
 	public OrderStatus() {
 	}
 
-	public int getOrderStatusId() {
+	public Integer getOrderStatusId() {
 		return this.orderStatusId;
 	}
 
-	public void setOrderStatusId(int orderStatusId) {
+	public void setOrderStatusId(Integer orderStatusId) {
 		this.orderStatusId = orderStatusId;
 	}
 

@@ -16,7 +16,7 @@ public class ShipmentStatus extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="shipment_status_id")
-	private int shipmentStatusId;
+	private Integer shipmentStatusId;
 
 	@Column(name="shipment_status_desc")
 	private String shipmentStatusDesc;
@@ -31,11 +31,11 @@ public class ShipmentStatus extends AbstractEntity implements Serializable {
 	public ShipmentStatus() {
 	}
 
-	public int getShipmentStatusId() {
+	public Integer getShipmentStatusId() {
 		return this.shipmentStatusId;
 	}
 
-	public void setShipmentStatusId(int shipmentStatusId) {
+	public void setShipmentStatusId(Integer shipmentStatusId) {
 		this.shipmentStatusId = shipmentStatusId;
 	}
 

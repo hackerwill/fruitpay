@@ -18,7 +18,7 @@ public class AllpayOrder extends AbstractEntity implements Serializable {
 	@Id
 	@Column(name="allpay_order_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int allpayOrderId;
+	private Integer allpayOrderId;
 
 	@Column(name="payment_date")
 	private String paymentDate;
@@ -29,11 +29,11 @@ public class AllpayOrder extends AbstractEntity implements Serializable {
 	@Column(name="rtn_message")
 	private String rtnMessage;
 
-	public int getAllpayOrderId() {
+	public Integer getAllpayOrderId() {
 		return allpayOrderId;
 	}
 
-	public void setAllpayOrderId(int allpayOrderId) {
+	public void setAllpayOrderId(Integer allpayOrderId) {
 		this.allpayOrderId = allpayOrderId;
 	}
 

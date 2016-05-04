@@ -21,7 +21,7 @@ public class ShipmentDay extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="shipment_days_id")
-	private int shipmentDaysId;
+	private Integer shipmentDaysId;
 
 	@Column(name="shipment_days_desc")
 	private String shipmentDaysDesc;
@@ -32,11 +32,11 @@ public class ShipmentDay extends AbstractEntity implements Serializable {
 	public ShipmentDay() {
 	}
 
-	public int getShipmentDaysId() {
+	public Integer getShipmentDaysId() {
 		return this.shipmentDaysId;
 	}
 
-	public void setShipmentDaysId(int shipmentDaysId) {
+	public void setShipmentDaysId(Integer shipmentDaysId) {
 		this.shipmentDaysId = shipmentDaysId;
 	}
 

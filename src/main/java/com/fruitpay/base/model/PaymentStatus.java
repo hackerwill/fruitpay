@@ -16,7 +16,7 @@ public class PaymentStatus extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="payment_status_id")
-	private int paymentStatusId;
+	private Integer paymentStatusId;
 
 	@Column(name="payment_status_desc")
 	private String paymentStatusDesc;
@@ -31,11 +31,11 @@ public class PaymentStatus extends AbstractEntity implements Serializable {
 	public PaymentStatus() {
 	}
 
-	public int getPaymentStatusId() {
+	public Integer getPaymentStatusId() {
 		return this.paymentStatusId;
 	}
 
-	public void setPaymentStatusId(int paymentStatusId) {
+	public void setPaymentStatusId(Integer paymentStatusId) {
 		this.paymentStatusId = paymentStatusId;
 	}
 

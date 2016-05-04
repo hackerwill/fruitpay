@@ -15,7 +15,7 @@ public class Unit extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="unit_id")
-	private int unitId;
+	private Integer unitId;
 
 	@Column(name="unit_desc")
 	private String unitDesc;
@@ -26,11 +26,11 @@ public class Unit extends AbstractEntity implements Serializable {
 	public Unit() {
 	}
 
-	public int getUnitId() {
+	public Integer getUnitId() {
 		return this.unitId;
 	}
 
-	public void setUnitId(int unitId) {
+	public void setUnitId(Integer unitId) {
 		this.unitId = unitId;
 	}
 

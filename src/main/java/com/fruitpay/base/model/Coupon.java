@@ -24,7 +24,7 @@ public class Coupon extends AbstractEntity implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="coupon_id")
-	private int couponId;
+	private Integer couponId;
 	
 	@Column(name="coupon_name")
 	private String couponName;
@@ -38,37 +38,37 @@ public class Coupon extends AbstractEntity implements Serializable{
 	private ConstantOption couponType;
 	
 	@Column(name="value")
-	private int value;
+	private Integer value;
 	
 	@Column(name="first_value")
-	private int firstValue;
+	private Integer firstValue;
 	
 	@Column(name="expiry_day")
 	@Temporal(TemporalType.DATE)
 	private Date expiryDay;
 	
 	@Column(name="max_limit")
-	private int maxLimit;
+	private Integer maxLimit;
 	
 	@Column(name="min_limit")
-	private int minLimit;
+	private Integer minLimit;
 	
 	@Column(name="max_usage_per_coupon")
-	private int maxUsagePerCoupon;
+	private Integer maxUsagePerCoupon;
 	
 	@Column(name="max_usage_per_user")
-	private int maxUsagePerUser;
+	private Integer maxUsagePerUser;
 	
 	@ManyToOne
 	@JoinColumn(name="usage_individually")
 	@JsonProperty("usageIndividually")
 	private ConstantOption usageIndividually;
 
-	public int getCouponId() {
+	public Integer getCouponId() {
 		return couponId;
 	}
 
-	public void setCouponId(int couponId) {
+	public void setCouponId(Integer couponId) {
 		this.couponId = couponId;
 	}
 
@@ -96,19 +96,19 @@ public class Coupon extends AbstractEntity implements Serializable{
 		this.couponType = couponType;
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
 
-	public int getFirstValue() {
+	public Integer getFirstValue() {
 		return firstValue;
 	}
 
-	public void setFirstValue(int firstValue) {
+	public void setFirstValue(Integer firstValue) {
 		this.firstValue = firstValue;
 	}
 
@@ -120,35 +120,35 @@ public class Coupon extends AbstractEntity implements Serializable{
 		this.expiryDay = expiryDay;
 	}
 
-	public int getMaxLimit() {
+	public Integer getMaxLimit() {
 		return maxLimit;
 	}
 
-	public void setMaxLimit(int maxLimit) {
+	public void setMaxLimit(Integer maxLimit) {
 		this.maxLimit = maxLimit;
 	}
 
-	public int getMinLimit() {
+	public Integer getMinLimit() {
 		return minLimit;
 	}
 
-	public void setMinLimit(int minLimit) {
+	public void setMinLimit(Integer minLimit) {
 		this.minLimit = minLimit;
 	}
 
-	public int getMaxUsagePerCoupon() {
+	public Integer getMaxUsagePerCoupon() {
 		return maxUsagePerCoupon;
 	}
 
-	public void setMaxUsagePerCoupon(int maxUsagePerCoupon) {
+	public void setMaxUsagePerCoupon(Integer maxUsagePerCoupon) {
 		this.maxUsagePerCoupon = maxUsagePerCoupon;
 	}
 
-	public int getMaxUsagePerUser() {
+	public Integer getMaxUsagePerUser() {
 		return maxUsagePerUser;
 	}
 
-	public void setMaxUsagePerUser(int maxUsagePerUser) {
+	public void setMaxUsagePerUser(Integer maxUsagePerUser) {
 		this.maxUsagePerUser = maxUsagePerUser;
 	}
 

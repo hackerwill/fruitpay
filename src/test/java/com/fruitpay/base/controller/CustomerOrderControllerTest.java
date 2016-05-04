@@ -11,14 +11,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.ShipmentStatus;
-import com.fruitpay.base.comm.exception.HttpServiceException;
-import com.fruitpay.base.dao.CouponDAO;
-import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.CheckoutPostBean;
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
-import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
@@ -134,7 +131,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void updateOrder() throws Exception {
+	public void updateOrderAndRecoverToPrevious() throws Exception {
 		
 		Customer customer = dataUtil.getBackgroundCustomer();
 		customer = customerService.saveCustomer(customer);
@@ -155,7 +152,10 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		CustomerOrder order = customerOrders.get(0);
 		
 		String testAddress = "TESTUPDATE";
+		int totalPrice = 400;
 		order.setReceiverAddress(testAddress);
+		order.setTotalPrice(totalPrice);
+		order.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreayCancel.getStatus()));
 		
 		this.mockMvc.perform(put("/orderCtrl/order")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -164,6 +164,11 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverAddress", is(order.getReceiverAddress())));
 		
+		order = customerOrderService.recoverTaskStatus(order.getOrderId());
+		order = customerOrderService.recoverTotalPrice(order.getOrderId());
+		Assert.assertEquals(dataUtil.getCustomerOrder().getTotalPrice(), order.getTotalPrice());
+		Assert.assertEquals(dataUtil.getCustomerOrder().getDeliveryDay().getOptionId(), order.getDeliveryDay().getOptionId());
+	
 	}
 	
 	@Transactional

@@ -24,7 +24,7 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="shipment_record_id")
-	private int shipmentRecordId;
+	private Integer shipmentRecordId;
 	
 	//bi-directional many-to-one association to ShipmentPeriod
 	@ManyToOne
@@ -41,13 +41,13 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 	private ConstantOption shipmentType;
 	
 	@Column(name="valid_flag")
-	private int validFlag;
+	private Integer validFlag;
 
-	public int getShipmentRecordId() {
+	public Integer getShipmentRecordId() {
 		return shipmentRecordId;
 	}
 
-	public void setShipmentRecordId(int shipmentRecordId) {
+	public void setShipmentRecordId(Integer shipmentRecordId) {
 		this.shipmentRecordId = shipmentRecordId;
 	}
 
@@ -75,11 +75,11 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 		this.shipmentType = shipmentType;
 	}
 
-	public int getValidFlag() {
+	public Integer getValidFlag() {
 		return validFlag;
 	}
 
-	public void setValidFlag(int validFlag) {
+	public void setValidFlag(Integer validFlag) {
 		this.validFlag = validFlag;
 	}
 	

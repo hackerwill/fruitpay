@@ -20,7 +20,7 @@ public class OrderProgram extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="program_id")
-	private int programId;
+	private Integer programId;
 
 	@Column(name="program_desc")
 	private String programDesc;
@@ -37,11 +37,11 @@ public class OrderProgram extends AbstractEntity implements Serializable {
 	public OrderProgram() {
 	}
 
-	public int getProgramId() {
+	public Integer getProgramId() {
 		return this.programId;
 	}
 
-	public void setProgramId(int programId) {
+	public void setProgramId(Integer programId) {
 		this.programId = programId;
 	}
 

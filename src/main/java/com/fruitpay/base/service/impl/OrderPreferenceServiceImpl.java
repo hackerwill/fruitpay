@@ -1,4 +1,4 @@
-package com.fruitpay.base.service;
+package com.fruitpay.base.service.impl;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
+import com.fruitpay.base.service.OrderPreferenceService;
 
 @Service
 public class OrderPreferenceServiceImpl implements OrderPreferenceService {

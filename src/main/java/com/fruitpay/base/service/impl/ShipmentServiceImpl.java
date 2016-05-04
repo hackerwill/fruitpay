@@ -61,6 +61,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption shipmentDeliver = null;
 	private ConstantOption shipmentCancel = null;
 	private ConstantOption shipmentDelivered = null;
+	private ConstantOption shipmentReady = null;
 	
 	@PostConstruct
 	public void init(){
@@ -68,6 +69,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipmentDeliver = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDeliver.toString());
 		shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 
 		shipmentCancel = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentCancel.toString()); 
+		shipmentReady = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReady.toString()); 
 	}
 	
 	@Override
@@ -125,9 +127,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrdersByValidFlag(orderId, VALID_FLAG.VALID.value());
 		if(customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
-		
-		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), 
-				DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName())));
+		DayOfWeek dayOfWeek = DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()));
+		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
 		int duration = customerOrder.getShipmentPeriod().getDuration();
 		
 		//unnecessary to count
@@ -143,7 +144,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
 		
 		while(!date.isAfter(DateUtil.toLocalDate(endDate))){
-			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, duration);
+			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, dayOfWeek, duration);
 			if(shipmentChangeType != null){
 				ShipmentDeliveryStatus deliveryStatus = new ShipmentDeliveryStatus();
 				deliveryStatus.setApplyDate(DateUtil.toDate(date));
@@ -156,8 +157,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return deliveryStatuses;
 	}
 	
-	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate, 
-			List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords, int duration){
+	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate,
+			List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords,  
+			DayOfWeek dayOfWeek, int duration){
 		
 		if(isShipped(searchDate, shipmentRecords)){
 			return shipmentDelivered;
@@ -170,19 +172,23 @@ public class ShipmentServiceImpl implements ShipmentService {
 		if(searchDate.isBefore(LocalDate.now()) || searchDate.isBefore(incrementDate))
 			return null;
 		
-		if(ChronoUnit.DAYS.between(searchDate, incrementDate) % JUMP_DAY != 0)
+		if(!searchDate.getDayOfWeek().equals(dayOfWeek))
+			return null;
+		
+		//若已經取消, 不需要再配送
+		if(isCancel(incrementDate, shipmentChanges))
 			return null;
 		
 		if(searchDate.equals(incrementDate)) {
+			LocalDate nextShipmentDay = staticDataService.getNextReceiveDay(new Date(), dayOfWeek);
+			if(searchDate.isBefore(nextShipmentDay))
+				return shipmentReady;
 			return shipmentDeliver;
-		//若已經取消, 不需要再配送
-		}else if(isCancel(incrementDate, shipmentChanges)) {
-			return null;
 		//固定加上一個禮拜的時間
 		}else if(isPulse(incrementDate, shipmentChanges)) {
-			return getDateStatus(searchDate, incrementDate.plusDays(JUMP_DAY), shipmentChanges, shipmentRecords, duration);
+			return getDateStatus(searchDate, incrementDate.plusDays(JUMP_DAY), shipmentChanges, shipmentRecords, dayOfWeek, duration);
 		}else {
-			return getDateStatus(searchDate, incrementDate.plusDays(duration), shipmentChanges, shipmentRecords, duration);
+			return getDateStatus(searchDate, incrementDate.plusDays(duration), shipmentChanges, shipmentRecords, dayOfWeek, duration);
 		}
 		
 	}

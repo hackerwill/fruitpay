@@ -20,7 +20,7 @@ public class PaymentMode extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="payment_mode_id")
-	private int paymentModeId;
+	private Integer paymentModeId;
 
 	@Column(name="payment_mode_desc")
 	private String paymentModeDesc;
@@ -29,16 +29,16 @@ public class PaymentMode extends AbstractEntity implements Serializable {
 	private String paymentModeName;
 	
 	@Column(name="payment_extra_price")
-	private int paymentExtraPrice;
+	private Integer paymentExtraPrice;
 
 	public PaymentMode() {
 	}
 
-	public int getPaymentModeId() {
+	public Integer getPaymentModeId() {
 		return this.paymentModeId;
 	}
 
-	public void setPaymentModeId(int paymentModeId) {
+	public void setPaymentModeId(Integer paymentModeId) {
 		this.paymentModeId = paymentModeId;
 	}
 
@@ -58,11 +58,11 @@ public class PaymentMode extends AbstractEntity implements Serializable {
 		this.paymentModeName = paymentModeName;
 	}
 
-	public int getPaymentExtraPrice() {
+	public Integer getPaymentExtraPrice() {
 		return paymentExtraPrice;
 	}
 
-	public void setPaymentExtraPrice(int paymentExtraPrice) {
+	public void setPaymentExtraPrice(Integer paymentExtraPrice) {
 		this.paymentExtraPrice = paymentExtraPrice;
 	}
 

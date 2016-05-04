@@ -3,16 +3,23 @@ package com.fruitpay.base.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
+@Entity
+@NamedQuery(name="FieldChangeRecord.findAll", query="SELECT f FROM FieldChangeRecord f")
 public class FieldChangeRecord extends AbstractEntity implements Serializable {
 	
 	@Id
-	@Column(name="filed_change_record_id")
+	@Column(name="field_change_record_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int FieldChangeRecordId;
+	private int fieldChangeRecordId;
+	
+	@Column(name="pk_id")
+	private int pkId;
 	
 	@Column(name="table_name")
 	private String tableName;
@@ -20,15 +27,15 @@ public class FieldChangeRecord extends AbstractEntity implements Serializable {
 	@Column(name="field_name")
 	private String fieldName;
 	
-	@Column(name="value")
-	private String value;
+	@Column(name="field_value")
+	private String fieldValue;
 
 	public int getFieldChangeRecordId() {
-		return FieldChangeRecordId;
+		return fieldChangeRecordId;
 	}
 
 	public void setFieldChangeRecordId(int fieldChangeRecordId) {
-		FieldChangeRecordId = fieldChangeRecordId;
+		this.fieldChangeRecordId = fieldChangeRecordId;
 	}
 
 	public String getTableName() {
@@ -39,6 +46,14 @@ public class FieldChangeRecord extends AbstractEntity implements Serializable {
 		this.tableName = tableName;
 	}
 
+	public int getPkId() {
+		return pkId;
+	}
+
+	public void setPkId(int pkId) {
+		this.pkId = pkId;
+	}
+
 	public String getFieldName() {
 		return fieldName;
 	}
@@ -47,12 +62,12 @@ public class FieldChangeRecord extends AbstractEntity implements Serializable {
 		this.fieldName = fieldName;
 	}
 
-	public String getValue() {
-		return value;
+	public String getFieldValue() {
+		return fieldValue;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setFieldValue(String fieldValue) {
+		this.fieldValue = fieldValue;
 	}
 	
 }

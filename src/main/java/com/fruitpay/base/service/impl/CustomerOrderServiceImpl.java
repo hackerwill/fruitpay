@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.NeedRecordEnum;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
@@ -26,7 +27,9 @@ import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
+import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.service.CustomerOrderService;
+import com.fruitpay.base.service.FieldChangeRecordService;
 import com.fruitpay.base.service.StaticDataService;
 
 @Service
@@ -42,6 +45,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private OrderPreferenceDAO orderPreferenceDAO;
 	@Inject 
 	private StaticDataService staticDataService;
+	@Inject 
+	private FieldChangeRecordService fieldChangeRecordService;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -169,6 +174,26 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), 
 				DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName())));
 		return firstDeliveryDate;
+	}
+
+	@Override
+	@Transactional
+	public CustomerOrder recoverTotalPrice(int orderId) {
+		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
+		int totalPrice = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.totalPrice, orderId, Integer.class);
+		customerOrder.setTotalPrice(totalPrice);
+		customerOrder = customerOrderDAO.save(customerOrder);
+		return customerOrder;
+	}
+	
+	@Override
+	@Transactional
+	public CustomerOrder recoverTaskStatus(int orderId) {
+		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
+		OrderStatus orderStatus = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.orderStatus, orderId, OrderStatus.class);
+		customerOrder.setOrderStatus(orderStatus);
+		customerOrder = customerOrderDAO.save(customerOrder);
+		return customerOrder;
 	}
 
 }

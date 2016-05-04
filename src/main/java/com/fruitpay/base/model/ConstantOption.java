@@ -20,7 +20,7 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="option_id")
-	private int optionId;
+	private Integer optionId;
 
 	@Column(name="option_name")
 	private String optionName;
@@ -32,7 +32,7 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 	private String validFlag;
 
 	@Column(name="order_no")
-	private int orderNo;
+	private Integer orderNo;
 	
 	@ManyToOne
 	@JoinColumn(name="const_id")
@@ -42,11 +42,11 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 	public ConstantOption() {
 	}
 
-	public int getOptionId() {
+	public Integer getOptionId() {
 		return optionId;
 	}
 
-	public void setOptionId(int optionId) {
+	public void setOptionId(Integer optionId) {
 		this.optionId = optionId;
 	}
 
@@ -82,11 +82,11 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 		this.constant = constant;
 	}
 
-	public int getOrderNo() {
+	public Integer getOrderNo() {
 		return orderNo;
 	}
 
-	public void setOrderNo(int orderNo) {
+	public void setOrderNo(Integer orderNo) {
 		this.orderNo = orderNo;
 	}
 

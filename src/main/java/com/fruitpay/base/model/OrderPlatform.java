@@ -19,7 +19,7 @@ public class OrderPlatform extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="platform_id")
-	private int platformId;
+	private Integer platformId;
 
 	@Column(name="platform_desc")
 	private String platformDesc;
@@ -30,11 +30,11 @@ public class OrderPlatform extends AbstractEntity implements Serializable {
 	public OrderPlatform() {
 	}
 
-	public int getPlatformId() {
+	public Integer getPlatformId() {
 		return this.platformId;
 	}
 
-	public void setPlatformId(int platformId) {
+	public void setPlatformId(Integer platformId) {
 		this.platformId = platformId;
 	}
 

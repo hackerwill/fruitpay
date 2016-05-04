@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fruitpay.comm.annotation.NeedRecord;
 
 import java.util.Date;
 import java.util.List;
@@ -18,16 +19,14 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="CustomerOrder.findAll", query="SELECT c FROM CustomerOrder c")
-@Cacheable(false)
 public class CustomerOrder extends AbstractEntity  implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="order_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int orderId;
+	private Integer orderId;
 
-	
 	@Column(name="order_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
@@ -87,14 +86,16 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	private OrderProgram orderProgram;
 	
 	@Column(name="program_num")
-	private int programNum;
+	private Integer programNum;
 
 	@ManyToOne
 	@JoinColumn(name="order_status_id")
+	@NeedRecord
 	private OrderStatus orderStatus;
 
 	@ManyToOne
 	@JoinColumn(name="payment_mode_id")
+	@NeedRecord
 	private PaymentMode paymentMode;
 	
 	//bi-directional many-to-one association to ShipmentPeriod
@@ -143,13 +144,15 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="delivery_day")
 	@JsonProperty("deliveryDay")
+	@NeedRecord
 	private ConstantOption deliveryDay;
 	
 	@Column(name="shipping_cost")
-	private int shippingCost;
+	private Integer shippingCost;
 	
 	@Column(name="total_price")
-	private int totalPrice;
+	@NeedRecord
+	private Integer totalPrice;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	  @JoinTable(
@@ -159,7 +162,7 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	private List<Coupon> coupons;
 	
 	@Column(name="valid_flag")
-	private int validFlag;
+	private Integer validFlag;
 	
 	@Column(name="allpay_rtn_code")
 	private String allpayRtnCode;
@@ -171,11 +174,11 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	public CustomerOrder() {
 	}
 
-	public int getOrderId() {
+	public Integer getOrderId() {
 		return this.orderId;
 	}
 
-	public void setOrderId(int orderId) {
+	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
 	}
 
@@ -423,27 +426,27 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 		this.receiptVatNumber = receiptVatNumber;
 	}
 
-	public int getShippingCost() {
+	public Integer getShippingCost() {
 		return shippingCost;
 	}
 
-	public void setShippingCost(int shippingCost) {
+	public void setShippingCost(Integer shippingCost) {
 		this.shippingCost = shippingCost;
 	}
 
-	public int getTotalPrice() {
+	public Integer getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(int totalPrice) {
+	public void setTotalPrice(Integer totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-	public int getProgramNum() {
+	public Integer getProgramNum() {
 		return programNum;
 	}
 
-	public void setProgramNum(int programNum) {
+	public void setProgramNum(Integer programNum) {
 		this.programNum = programNum;
 	}
 
@@ -473,11 +476,11 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 		return coupon;
 	}
 
-	public int getValidFlag() {
+	public Integer getValidFlag() {
 		return validFlag;
 	}
 
-	public void setValidFlag(int validFlag) {
+	public void setValidFlag(Integer validFlag) {
 		this.validFlag = validFlag;
 	}
 

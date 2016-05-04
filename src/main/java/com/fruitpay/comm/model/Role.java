@@ -2,7 +2,6 @@ package com.fruitpay.comm.model;
 
 import java.io.Serializable;
 
-import com.fruitpay.backend.model.Manager;
 import com.fruitpay.base.model.Customer;
 
 public class Role implements Serializable {
@@ -23,13 +22,6 @@ public class Role implements Serializable {
 		this.charactor = "customer";
 		this.userId = String.valueOf(customer.getCustomerId());
 		this.userName = customer.getFirstName();
-	}
-	
-	public Role(Manager manager){
-		super();
-		this.charactor = "manager";
-		this.userId = manager.getManagerId();
-		this.userName = manager.getManagerId();
 	}
 	
 	public String getCharactor() {

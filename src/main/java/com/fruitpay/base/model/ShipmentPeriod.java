@@ -16,7 +16,7 @@ public class ShipmentPeriod extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="period_id")
-	private int periodId;
+	private Integer periodId;
 
 	@Column(name="period_desc")
 	private String periodDesc;
@@ -30,11 +30,11 @@ public class ShipmentPeriod extends AbstractEntity implements Serializable {
 	public ShipmentPeriod() {
 	}
 
-	public int getPeriodId() {
+	public Integer getPeriodId() {
 		return this.periodId;
 	}
 
-	public void setPeriodId(int periodId) {
+	public void setPeriodId(Integer periodId) {
 		this.periodId = periodId;
 	}
 

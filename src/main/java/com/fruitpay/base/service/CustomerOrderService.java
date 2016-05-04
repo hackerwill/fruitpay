@@ -37,5 +37,9 @@ public interface CustomerOrderService {
 	public CustomerOrder findOneIncludingOrderPreference(Integer orderId);
 	
 	public LocalDate findOrderFirstDeliveryDate(int orderId);
+	
+	public CustomerOrder recoverTotalPrice(int orderId);
+
+	public CustomerOrder recoverTaskStatus(int orderId);
 
 }

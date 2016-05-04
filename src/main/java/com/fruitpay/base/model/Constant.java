@@ -20,7 +20,7 @@ public class Constant extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="const_id")
-	private int constId;
+	private Integer constId;
 
 	@Column(name="const_name")
 	private String constName;
@@ -36,11 +36,11 @@ public class Constant extends AbstractEntity implements Serializable {
 	public Constant() {
 	}
 
-	public int getConstId() {
+	public Integer getConstId() {
 		return constId;
 	}
 
-	public void setConstId(int constId) {
+	public void setConstId(Integer constId) {
 		this.constId = constId;
 	}
 
