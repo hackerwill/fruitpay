@@ -157,12 +157,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		order.setTotalPrice(totalPrice);
 		order.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreayCancel.getStatus()));
 		
-		this.mockMvc.perform(put("/orderCtrl/order")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(order)))
-	   		.andExpect(status().isOk())
-	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.receiverAddress", is(order.getReceiverAddress())));
+		
+		order = customerOrderService.updateCustomerOrder(order);
 		
 		order = customerOrderService.recoverOrderStatus(order.getOrderId());
 		order = customerOrderService.recoverTotalPrice(order.getOrderId());
