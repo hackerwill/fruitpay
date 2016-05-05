@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,16 @@ public class AbstractEntityListener {
 		abstractEntity.setCreateDate(new Date());
 		abstractEntity.setUpdateDate(new Date());
 
+	}
+	
+	//有可能遇到同一次交易裡面,就要回復狀態,因此每次插入資料到資料庫後,再做一次double check
+	@PostPersist
+	protected void safePreviousRecordDoubleCheck(AbstractEntity abstractEntity) throws IllegalAccessException, IllegalArgumentException, ClassNotFoundException {
+		if(abstractEntity.getPreviousRecords() == null) {
+			List<FieldChangeRecord> records = NeedRecordHelper.getFieldChangeRecords(abstractEntity);
+			abstractEntity.setPreviousRecords(records); 
+		}
+		
 	}
 	
 	@PostLoad
