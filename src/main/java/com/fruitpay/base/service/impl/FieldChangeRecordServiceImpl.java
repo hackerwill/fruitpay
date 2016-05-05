@@ -30,6 +30,8 @@ public class FieldChangeRecordServiceImpl implements FieldChangeRecordService {
 	@Override
 	@Transactional
 	public List<FieldChangeRecord> add(List<FieldChangeRecord> fieldChangeRecords) {
+		logger.info("Enter add filedChangeRecord");
+		logger.info(fieldChangeRecords.size());
 		fieldChangeRecords = fieldChangeRecordDAO.save(fieldChangeRecords);
 		return fieldChangeRecords;
 	}
