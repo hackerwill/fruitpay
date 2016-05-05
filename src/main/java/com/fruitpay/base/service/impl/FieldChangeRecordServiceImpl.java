@@ -46,7 +46,7 @@ public class FieldChangeRecordServiceImpl implements FieldChangeRecordService {
 				pkId, tableName, fieldName);
 		
 		if(record == null)
-			throw new NullPointerException("The record is not found in field '" + fieldName + "', table '" + tableName+ "', " + ", id " + pkId );
+			throw new NullPointerException("The record is not found in field = '" + fieldName + "', table ='" + tableName+ "', id =" + pkId );
 		
 		try {
 			

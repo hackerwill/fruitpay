@@ -160,8 +160,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		
 		order = customerOrderService.updateCustomerOrder(order);
 		
-		order = customerOrderService.recoverOrderStatus(order.getOrderId());
 		order = customerOrderService.recoverTotalPrice(order.getOrderId());
+		order = customerOrderService.recoverOrderStatus(order.getOrderId());
 		Assert.assertEquals(dataUtil.getCustomerOrder().getTotalPrice(), order.getTotalPrice());
 		Assert.assertEquals(dataUtil.getCustomerOrder().getDeliveryDay().getOptionId(), order.getDeliveryDay().getOptionId());
 	
