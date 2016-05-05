@@ -54,7 +54,7 @@ public class AbstractEntityListener {
 	}
 	
 	@PostLoad
-    private void safePreviousRecord(AbstractEntity abstractEntity) throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
+	protected void safePreviousRecord(AbstractEntity abstractEntity) throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
 		List<FieldChangeRecord> records = NeedRecordHelper.getFieldChangeRecords(abstractEntity);
 		abstractEntity.setPreviousRecords(records); 
     }
