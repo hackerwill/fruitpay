@@ -188,7 +188,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	
 	@Override
 	@Transactional
-	public CustomerOrder recoverTaskStatus(int orderId) {
+	public CustomerOrder recoverOrderStatus(int orderId) {
 		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
 		OrderStatus orderStatus = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.orderStatus, orderId, OrderStatus.class);
 		customerOrder.setOrderStatus(orderStatus);

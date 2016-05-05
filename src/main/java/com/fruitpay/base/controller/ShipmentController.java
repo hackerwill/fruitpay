@@ -73,7 +73,7 @@ public class ShipmentController {
 		shipmentChange = shipmentService.updateValidFlag(shipmentChange, CommConst.VALID_FLAG.INVALID);
 		
 		if(shipmentChange.getShipmentChangeType().getOptionName().equals(ShipmentStatus.shipmentCancel.toString())){
-			customerOrderService.recoverTaskStatus(shipmentChange.getCustomerOrder().getOrderId());
+			customerOrderService.recoverOrderStatus(shipmentChange.getCustomerOrder().getOrderId());
 		}
 		
 		return shipmentChange;

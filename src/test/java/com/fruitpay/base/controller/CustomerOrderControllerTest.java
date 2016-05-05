@@ -164,7 +164,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverAddress", is(order.getReceiverAddress())));
 		
-		order = customerOrderService.recoverTaskStatus(order.getOrderId());
+		order = customerOrderService.recoverOrderStatus(order.getOrderId());
 		order = customerOrderService.recoverTotalPrice(order.getOrderId());
 		Assert.assertEquals(dataUtil.getCustomerOrder().getTotalPrice(), order.getTotalPrice());
 		Assert.assertEquals(dataUtil.getCustomerOrder().getDeliveryDay().getOptionId(), order.getDeliveryDay().getOptionId());

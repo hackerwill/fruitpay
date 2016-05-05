@@ -40,6 +40,6 @@ public interface CustomerOrderService {
 	
 	public CustomerOrder recoverTotalPrice(int orderId);
 
-	public CustomerOrder recoverTaskStatus(int orderId);
+	public CustomerOrder recoverOrderStatus(int orderId);
 
 }
