@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.auth.AuthenticationException;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,7 @@ public class AbstractEntityListener {
     }
 	
 	@PreUpdate
+	@Transactional
 	protected void onUpdate(AbstractEntity abstractEntity) {
 		
 		abstractEntity.setUpdateUser(getCurrentUser(abstractEntity));
