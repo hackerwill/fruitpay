@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.persistence.Id;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.fruitpay.base.model.FieldChangeRecord;
@@ -18,8 +19,10 @@ import com.google.gson.GsonBuilder;
 
 public class NeedRecordHelper {
 	
+	private static final Logger logger = Logger.getLogger(NeedRecordHelper.class);
+	
 	public static <T> List<FieldChangeRecord> getFieldChangeRecords(T t) throws IllegalAccessException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
-		
+		logger.info("Enter getFieldChangeRecords");;
 		List<FieldChangeRecord> records = new ArrayList<>();
 		Map<String, String> map = getNeedRecordList(t);
 		int pkId = getObjectId(t);
@@ -27,6 +30,10 @@ public class NeedRecordHelper {
 		
 		map.forEach((key, value) -> {
 			FieldChangeRecord record = new FieldChangeRecord();
+			logger.info(pkId);
+			logger.info(tableName);
+			logger.info(key);
+			logger.info(value);
 			record.setPkId(pkId);
 			record.setTableName(tableName);
 			record.setFieldName(key);
