@@ -61,7 +61,6 @@ public class AbstractEntityListener {
     }
 	
 	@PreUpdate
-	@Transactional
 	protected void onUpdate(AbstractEntity abstractEntity) {
 		
 		abstractEntity.setUpdateUser(getCurrentUser(abstractEntity));
