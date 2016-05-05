@@ -68,17 +68,11 @@ public class AbstractEntityListener {
 		
 		try {
 			List<FieldChangeRecord> fieldChangeRecords = NeedRecordHelper.getFieldChangeRecords(abstractEntity);
-			logger.info("test with fieldChangeRecords");
-			logger.info(fieldChangeRecords == null || fieldChangeRecords.size() == 0);
 			if(fieldChangeRecords.isEmpty())
 				return;
 			
 			List<FieldChangeRecord> previousRecords = abstractEntity.getPreviousRecords();
-			logger.info("test with it previousRecords");
-			logger.info(previousRecords == null || previousRecords.size() == 0);
 			previousRecords = filterList(fieldChangeRecords, previousRecords);
-			logger.info("test with previousRecords");
-			logger.info(previousRecords == null || previousRecords.size() == 0);
 			if(previousRecords.isEmpty())
 				return;
 			

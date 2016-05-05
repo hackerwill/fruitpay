@@ -74,7 +74,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
 	
 		BeanUtils.copyProperties(customerOrder, origin);
-		origin = customerOrderDAO.save(origin);
+		origin = customerOrderDAO.saveAndFlush(origin);
 		return origin;
 	}
 

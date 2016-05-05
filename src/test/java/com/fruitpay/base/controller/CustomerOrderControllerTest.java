@@ -156,8 +156,6 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		order.setReceiverAddress(testAddress);
 		order.setTotalPrice(totalPrice);
 		order.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreayCancel.getStatus()));
-		
-		
 		order = customerOrderService.updateCustomerOrder(order);
 		
 		order = customerOrderService.recoverTotalPrice(order.getOrderId());
