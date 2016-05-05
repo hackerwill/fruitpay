@@ -2,6 +2,9 @@ package com.fruitpay.base.service;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.junit.Assert;
@@ -45,8 +48,10 @@ public class FieldChangeRecordServiceTest extends AbstractSpringJnitTest{
 		r2.setFieldName(fieldName);
 		r2.setFieldValue(String.valueOf(fieldValue2));
 		
-		fieldChangeRecordDAO.save(r1);
-		fieldChangeRecordDAO.save(r2);
+		List<FieldChangeRecord>  fieldChangeRecords = new ArrayList<>();
+		fieldChangeRecords.add(r1);
+		fieldChangeRecords.add(r2);
+		fieldChangeRecordService.add(fieldChangeRecords);
 		
 		Integer value = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.totalPrice, pkId, Integer.class);
 		Assert.assertEquals(fieldValue2, value);
@@ -78,8 +83,10 @@ public class FieldChangeRecordServiceTest extends AbstractSpringJnitTest{
 		r2.setFieldName(fieldName);
 		r2.setFieldValue(String.valueOf(optionId2));
 		
-		fieldChangeRecordDAO.save(r1);
-		fieldChangeRecordDAO.save(r2);
+		List<FieldChangeRecord>  fieldChangeRecords = new ArrayList<>();
+		fieldChangeRecords.add(r1);
+		fieldChangeRecords.add(r2);
+		fieldChangeRecordService.add(fieldChangeRecords);
 		
 		ConstantOption deliveryDay = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.deliveryDay, pkId, ConstantOption.class);
 		Assert.assertEquals(deliveryDay2.getOptionId(), deliveryDay.getOptionId());

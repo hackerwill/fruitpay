@@ -32,7 +32,7 @@ public class FieldChangeRecordServiceImpl implements FieldChangeRecordService {
 	public List<FieldChangeRecord> add(List<FieldChangeRecord> fieldChangeRecords) {
 		logger.info("Enter add filedChangeRecord");
 		logger.info(fieldChangeRecords.size());
-		fieldChangeRecords.forEach(fieldRecord -> fieldChangeRecordDAO.saveAndFlush(fieldRecord));
+		fieldChangeRecords = fieldChangeRecordDAO.save(fieldChangeRecords);
 		return fieldChangeRecords;
 	}
 
