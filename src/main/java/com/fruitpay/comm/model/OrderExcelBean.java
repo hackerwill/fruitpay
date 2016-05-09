@@ -143,6 +143,9 @@ public class OrderExcelBean implements Serializable {
 		this.deliveryDay = customerOrder.getDeliveryDay().getOptionDesc();
 		orderExcelMap.put(String.valueOf(Order.deliveryDay), deliveryDay);
 		
+		this.programNum = customerOrder.getProgramNum();
+		orderExcelMap.put(String.valueOf(Order.programNum), programNum);
+		
 	}
 	
 	
