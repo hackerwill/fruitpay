@@ -42,6 +42,9 @@ public class ShipmentChange extends AbstractEntity implements Serializable{
 	
 	@Column(name="valid_flag")
 	private Integer validFlag;
+	
+	@Column(name="reason")
+	private String reason;
 
 	public Integer getId() {
 		return id;
@@ -81,6 +84,14 @@ public class ShipmentChange extends AbstractEntity implements Serializable{
 
 	public void setValidFlag(Integer validFlag) {
 		this.validFlag = validFlag;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 	
 }

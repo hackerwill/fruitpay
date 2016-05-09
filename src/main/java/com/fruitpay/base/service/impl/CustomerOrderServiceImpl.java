@@ -180,6 +180,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Transactional
 	public CustomerOrder recoverTotalPrice(int orderId) {
 		CustomerOrder customerOrder = customerOrderDAO.findOne(orderId);
+		logger.info(fieldChangeRecordService);
 		int totalPrice = fieldChangeRecordService.findLastRecord(NeedRecordEnum.CustomerOrder.totalPrice, orderId, Integer.class);
 		customerOrder.setTotalPrice(totalPrice);
 		customerOrder = customerOrderDAO.save(customerOrder);

@@ -62,7 +62,6 @@ public class AbstractEntityListener {
     }
 	
 	@PreUpdate
-	@Transactional
 	protected void onUpdate(AbstractEntity abstractEntity) {
 		
 		abstractEntity.setUpdateUser(getCurrentUser(abstractEntity));
@@ -107,6 +106,7 @@ public class AbstractEntityListener {
 	
 	private void addFieldChangeRecords( List<FieldChangeRecord> fieldChangeRecords){
 		FieldChangeRecordService fieldChangeRecordService = SpringApplicationContext.getBean(FieldChangeRecordService.class);
+		logger.info(fieldChangeRecordService);
 		fieldChangeRecordService.add(fieldChangeRecords);
 	}
 	

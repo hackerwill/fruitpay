@@ -176,7 +176,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 			return null;
 		
 		//若已經取消, 不需要再配送
-		if(isCancel(incrementDate, shipmentChanges))
+		if(isAfterCancel(incrementDate, shipmentChanges))
 			return null;
 		
 		if(searchDate.equals(incrementDate)) {
@@ -206,10 +206,25 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return false;
 	}
 	
+	private boolean isAfterCancel(LocalDate date, List<ShipmentChange> shipmentChanges){
+		
+		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
+			ShipmentChange shipmentChange = iterator.next();
+			
+			if(date.isAfter(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
+					&& ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	private boolean isCancel(LocalDate date, List<ShipmentChange> shipmentChanges){
 		
 		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
 			ShipmentChange shipmentChange = iterator.next();
+			
 			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
 					&& ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
 				return true;
