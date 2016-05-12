@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.comm.model.SelectOption;
+import com.fruitpay.comm.utils.DateUtil;
 
 @Service
 public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDataService {
@@ -181,11 +183,11 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	@Override
 	public String getNextReceiveDayStr(Date nowTime, DayOfWeek dayOfWeek){
 		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
-		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate now = DateUtil.toLocalDate(nowTime);
 		//下一個收貨日
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
 		//提前的天數
-		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(2);
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(4);
 		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
 		
 		boolean greaterThanNow = compareTimeGreaterThanNow(
@@ -199,11 +201,10 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	public LocalDate getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
 		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
-		LocalDate now = Instant.ofEpochMilli(nowTime.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-		//下一個收貨日
+		LocalDate now = DateUtil.toLocalDate(nowTime);//下一個收貨日
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
 		//提前的天數
-		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(2);
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(4);
 		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
 		
 		boolean greaterThanNow = compareTimeGreaterThanNow(

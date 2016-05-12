@@ -67,7 +67,7 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
 		cal.set(2015, 11, 20, 0, 0);
 		cal.getTime();
 		String nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
-		Assert.assertEquals("12-23", nextReceiveDay);
+		Assert.assertEquals("12-30", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 21, 0, 0);
@@ -91,7 +91,7 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
 		cal.set(2016, 00, 03, 0, 0);
 		cal.getTime();
 		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.WEDNESDAY);
-		Assert.assertEquals("01-06", nextReceiveDay);
+		Assert.assertEquals("01-13", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2016, 00, 03, 0, 0);
@@ -103,7 +103,7 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
 		cal.set(2015, 11, 31, 0, 0);
 		cal.getTime();
 		nextReceiveDay = staticDataService.getNextReceiveDayStr(cal.getTime(), DayOfWeek.MONDAY);
-		Assert.assertEquals("01-04", nextReceiveDay);
+		Assert.assertEquals("01-11", nextReceiveDay);
 		
 		cal = Calendar.getInstance();
 		cal.set(2015, 11, 30, 0, 0);

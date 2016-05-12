@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.NeedRecordEnum;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;

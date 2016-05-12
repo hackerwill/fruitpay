@@ -9,8 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderStatus;
 
 public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> {
 	
@@ -18,7 +20,11 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public Page<CustomerOrder> findByValidFlag(int validFlag, Pageable pageable);
 	
+	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, Pageable pageable);
+	
 	public List<CustomerOrder> findByValidFlag(int validFlag);
+	
+	public List<CustomerOrder> findByValidFlagAndDeliveryDayAndOrderStatusIn(int validFlag, ConstantOption deliveryDay, List<OrderStatus> orderStatues);
 	
 	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
 	

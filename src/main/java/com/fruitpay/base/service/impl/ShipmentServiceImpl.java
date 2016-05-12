@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -28,10 +29,13 @@ import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.ShipmentChangeDAO;
 import com.fruitpay.base.dao.ShipmentRecordDAO;
+import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentRecord;
@@ -53,6 +57,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private StaticDataService staticDataService;
 	@Inject
 	private ShipmentRecordDAO shipmentRecordDAO;
+	@Inject
+	private CustomerOrderDAO customerOrderDAO;
 	
 	//if one delivery day is pulse, the next delivery day plus day amount
 	private final int JUMP_DAY = 7;
@@ -247,8 +253,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return false;
 	}
 	
-	
-
 	@Override
 	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size) {
 		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByValidFlag(
@@ -262,6 +266,60 @@ public class ShipmentServiceImpl implements ShipmentService {
 		customerOrder.setOrderId(orderId);
 		List<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
 		return shipmentRecords;
+	}
+
+	@Override
+	public Page<CustomerOrder> listAllOrdersByDate(LocalDate date, int page, int size) {
+		Constant deliveryDayConstant = staticDataService.getConstant(6);
+		List<ConstantOption> deliveryDays = deliveryDayConstant.getConstOptions();
+		List<OrderStatus> orderStatues = staticDataService.getAllOrderStatus().stream()
+					.filter(orderStatus -> {
+						return orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.AlreadyCheckout.getStatus()
+								|| orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.CreditPaySuccessful.getStatus();
+					}).collect(Collectors.toList());
+		
+		DayOfWeek dayOfWeek = date.getDayOfWeek();
+		deliveryDays = deliveryDays.stream()
+			.filter(deliveryDay -> dayOfWeek.getValue() == Integer.parseInt(deliveryDay.getOptionName()))
+			.collect(Collectors.toList());
+		
+		if(deliveryDays.size() == 0)
+			return customerOrderDAO.findByOrderIdIn(new ArrayList<Integer>(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+		
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByValidFlagAndDeliveryDayAndOrderStatusIn(
+				VALID_FLAG.VALID.value(), deliveryDays.get(0), orderStatues);
+		
+		List<Integer> orderIds = customerOrders.stream().filter(customerOrder -> {
+
+			LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
+			int duration = customerOrder.getShipmentPeriod().getDuration();
+			int orderId = customerOrder.getOrderId();
+			
+			List<ShipmentChange> shipmentChanges = this.findChangesByOrderId(orderId);
+			List<ShipmentRecord> shipmentRecords = this.findRecordsByOrderId(orderId);
+			
+			ConstantOption status = this.getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, 
+					dayOfWeek, duration);
+			
+			if(status != null && (status.getOptionName().equals(shipmentDeliver.getOptionName()) 
+					|| status.getOptionName().equals(shipmentReady.getOptionName()))) {
+				return true;
+			} else {
+				return false;
+			}
+		}).map(customerOrder -> {
+			return customerOrder.getOrderId();
+		}).collect(Collectors.toList());
+		
+		Page<CustomerOrder> customerOrderPages = customerOrderDAO.findByOrderIdIn(orderIds, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+		
+		return customerOrderPages;
+	}
+
+	@Override
+	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, int page, int size) {
+		Page<CustomerOrder> customerOrderPages = customerOrderDAO.findByOrderIdIn(orderIds, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+		return customerOrderPages;
 	}
 
 }

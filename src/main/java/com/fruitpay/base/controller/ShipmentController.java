@@ -1,5 +1,8 @@
 package com.fruitpay.base.controller;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -124,6 +127,24 @@ public class ShipmentController {
 		List<ShipmentDeliveryStatus> shipmentDeliveryStatuses = shipmentService.getAllDeliveryStatus(startDate, endDate, orderId);
 		
 		return shipmentDeliveryStatuses;
+	}
+	
+	@RequestMapping(value = "/shipmentPreview", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody Page<CustomerOrder> getShipmentPreview(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
+		
+		LocalDate localDate = null;
+		if(date == null){
+			return shipmentService.findByOrderIdIn(new ArrayList<Integer>(), page, size);
+		}else{
+			localDate = DateUtil.toLocalDate(date);	
+		}
+		
+		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersByDate(localDate, page, size);
+		return customerOrders;
 	}
 
 }
