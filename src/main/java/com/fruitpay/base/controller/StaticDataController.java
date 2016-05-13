@@ -1,6 +1,7 @@
 package com.fruitpay.base.controller;
 
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -137,9 +138,25 @@ public class StaticDataController {
 						return Integer.compare(o1.getOrderNo(), o2.getOrderNo());
 					}
 				});
-		
+		//針對配送日期的邏輯做調整
+		if(constant.getConstId() == 6) {
+			options = options.stream()
+					.filter(option -> option.getOptionName().equals(String.valueOf(returnNextDayOfWeek())))
+					.collect(Collectors.toList());
+		}
 		constant.setConstOptions(options);
 		return constant;
+	}
+	
+	private int returnNextDayOfWeek() {
+		int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+		if(dayOfWeek == 1 || dayOfWeek == 2 || dayOfWeek == 3){
+			return 1;
+		}else if(dayOfWeek == 4 || dayOfWeek == 5) {
+			return 3;
+		}else{
+			return 5;
+		}
 	}
 	
 	@RequestMapping(value = "/adminConstant/{constId}", method = RequestMethod.GET)
