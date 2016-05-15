@@ -1,7 +1,9 @@
 package com.fruitpay.base.service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,10 +26,14 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void testWithListAllOrdersByDate() throws Exception {
-		LocalDate date = LocalDate.of(2016, Month.MAY, 13);
+		LocalDate nextFriday = calcNextFriday(LocalDate.now());
 		
-		Page<CustomerOrder> customerOrders =  shipmentService.listAllOrdersByDate(date, 1, 10);
+		Page<CustomerOrder> customerOrders =  shipmentService.listAllOrdersByDate(nextFriday, 1, 10);
 		Assert.assertNotEquals(customerOrders.getContent().size(), 0);
 	}
+	
+	private LocalDate calcNextFriday(LocalDate d) {
+		  return d.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+		}
 	
 }
