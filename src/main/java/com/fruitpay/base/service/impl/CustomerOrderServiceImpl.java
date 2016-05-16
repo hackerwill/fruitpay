@@ -73,7 +73,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		CustomerOrder origin = customerOrderDAO.findOne(customerOrder.getOrderId());
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
-	
+		
+		//若沒有顧客, 使用原本的即可
+		if(customerOrder.getCustomer() == null)
+			customerOrder.setCustomer(origin.getCustomer());
 		BeanUtils.copyProperties(customerOrder, origin);
 		origin = customerOrderDAO.saveAndFlush(origin);
 		return origin;
