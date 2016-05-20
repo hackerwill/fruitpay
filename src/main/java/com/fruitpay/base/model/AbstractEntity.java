@@ -25,7 +25,7 @@ public abstract class AbstractEntity implements Serializable {
 	
 	
 	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="create_id")
+	@JoinColumn(name="create_id", updatable=false)
 	@JsonIgnore 
 	protected Customer createUser;
 	
@@ -33,6 +33,9 @@ public abstract class AbstractEntity implements Serializable {
 	@JoinColumn(name="update_id")
 	@JsonIgnore 
 	protected Customer updateUser;
+	
+	@Transient
+	protected String updateDateUserName;
 	
 	@Column(name="create_date")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -71,6 +74,14 @@ public abstract class AbstractEntity implements Serializable {
 
 	public Customer getUpdateUser() {
 		return updateUser;
+	}
+
+	public String getUpdateUserName() {
+		return updateDateUserName;
+	}
+
+	public void setUpdateUserName(String updateDateUserName) {
+		this.updateDateUserName = updateDateUserName;
 	}
 
 	public void setUpdateUser(Customer updateUser) {

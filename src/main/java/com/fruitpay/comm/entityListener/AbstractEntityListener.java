@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fruitpay.base.model.AbstractEntity;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.FieldChangeRecord;
+import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.FieldChangeRecordService;
 import com.fruitpay.comm.auth.SysContent;
@@ -59,6 +60,19 @@ public class AbstractEntityListener {
 	protected void safePreviousRecord(AbstractEntity abstractEntity) throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
 		List<FieldChangeRecord> records = NeedRecordHelper.getFieldChangeRecords(abstractEntity);
 		abstractEntity.setPreviousRecords(records); 
+		
+		Customer updateCustomer = abstractEntity.getUpdateUser();
+		
+		if(updateCustomer != null) {
+			StringBuilder userName = new StringBuilder();
+			if(updateCustomer.getLastName() != null) 
+				userName.append(updateCustomer.getLastName());
+			if(updateCustomer.getFirstName() != null) 
+				userName.append(updateCustomer.getFirstName());
+			if(userName.length() > 0)
+				abstractEntity.setUpdateUserName(userName.toString());
+		}
+			
     }
 	
 	@PreUpdate
