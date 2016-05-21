@@ -296,7 +296,6 @@ public class AllpayCheckoutController {
 			oPayment.Send.Remark = "";
 			oPayment.Send.ChooseSubPayment = PaymentMethodItem.None;
 			oPayment.Send.NeedExtraPaidInfo = ExtraPaymentInfo.No;
-			oPayment.Send.DeviceSource = DeviceType.PC;
 			// 加入選購商品資料。
 			Item a1 = new Item();
 			a1.Name = programName;
