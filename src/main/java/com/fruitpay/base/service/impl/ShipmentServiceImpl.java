@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -166,12 +168,14 @@ public class ShipmentServiceImpl implements ShipmentService {
 			List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords,  
 			DayOfWeek dayOfWeek, int duration){
 		
-		if(isShipped(searchDate, shipmentRecords)){
+		if(isShipped(searchDate, shipmentChanges, shipmentRecords)){
 			return shipmentDelivered;
 		}else if(isCancel(searchDate, shipmentChanges)) {
 			return shipmentCancel;
 		}else if(isPulse(searchDate, shipmentChanges)) {
 			return shipmentPulse;
+		}else if(isNeedShipment(searchDate, shipmentChanges)){
+			return shipmentDeliver;
 		}
 		
 		if(searchDate.isBefore(LocalDate.now()) || searchDate.isBefore(incrementDate))
@@ -185,6 +189,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 			return null;
 		
 		if(searchDate.equals(incrementDate)) {
+			// 檢查是否有同個週期內其他的修改狀態, 若有的話, 原本的日期要做的事情就不用做 
+			if(isOtherChangeInSamePeriod(searchDate, shipmentChanges, duration)) {
+				return null;
+			}
+			
 			LocalDate nextShipmentDay = staticDataService.getNextReceiveDay(new Date(), dayOfWeek);
 			if(searchDate.isBefore(nextShipmentDay))
 				return shipmentReady;
@@ -198,12 +207,48 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 	}
 	
-	private boolean isShipped(LocalDate date, List<ShipmentRecord> shipmentRecords) {
+	private boolean isOtherChangeInSamePeriod(LocalDate date, List<ShipmentChange> shipmentChanges, int duration) {
+		LocalDate startDate = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+		LocalDate endDate = startDate.plusDays(duration - 1);
 		
+		boolean existed = shipmentChanges.stream().anyMatch(shipmentChange -> {
+			LocalDate thisDate = DateUtil.toLocalDate(shipmentChange.getApplyDate());
+			if((startDate.isBefore(thisDate) && endDate.isAfter(thisDate)
+					|| startDate.equals(thisDate) || endDate.equals(thisDate))) {
+				return true;
+			}
+			return false;
+		});
+		
+		return existed;
+	}
+	
+	private boolean isShipped(LocalDate date, List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords) {
+		
+		boolean matchChange = shipmentChanges.stream().anyMatch(shipmentChange -> {
+			return ShipmentStatus.shipmentDelivered.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())
+					&& date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()));
+		});
+		
+		boolean recordMatch = false;
 		for (Iterator<ShipmentRecord> iterator = shipmentRecords.iterator(); iterator.hasNext();) {
 			ShipmentRecord shipmentRecord = iterator.next();
 			if(date.equals(DateUtil.toLocalDate(shipmentRecord.getDate()))
 					&& ShipmentStatus.shipmentDelivered.toString().equals(shipmentRecord.getShipmentType().getOptionName())){
+				recordMatch = true;
+			}
+		}
+		
+		return matchChange || recordMatch;
+	}
+	
+	private boolean isNeedShipment(LocalDate date, List<ShipmentChange> shipmentChanges){
+		
+		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
+			ShipmentChange shipmentChange = iterator.next();
+			
+			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
+					&& ShipmentStatus.shipmentDeliver.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
 				return true;
 			}
 		}
