@@ -164,7 +164,7 @@ public class StaticDataController {
 	}
 	
 	@RequestMapping(value = "/adminConstant", method = RequestMethod.GET)
-	//@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
 	public @ResponseBody Page<Constant> getAllAdminConstants(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size){
@@ -207,7 +207,7 @@ public class StaticDataController {
 	}
 	
 	@RequestMapping(value = "/adminConstantOption/{constId}", method = RequestMethod.GET)
-	//@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
 	public @ResponseBody Page<ConstantOption> getAllAdminConstants(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
