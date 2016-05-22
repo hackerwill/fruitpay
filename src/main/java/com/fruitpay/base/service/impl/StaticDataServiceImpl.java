@@ -14,8 +14,12 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.dao.ConstantDAO;
 import com.fruitpay.base.dao.ConstantOptionDAO;
@@ -141,8 +145,8 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	}
 
 	@Override
-	public List<Constant> getAllConstants() {
-		return constantDAO.findAll();
+	public Page<Constant> getAllConstants(int page, int size) {
+		return constantDAO.findAll(new PageRequest(page, size));
 	}
 
 	@Override
@@ -223,6 +227,58 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	public ConstantOption getConstantOptionByName(String optionName) {
 		ConstantOption constantOption = constantOptionDAO.findByOptionName(optionName);
 		return constantOption;
+	}
+
+
+	@Override
+	@Transactional
+	public Constant addConstant(Constant constant) {
+		constant = constantDAO.save(constant);
+		return constant;
+	}
+
+
+	@Override
+	@Transactional
+	public Constant updateConstant(Constant constant) {
+		Constant origin = constantDAO.findOne(constant.getConstId());
+		
+		BeanUtils.copyProperties(constant, origin);
+		origin = constantDAO.save(origin);
+		return origin;
+	}
+
+
+	@Override
+	@Transactional
+	public ConstantOption addConstantOption(ConstantOption constantOption) {
+		constantOption = constantOptionDAO.save(constantOption);
+		return constantOption;
+	}
+
+
+	@Override
+	@Transactional
+	public ConstantOption updateConstantOption(ConstantOption constantOption) {
+		ConstantOption origin = constantOptionDAO.findOne(constantOption.getOptionId());
+		
+		BeanUtils.copyProperties(constantOption, origin);
+		origin = constantOptionDAO.save(origin);
+		return origin;
+	}
+
+
+	@Override
+	public List<Constant> getAllConstants() {
+		return constantDAO.findAll();
+	}
+
+
+	@Override
+	public Page<ConstantOption> getConstantOptions(Integer constId, int page, int size) {
+		Constant constant = new Constant();
+		constant.setConstId(constId);
+		return constantOptionDAO.findByConstant(constant, new PageRequest(page, size, new Sort(Sort.Direction.ASC, "orderNo")));
 	}
 
 }

@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
@@ -269,6 +270,21 @@ public class DataUtil {
 		customerOrder.setOrderPreferences(orderPreferences);
 		
 		return customerOrder;
+	}
+	
+	public Constant getConstant() {
+		Constant constant = new Constant();
+		constant.setConstName("TestContant");
+		return constant;
+	}
+	
+	public ConstantOption getConstantOption(Constant constant) {
+		ConstantOption constantOption = new ConstantOption();
+		constantOption.setConstant(constant);
+		constantOption.setOrderNo(0);
+		constantOption.setValidFlag(VALID_FLAG.VALID.value());
+		constantOption.setOptionName("testOptionName");
+		return constantOption;
 	}
 
 }

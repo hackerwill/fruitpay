@@ -9,10 +9,13 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fruitpay.base.comm.AllowRole;
@@ -29,6 +32,7 @@ import com.fruitpay.base.model.Product;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
+import com.fruitpay.comm.utils.AssertUtils;
 
 @Controller
 @RequestMapping("staticDataCtrl")
@@ -157,6 +161,77 @@ public class StaticDataController {
 		}else{
 			return 5;
 		}
+	}
+	
+	@RequestMapping(value = "/adminConstant", method = RequestMethod.GET)
+	//@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody Page<Constant> getAllAdminConstants(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size){
+		Page<Constant> constants = staticDataService.getAllConstants(page, size);
+		
+		constants = constants.map(constant -> {
+			List<ConstantOption> constantOptions = constant.getConstOptions();
+			constantOptions = constantOptions.stream().sorted(new Comparator<ConstantOption>() {
+				@Override
+				public int compare(ConstantOption o1, ConstantOption o2) {
+					return Integer.compare(o1.getOrderNo(), o2.getOrderNo());
+				}
+			}).collect(Collectors.toList());
+			constant.setConstOptions(constantOptions);
+			
+			return constant;
+		});
+		
+		return constants;
+	}
+	
+	@RequestMapping(value = "/adminConstant", method = RequestMethod.POST)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody Constant addAdminConstant(@RequestBody Constant constant){
+		if(AssertUtils.isEmpty(constant))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+			
+		constant = staticDataService.addConstant(constant);
+		return constant;
+	}
+	
+	@RequestMapping(value = "/adminConstant", method = RequestMethod.PUT)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody Constant updateAdminConstant(@RequestBody Constant constant){
+		if(AssertUtils.isEmpty(constant))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+			
+		constant = staticDataService.updateConstant(constant);
+		return constant;
+	}
+	
+	@RequestMapping(value = "/adminConstantOption/{constId}", method = RequestMethod.GET)
+	//@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody Page<ConstantOption> getAllAdminConstants(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@PathVariable int constId){
+		Page<ConstantOption> constantOptions = staticDataService.getConstantOptions(constId, page, size);
+		
+		return constantOptions;
+	}
+	
+	@RequestMapping(value = "/adminConstant/constOption", method = RequestMethod.POST)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody ConstantOption insertConstantOption(@RequestBody ConstantOption constantOption){
+		if(AssertUtils.isEmpty(constantOption))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		constantOption = staticDataService.addConstantOption(constantOption);
+		return constantOption;
+	}
+	
+	@RequestMapping(value = "/adminConstant/constOption", method = RequestMethod.PUT)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody ConstantOption updateConstantOption(@RequestBody ConstantOption constantOption){
+		constantOption = staticDataService.updateConstantOption(constantOption);
+		return constantOption;
 	}
 	
 	@RequestMapping(value = "/adminConstant/{constId}", method = RequestMethod.GET)

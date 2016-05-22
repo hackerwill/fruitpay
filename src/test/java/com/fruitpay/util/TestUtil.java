@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class TestUtil {
 	 
@@ -18,7 +19,8 @@ public class TestUtil {
     
     public static byte[] convertObjectToJsonBytesByGson(Object object) throws UnsupportedEncodingException {
     	
-    	Gson gson = new Gson();
+    	Gson gson = new GsonBuilder()
+    			   .setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
     	String jsonString = gson.toJson(object);
     	return jsonString.getBytes("UTF-8");
     }

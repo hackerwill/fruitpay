@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.OrderPlatform;
@@ -46,7 +48,19 @@ public interface StaticDataService {
 	
 	public List<Constant> getAllConstants();
 	
+	public Page<Constant> getAllConstants(int page, int size);
+	
 	public Constant getConstant(Integer constId);
+	
+	public Page<ConstantOption> getConstantOptions(Integer constId, int page, int size);
+	
+	public Constant addConstant(Constant constant);
+	
+	public Constant updateConstant(Constant constant);
+	
+	public ConstantOption addConstantOption(ConstantOption constantOption);
+	
+	public ConstantOption updateConstantOption(ConstantOption constantOption);
 	
 	public ConstantOption getConstantOptionByName(String optionName);
 	

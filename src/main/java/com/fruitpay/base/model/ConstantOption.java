@@ -20,6 +20,7 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 
 	@Id
 	@Column(name="option_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer optionId;
 
 	@Column(name="option_name")
@@ -29,7 +30,7 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 	private String optionDesc;
 	
 	@Column(name="valid_flag")
-	private String validFlag;
+	private int validFlag;
 
 	@Column(name="order_no")
 	private Integer orderNo;
@@ -66,11 +67,11 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 		this.optionDesc = optionDesc;
 	}
 
-	public String getValidFlag() {
+	public int getValidFlag() {
 		return validFlag;
 	}
 
-	public void setValidFlag(String validFlag) {
+	public void setValidFlag(int validFlag) {
 		this.validFlag = validFlag;
 	}
 
