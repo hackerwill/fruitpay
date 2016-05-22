@@ -62,12 +62,21 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	}
 	
 	@Test
-	public void getAdminConstantShouldReturnConstantList() throws Exception{
+	public void getAdminConstantShouldReturnPageConstantList() throws Exception{
 		this.mockMvc.perform(get("/staticDataCtrl/adminConstant")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-			.andExpect(jsonPath("$", hasSize(greaterThan(0))));
+			.andExpect(jsonPath("$.content", hasSize(greaterThan(0))));
+	}
+	
+	@Test
+	public void getAdminConstantOptionShouldReturnPageConstantOptionList() throws Exception{
+		this.mockMvc.perform(get("/staticDataCtrl/adminConstantOption/3")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.content", hasSize(greaterThan(0))));
 	}
 	
 	@Test
