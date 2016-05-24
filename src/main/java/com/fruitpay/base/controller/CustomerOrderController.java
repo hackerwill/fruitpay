@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +38,9 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.OrderPreferenceService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
+import com.fruitpay.comm.model.EnumMapOrder;
+import com.fruitpay.comm.model.ExcelColumn;
+import com.fruitpay.comm.model.Order;
 import com.fruitpay.comm.model.OrderExcelBean;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
@@ -204,39 +209,41 @@ public class CustomerOrderController {
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
 			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId) {
-		if(customerOrders.size()<=0){
+		
+		if(customerOrders.size() == 0) {
 			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId);
 			customerOrders = customerOrderService.findAllByConditions(orderCondition);
+		} else {
+			customerOrders = customerOrders.stream().map(order -> {
+				return customerOrderService.findOneIncludingOrderPreference(order.getOrderId());
+			}).collect(Collectors.toList());
 		}
-		else{
-			for(int i=0; i<customerOrders.size(); i++){
-				CustomerOrder tempOrder = customerOrders.get(i);
-				customerOrders.set(i, customerOrderService.findOneIncludingOrderPreference(tempOrder.getOrderId()));
-			}
-		}
-		List<Map<String, Object>> customerExcelBeans = new LinkedList<Map<String, Object>>();
+		
+		List<OrderExcelBean> customerExcelBeans = new LinkedList<OrderExcelBean>();
 		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
 			CustomerOrder customerOrder = iterator.next();
 			OrderExcelBean orderExcelBean = new OrderExcelBean(customerOrder);
-			customerExcelBeans.add(orderExcelBean.getOrderExcelMap());
+			try {
+				customerExcelBeans.add(orderExcelBean);
+			} catch (IllegalArgumentException e) {
+				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+			}
 		}
-		String fileName = FPSessionUtil.getHeader(request, "fileName");
-		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-		request.setAttribute("fileName", fileName);
-		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8");
-		response.setCharacterEncoding("utf-8");
-		response.setHeader("Accept-Language", "zh-TW");
-		response.setHeader("contentType",
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8");
+		
 		try {
-			OutputStream output = response.getOutputStream();
-			ExcelUtil.doExcelExport(null, customerExcelBeans, output, "xls"); // new FileOutputStream(new File("D:/"+fileName))
-			output.close();
-			System.out.println("excel ecport success！");
+			List<Map<String, Object>> map = customerExcelBeans.stream().map(bean -> {
+				try {
+					return bean.getMap();
+				} catch (Exception e) {
+					throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+				}
+			}).collect(Collectors.toList());
+			ExcelUtil.doExcelExport(request, response, "xls", 
+					map, 
+					customerExcelBeans.get(0).getColList());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // exportExcelFile(customerOrders, output);
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+		}
 
 		return response;
 
