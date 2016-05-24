@@ -123,9 +123,10 @@ public class StaticDataController {
 		//過濾掉僅顯示有效的常數
 		for (Constant constant : constants) {
 			List<ConstantOption> options = constant.getConstOptions().stream()
-					.filter(option -> "1".equals(option.getValidFlag()))
+					.filter(option -> 1 == option.getValidFlag())
 					.collect(Collectors.toList());
 		}
+		
 		return constants;
 	}
 	
@@ -133,7 +134,7 @@ public class StaticDataController {
 	public @ResponseBody Constant getAllConstants(@PathVariable Integer constId){
 		Constant constant = staticDataService.getConstant(constId);
 		List<ConstantOption> options = constant.getConstOptions().stream()
-			.filter(option -> "1".equals(option.getValidFlag()))
+			.filter(option -> 1 == option.getValidFlag())
 			.collect(Collectors.toList());
 		//排序
 		options.sort(new Comparator<ConstantOption>() {
