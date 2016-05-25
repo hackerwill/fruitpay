@@ -14,7 +14,7 @@ import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.comm.annotation.ColumnName;
 import com.fruitpay.comm.utils.StringUtil;
 
-public class OrderExcelBean extends AbstractExcelBean{
+public class OrderExcelBean extends AbstractExcelBean {
 	
 	@ColumnName("訂單狀態")
 	private String orderStatus;	//訂單狀態
@@ -73,7 +73,11 @@ public class OrderExcelBean extends AbstractExcelBean{
 	@ColumnName("數量")
 	private Integer programNum;	//數量
 	
-	public OrderExcelBean(CustomerOrder customerOrder){
+	public OrderExcelBean() {
+		super();
+	}
+	
+	public OrderExcelBean(CustomerOrder customerOrder) {
 		super();
 		
 		this.orderStatus = customerOrder.getOrderStatus().getOrderStatusName();

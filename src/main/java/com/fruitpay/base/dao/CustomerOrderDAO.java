@@ -22,6 +22,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, Pageable pageable);
 	
+	public List<CustomerOrder> findByOrderIdIn(List<Integer> orderIds);
+	
 	public List<CustomerOrder> findByValidFlag(int validFlag);
 	
 	public List<CustomerOrder> findByValidFlagAndDeliveryDayAndOrderStatusIn(int validFlag, ConstantOption deliveryDay, List<OrderStatus> orderStatues);

@@ -308,9 +308,13 @@ public class ShipmentServiceImpl implements ShipmentService {
 		List<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
 		return shipmentRecords;
 	}
-
+	
 	@Override
-	public Page<CustomerOrder> listAllOrdersByDate(LocalDate date, int page, int size) {
+	public List<Integer> listAllOrderIdsByDate(LocalDate date) {
+		
+		if(date == null) 
+			return new ArrayList<Integer>();
+		
 		Constant deliveryDayConstant = staticDataService.getConstant(6);
 		List<ConstantOption> deliveryDays = deliveryDayConstant.getConstOptions();
 		List<OrderStatus> orderStatues = staticDataService.getAllOrderStatus().stream()
@@ -325,7 +329,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 			.collect(Collectors.toList());
 		
 		if(deliveryDays.size() == 0)
-			return customerOrderDAO.findByOrderIdIn(new ArrayList<Integer>(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+			return new ArrayList<Integer>();
 		
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByValidFlagAndDeliveryDayAndOrderStatusIn(
 				VALID_FLAG.VALID.value(), deliveryDays.get(0), orderStatues);
@@ -351,6 +355,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}).map(customerOrder -> {
 			return customerOrder.getOrderId();
 		}).collect(Collectors.toList());
+		
+		return orderIds;
+	}
+
+	@Override
+	public Page<CustomerOrder> listAllOrdersPageable(List<Integer> orderIds, int page, int size) {
 		
 		Page<CustomerOrder> customerOrderPages = customerOrderDAO.findByOrderIdIn(orderIds, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		

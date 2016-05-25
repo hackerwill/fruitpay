@@ -34,6 +34,8 @@ public interface CustomerOrderService {
 	
 	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition);
 	
+	public List<CustomerOrder> findByOrderIdsIncludingOrderPreference(List<Integer> orderIds);
+	
 	public CustomerOrder findOneIncludingOrderPreference(Integer orderId);
 	
 	public LocalDate findOrderFirstDeliveryDate(int orderId);

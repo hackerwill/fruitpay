@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -199,6 +200,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		customerOrder.setOrderStatus(orderStatus);
 		customerOrder = customerOrderDAO.save(customerOrder);
 		return customerOrder;
+	}
+
+	@Override
+	public List<CustomerOrder> findByOrderIdsIncludingOrderPreference(List<Integer> orderIds) {
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByOrderIdIn(orderIds);
+		List<OrderPreference> orderPreferences = orderPreferenceDAO.findByCustomerOrderIn(customerOrders);
+		
+		customerOrders = customerOrders.stream().map(customerOrder -> {
+			List<OrderPreference> thisPreferences = orderPreferences.stream().filter(orderPreference -> {
+				return orderPreference.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId());
+			}).collect(Collectors.toList());
+			customerOrder.setOrderPreferences(thisPreferences);
+			return customerOrder;
+		}).collect(Collectors.toList());
+		return customerOrders;
 	}
 
 }

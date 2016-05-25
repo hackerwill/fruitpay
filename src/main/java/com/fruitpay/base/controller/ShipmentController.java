@@ -1,12 +1,17 @@
 package com.fruitpay.base.controller;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -26,14 +31,18 @@ import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
+import com.fruitpay.comm.model.OrderExcelBean;
+import com.fruitpay.comm.model.ShipmentExcelBean;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.DateUtil;
+import com.fruitpay.comm.utils.ExcelUtil;
 
 @Controller
 @RequestMapping("shipmentCtrl")
@@ -129,22 +138,78 @@ public class ShipmentController {
 		return shipmentDeliveryStatuses;
 	}
 	
+	@RequestMapping(value = "/exportShipments", method = RequestMethod.POST)
+	//@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody HttpServletResponse exportShipments(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody  List<Integer> orderIds,
+			@RequestParam(value = "date", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
+		
+		if(orderIds.size() == 0 || date == null) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
+		}
+		
+		LocalDate localDate = DateUtil.toLocalDate(date);
+		
+		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingOrderPreference(orderIds);
+		
+		List<Map<String, Object>> map = customerOrders.stream().map(customerOrder -> {
+			try {
+				return new ShipmentExcelBean(customerOrder, localDate.minusDays(1), localDate).getMap();
+			} catch (Exception e) {
+				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+			}
+		}).collect(Collectors.toList());
+		
+		try {
+			ExcelUtil.doExcelExport(request, response, "xls", map, new ShipmentExcelBean().getColList());
+		} catch (Exception e) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+		}
+
+		return response;
+
+	}
+	
 	@RequestMapping(value = "/shipmentPreview", method = RequestMethod.GET)
 	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
-	public @ResponseBody Page<CustomerOrder> getShipmentPreview(
+	public @ResponseBody ShipmentPreview getShipmentPreview(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
 			@DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
 		
 		LocalDate localDate = null;
-		if(date == null){
-			return shipmentService.findByOrderIdIn(new ArrayList<Integer>(), page, size);
-		}else{
+		if(date != null){
 			localDate = DateUtil.toLocalDate(date);	
 		}
 		
-		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersByDate(localDate, page, size);
-		return customerOrders;
+		List<Integer> orderIds = shipmentService.listAllOrderIdsByDate(localDate);
+		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersPageable(orderIds, page, size);
+		
+		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds);
+		return shipmentPreview;
+	}
+	
+	private class ShipmentPreview implements Serializable{
+		Page<CustomerOrder> customerOrders;
+		List<Integer> orderIds;
+		
+		public ShipmentPreview(Page<CustomerOrder> customerOrders, List<Integer> orderIds) {
+			super();
+			this.customerOrders = customerOrders;
+			this.orderIds = orderIds;
+		}
+		public Page<CustomerOrder> getCustomerOrders() {
+			return customerOrders;
+		}
+		public void setCustomerOrders(Page<CustomerOrder> customerOrders) {
+			this.customerOrders = customerOrders;
+		}
+		public List<Integer> getOrderIds() {
+			return orderIds;
+		}
+		public void setOrderIds(List<Integer> orderIds) {
+			this.orderIds = orderIds;
+		}
 	}
 
 }

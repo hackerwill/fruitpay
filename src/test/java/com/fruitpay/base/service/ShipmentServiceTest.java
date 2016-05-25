@@ -28,8 +28,8 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	public void testWithListAllOrdersByDate() throws Exception {
 		LocalDate nextFriday = calcNextFriday(LocalDate.now());
 		
-		Page<CustomerOrder> customerOrders =  shipmentService.listAllOrdersByDate(nextFriday, 1, 10);
-		Assert.assertNotEquals(customerOrders.getContent().size(), 0);
+		List<Integer> customerOrders =  shipmentService.listAllOrderIdsByDate(nextFriday);
+		Assert.assertNotEquals(customerOrders.size(), 0);
 	}
 	
 	private LocalDate calcNextFriday(LocalDate d) {

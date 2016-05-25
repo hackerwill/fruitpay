@@ -219,28 +219,16 @@ public class CustomerOrderController {
 			}).collect(Collectors.toList());
 		}
 		
-		List<OrderExcelBean> customerExcelBeans = new LinkedList<OrderExcelBean>();
-		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
-			CustomerOrder customerOrder = iterator.next();
-			OrderExcelBean orderExcelBean = new OrderExcelBean(customerOrder);
+		List<Map<String, Object>> map = customerOrders.stream().map(customerOrder -> {
 			try {
-				customerExcelBeans.add(orderExcelBean);
-			} catch (IllegalArgumentException e) {
+				return new OrderExcelBean(customerOrder).getMap();
+			} catch (Exception e) {
 				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 			}
-		}
+		}).collect(Collectors.toList());
 		
 		try {
-			List<Map<String, Object>> map = customerExcelBeans.stream().map(bean -> {
-				try {
-					return bean.getMap();
-				} catch (Exception e) {
-					throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
-				}
-			}).collect(Collectors.toList());
-			ExcelUtil.doExcelExport(request, response, "xls", 
-					map, 
-					customerExcelBeans.get(0).getColList());
+			ExcelUtil.doExcelExport(request, response, "xls", map, new OrderExcelBean().getColList());
 		} catch (Exception e) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 		}

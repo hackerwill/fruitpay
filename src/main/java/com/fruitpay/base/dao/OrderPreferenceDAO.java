@@ -9,8 +9,10 @@ import com.fruitpay.base.model.OrderPreference;
 
 public interface OrderPreferenceDAO extends JpaRepository<OrderPreference, Integer> {
 	
-	public List<OrderPreference> findByCustomerOrder(CustomerOrder CustomerOrder);
+	public List<OrderPreference> findByCustomerOrder(CustomerOrder customerOrder);
 	
-	public List<OrderPreference> findByCustomerOrderAndLikeDegree(CustomerOrder CustomerOrder, byte likeDegree);
+	public List<OrderPreference> findByCustomerOrderIn(List<CustomerOrder> customerOrders);
+	
+	public List<OrderPreference> findByCustomerOrderAndLikeDegree(CustomerOrder customerOrder, byte likeDegree);
 
 }

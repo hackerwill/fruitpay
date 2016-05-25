@@ -33,7 +33,9 @@ public interface ShipmentService {
 	
 	public List<ShipmentDeliveryStatus> getAllDeliveryStatus(Date startDate, Date endDate, int orderId);
 	
-	public Page<CustomerOrder> listAllOrdersByDate(LocalDate date, int page, int size);
+	public List<Integer> listAllOrderIdsByDate(LocalDate date);
+	
+	public Page<CustomerOrder> listAllOrdersPageable(List<Integer> orderIds, int page, int size);
 	
 	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, int page, int size);
 	
