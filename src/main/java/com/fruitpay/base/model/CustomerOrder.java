@@ -170,6 +170,10 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JoinColumn(name="allpay_order_id")
 	private AllpayOrder allpayOrder;
+	
+	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY)
+	@JsonManagedReference
+	List<OrderComment> orderComments;
 
 	public CustomerOrder() {
 	}
@@ -506,6 +510,14 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 
 	public void setShipmentChanges(List<ShipmentChange> shipmentChanges) {
 		this.shipmentChanges = shipmentChanges;
+	}
+
+	public List<OrderComment> getOrderComments() {
+		return orderComments;
+	}
+
+	public void setOrderComments(List<OrderComment> orderComments) {
+		this.orderComments = orderComments;
 	}
 	
 }

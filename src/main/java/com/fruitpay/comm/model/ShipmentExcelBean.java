@@ -47,7 +47,7 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	
 	public ShipmentExcelBean(CustomerOrder customerOrder, LocalDate shipmentDate, LocalDate deliveryDate) {
 		super();
-		
+		try {
 		this.shipmentTime = String.valueOf(customerOrder.getShipmentTime().getOptionId() - 4); //轉成要的數字格式
 		
 		this.unlike = getUnlikeStr(customerOrder, customerOrder.getOrderPreferences());
@@ -79,6 +79,10 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		this.temperate = "2";
 		
 		this.spec = "1";
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 	
 	private String getPayOnReceiveStr(CustomerOrder customerOrder){
