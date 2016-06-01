@@ -174,6 +174,9 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	@OneToMany(mappedBy="customerOrder", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	List<OrderComment> orderComments;
+	
+	@Column(name="shipment_count")
+	private Integer shipmentCount;
 
 	public CustomerOrder() {
 	}
@@ -518,6 +521,14 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 
 	public void setOrderComments(List<OrderComment> orderComments) {
 		this.orderComments = orderComments;
+	}
+
+	public Integer getShipmentCount() {
+		return shipmentCount;
+	}
+
+	public void setShipmentCount(Integer shipmentCount) {
+		this.shipmentCount = shipmentCount;
 	}
 	
 }
