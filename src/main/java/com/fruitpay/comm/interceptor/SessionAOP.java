@@ -40,7 +40,7 @@ public class SessionAOP {
 	@Inject UserRoleService userRoleService;
 	
 	@Around(value = "@annotation(com.fruitpay.comm.annotation.UserAccessValidate)")
-	public Object aroundManager(ProceedingJoinPoint pj) {
+	public Object aroundManager(ProceedingJoinPoint pj) throws Throwable {
 		HttpServletRequest request = SysContent.getRequest();
 
 		AllowRole[] allowRoles = this.getSessionType(pj);
@@ -62,12 +62,7 @@ public class SessionAOP {
 		if(!isRoleMatch(allowRoles, userRoles))
 			throw new HttpServiceException(ReturnMessageEnum.Common.AuthenticationFailed.getReturnMessage());
 		
-		try {
-			return pj.proceed();
-		} catch (Throwable e) {
-			logger.error(e);
-			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
-		}
+		return pj.proceed();
 	}
 	
 	private boolean isRoleMatch(AllowRole[] allowRoles, List<UserRole> userRoles){

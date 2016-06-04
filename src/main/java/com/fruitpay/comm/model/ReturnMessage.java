@@ -1,5 +1,9 @@
 package com.fruitpay.comm.model;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -21,7 +25,15 @@ public class ReturnMessage{
 	public ReturnMessage(Throwable ex){
 		super();
 		this.errorCode = ReturnMessageEnum.Status.Failed.getStatus();
-		this.message = ex.getMessage();
+		
+		StringBuilder sb = new StringBuilder();
+		Throwable child =  ex;
+		while(child != null) {
+			sb.append(child.getMessage() + System.lineSeparator());
+			child = child.getCause();
+		}
+		
+		this.message = sb.toString();
 	}
 	
 	public ReturnMessage(String errorCode, String message, HttpStatus status) {

@@ -34,8 +34,14 @@ public class ServiceExceptionControllerTest extends AbstractSpringJnitTest{
     }
 	
 	@Test
-	public void testNullPointerException() throws Exception {
+	public void testHttpServiceException() throws Exception {
 		this.mockMvc.perform(get("/staticDataCtrl/exceptionHandleTest"))
+	   		.andExpect(status().isInternalServerError());
+	}
+	
+	@Test
+	public void exceptionHandleArithmeticExceptionTest() throws Exception {
+		this.mockMvc.perform(get("/staticDataCtrl/exceptionHandleArithmeticExceptionTest"))
 	   		.andExpect(status().isInternalServerError());
 	}
 

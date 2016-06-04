@@ -72,7 +72,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void addOrder() throws Exception {
+	public void addOrderAndAddComment() throws Exception {
 		
 		Customer customer = dataUtil.getBackgroundCustomer();
 		customer = customerService.saveCustomer(customer);

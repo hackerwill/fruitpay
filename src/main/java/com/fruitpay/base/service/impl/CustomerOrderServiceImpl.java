@@ -24,9 +24,11 @@ import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
+import com.fruitpay.base.dao.OrderCommentDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderStatus;
@@ -49,6 +51,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private StaticDataService staticDataService;
 	@Inject 
 	private FieldChangeRecordService fieldChangeRecordService;
+	@Inject 
+	private OrderCommentDAO orderCommentDAO;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -215,6 +219,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			return customerOrder;
 		}).collect(Collectors.toList());
 		return customerOrders;
+	}
+
+	@Override
+	public OrderComment add(OrderComment orderComment) {
+		orderComment = orderCommentDAO.save(orderComment);
+		return orderComment;
+	}
+
+	@Override
+	public OrderComment update(OrderComment orderComment) {
+		OrderComment origin = orderCommentDAO.findOne(orderComment.getCommentId());
+		if(origin == null)
+			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
+		
+		BeanUtils.copyProperties(orderComment, origin);
+		origin = orderCommentDAO.save(origin);
+		return origin;
+	}
+
+	@Override
+	public List<OrderComment> findOrderCommnetsByOrderId(int orderId) {
+		CustomerOrder customerOrder = new CustomerOrder();
+		customerOrder.setOrderId(orderId);
+		List<OrderComment> orderComments = orderCommentDAO.findByCustomerOrder(customerOrder);
+		return orderComments;
 	}
 
 }

@@ -356,6 +356,17 @@ public class ShipmentServiceImpl implements ShipmentService {
 			return customerOrder.getOrderId();
 		}).collect(Collectors.toList());
 		
+		//如果有客製需配送的日期 在這裡加入
+		List<Integer> customizedOrderIds = shipmentChangeDAO.findByApplyDateAndShipmentChangeTypeAndValidFlag(
+				DateUtil.toDate(date), shipmentDeliver, VALID_FLAG.VALID.value()).stream()
+				.map(shipmentChangeType -> {
+					return shipmentChangeType.getCustomerOrder().getOrderId();
+				}).collect(Collectors.toList());
+		
+		if(!customizedOrderIds.isEmpty()) {
+			orderIds.addAll(customizedOrderIds);
+		}
+		
 		return orderIds;
 	}
 

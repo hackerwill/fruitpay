@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderCondition;
 
 public interface CustomerOrderService {
@@ -43,5 +44,11 @@ public interface CustomerOrderService {
 	public CustomerOrder recoverTotalPrice(int orderId);
 
 	public CustomerOrder recoverOrderStatus(int orderId);
+	
+	public OrderComment add(OrderComment orderComment);
+	
+	public OrderComment update(OrderComment orderComment);
+	
+	public List<OrderComment> findOrderCommnetsByOrderId(int orderId);
 
 }

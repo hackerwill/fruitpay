@@ -34,6 +34,7 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     		HttpServiceException serviceEx = (HttpServiceException)ex;
     		return new ResponseEntity<Object>(serviceEx.getReturnMessage(), serviceEx.getStatus());
     	}else{
+    		ex.printStackTrace();
     		ReturnMessage returnMessage = new ReturnMessage(ex);
     		return new ResponseEntity<Object>(returnMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     	}

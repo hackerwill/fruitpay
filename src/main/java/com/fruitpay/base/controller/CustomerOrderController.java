@@ -32,6 +32,7 @@ import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -247,6 +248,18 @@ public class CustomerOrderController {
 		List<OrderPreference> OrderPreferences = orderPreferenceService.findByCustomerOrder(orderId);
 
 		return OrderPreferences;
+	}
+	
+	@RequestMapping(value = "/orderComment", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody OrderComment addOrderComment(@RequestBody OrderComment orderComment) {
+
+		if (AssertUtils.isEmpty(orderComment))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		
+		
+		return orderComment;
 	}
 
 }

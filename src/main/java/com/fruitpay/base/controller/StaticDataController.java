@@ -257,4 +257,10 @@ public class StaticDataController {
 		return null;
 	}
 	
+	@RequestMapping(value = "/exceptionHandleArithmeticExceptionTest", method = RequestMethod.GET)
+	public @ResponseBody Object exceptionHandleArithmeticExceptionTest(){
+		int value = 1 / 0;
+		return null;
+	}
+	
 }
