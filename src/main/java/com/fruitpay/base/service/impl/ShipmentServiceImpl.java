@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -367,6 +368,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 			orderIds.addAll(customizedOrderIds);
 		}
 		
+		Collections.sort(orderIds, (a, b) -> {
+			return a.compareTo(b);
+		});
 		return orderIds;
 	}
 
