@@ -369,7 +369,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}
 		
 		Collections.sort(orderIds, (a, b) -> {
-			return a.compareTo(b);
+			return b.compareTo(a);
 		});
 		return orderIds;
 	}
