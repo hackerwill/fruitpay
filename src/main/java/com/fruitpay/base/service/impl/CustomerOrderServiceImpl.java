@@ -33,6 +33,7 @@ import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.service.CustomerOrderService;
+import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.FieldChangeRecordService;
 import com.fruitpay.base.service.StaticDataService;
 
@@ -45,6 +46,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private CustomerOrderDAO customerOrderDAO;
 	@Inject 
 	private CustomerDAO customerDAO;
+	@Inject 
+	private CustomerService customerService;
 	@Inject 
 	private OrderPreferenceDAO orderPreferenceDAO;
 	@Inject 
@@ -80,10 +83,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
 		
 		//若沒有顧客, 使用原本的即可
-		if(customerOrder.getCustomer() == null)
+		if(customerOrder.getCustomer() == null) {
 			customerOrder.setCustomer(origin.getCustomer());
+		}
 		BeanUtils.copyProperties(customerOrder, origin);
 		origin = customerOrderDAO.saveAndFlush(origin);
+		customerService.update(customerOrder.getCustomer());
 		return origin;
 	}
 

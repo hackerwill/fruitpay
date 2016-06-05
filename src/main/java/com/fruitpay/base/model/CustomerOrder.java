@@ -67,7 +67,7 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	@Column(name="receipt_vat_number")
 	private String receiptVatNumber;
 
-	@ManyToOne(cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne
 	@JoinColumn(name="post_id")
 	private PostalCode postalCode;
 
