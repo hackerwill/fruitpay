@@ -1,8 +1,11 @@
 package com.fruitpay.comm.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 
 import org.junit.Assert;
 import org.junit.Test;

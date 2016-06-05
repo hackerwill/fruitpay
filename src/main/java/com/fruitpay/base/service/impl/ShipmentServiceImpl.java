@@ -368,9 +368,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 			orderIds.addAll(customizedOrderIds);
 		}
 		
-		Collections.sort(orderIds, (a, b) -> {
-			return b.compareTo(a);
-		});
 		return orderIds;
 	}
 
