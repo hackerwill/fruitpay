@@ -197,7 +197,7 @@ public class DataUtil {
 	
 	public CustomerOrder getCustomerOrder(int shipmentDuration){
 		
-		PostalCode postalCode = staticDataService.getPostalCode(100);
+		PostalCode postalCode = staticDataService.getPostalCode(1001);
 		OrderPlatform orderPlatform = staticDataService.getOrderPlatform(1);
 		OrderProgram orderProgram = staticDataService.getOrderProgram(1);
 		PaymentMode paymentMode = staticDataService.getPaymentMode(1);
