@@ -2,18 +2,23 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -26,11 +31,6 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 	@Column(name="shipment_record_id")
 	private Integer shipmentRecordId;
 	
-	//bi-directional many-to-one association to ShipmentPeriod
-	@ManyToOne
-	@JoinColumn(name="order_id")
-	private CustomerOrder customerOrder;
-	
 	@Column(name="date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
@@ -42,6 +42,10 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 	
 	@Column(name="valid_flag")
 	private Integer validFlag;
+	
+	@OneToMany(mappedBy="shipmentRecord", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private List<ShipmentRecordDetail> shipmentRecordDetails;
 
 	public Integer getShipmentRecordId() {
 		return shipmentRecordId;
@@ -49,14 +53,6 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 
 	public void setShipmentRecordId(Integer shipmentRecordId) {
 		this.shipmentRecordId = shipmentRecordId;
-	}
-
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
 	}
 
 	public Date getDate() {
@@ -81,6 +77,14 @@ public class ShipmentRecord extends AbstractEntity implements Serializable{
 
 	public void setValidFlag(Integer validFlag) {
 		this.validFlag = validFlag;
+	}
+
+	public List<ShipmentRecordDetail> getShipmentRecordDetails() {
+		return shipmentRecordDetails;
+	}
+
+	public void setShipmentRecordDetails(List<ShipmentRecordDetail> shipmentRecordDetails) {
+		this.shipmentRecordDetails = shipmentRecordDetails;
 	}
 	
 }

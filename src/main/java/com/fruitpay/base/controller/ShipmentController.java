@@ -34,6 +34,8 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.model.ShipmentRecordPostBean;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
@@ -139,7 +141,7 @@ public class ShipmentController {
 	}
 	
 	@RequestMapping(value = "/exportShipments", method = RequestMethod.POST)
-	//@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody HttpServletResponse exportShipments(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody  List<Integer> orderIds,
 			@RequestParam(value = "date", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
@@ -187,6 +189,20 @@ public class ShipmentController {
 		
 		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds);
 		return shipmentPreview;
+	}
+	
+	@RequestMapping(value = "/shipmentRecord", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
+	public @ResponseBody ShipmentRecord addShipmentRecord(@RequestBody ShipmentRecordPostBean shipmentRecordPostBean) {
+		ShipmentRecord shipmentRecord = shipmentRecordPostBean.getShipmentRecord();
+		List<Integer> orderIds = shipmentRecordPostBean.getOrderIds();
+		
+		if (AssertUtils.isEmpty(shipmentRecord) || AssertUtils.anyIsEmpty(orderIds))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		ShipmentRecord shipmentrecord = shipmentService.add(shipmentRecord, orderIds);
+		
+		return shipmentrecord;
 	}
 	
 	private class ShipmentPreview implements Serializable{

@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Coupon;
@@ -34,6 +36,8 @@ import com.fruitpay.base.model.Role;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
+import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.model.UserRole;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
@@ -285,6 +289,15 @@ public class DataUtil {
 		constantOption.setValidFlag(VALID_FLAG.VALID.value());
 		constantOption.setOptionName("testOptionName");
 		return constantOption;
+	}
+	
+	public ShipmentRecord getshipmentRecord() {
+		ConstantOption shipmentType = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDelivered.toString());
+		ShipmentRecord shipmentRecord = new ShipmentRecord();
+		shipmentRecord.setDate(new Date());
+		shipmentRecord.setValidFlag(VALID_FLAG.VALID.value());
+		shipmentRecord.setShipmentType(shipmentType);
+		return shipmentRecord;
 	}
 
 }

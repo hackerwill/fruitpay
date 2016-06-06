@@ -31,6 +31,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.ShipmentChangeDAO;
 import com.fruitpay.base.dao.ShipmentRecordDAO;
+import com.fruitpay.base.dao.ShipmentRecordDetailDAO;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
@@ -38,6 +39,7 @@ import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
@@ -54,6 +56,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private CustomerOrderService customerOrderService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	private ShipmentRecordDetailDAO shipmentRecordDetailDAO;
 	@Inject
 	private ShipmentRecordDAO shipmentRecordDAO;
 	@Inject
@@ -145,11 +149,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 		LocalDate date = DateUtil.toLocalDate(startDate);
 		List<ShipmentChange> shipmentChanges = this.findChangesByOrderId(orderId);
-		List<ShipmentRecord> shipmentRecords = this.findRecordsByOrderId(orderId);
+		List<ShipmentRecordDetail> shipmentRecordDetails = this.findRecordDetailsByOrderId(orderId);
 		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
 		
 		while(!date.isAfter(DateUtil.toLocalDate(endDate))){
-			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, dayOfWeek, duration);
+			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
 			if(shipmentChangeType != null){
 				ShipmentDeliveryStatus deliveryStatus = new ShipmentDeliveryStatus();
 				deliveryStatus.setApplyDate(DateUtil.toDate(date));
@@ -163,10 +167,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 	
 	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate,
-			List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords,  
+			List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails,  
 			DayOfWeek dayOfWeek, int duration){
 		
-		if(isShipped(searchDate, shipmentChanges, shipmentRecords)){
+		if(isShipped(searchDate, shipmentChanges, shipmentRecordDetails)){
 			return shipmentDelivered;
 		}else if(isCancel(searchDate, shipmentChanges)) {
 			return shipmentCancel;
@@ -198,9 +202,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 			return shipmentDeliver;
 		//固定加上一個禮拜的時間
 		}else if(isPulse(incrementDate, shipmentChanges)) {
-			return getDateStatus(searchDate, incrementDate.plusDays(JUMP_DAY), shipmentChanges, shipmentRecords, dayOfWeek, duration);
+			return getDateStatus(searchDate, incrementDate.plusDays(JUMP_DAY), shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
 		}else {
-			return getDateStatus(searchDate, incrementDate.plusDays(duration), shipmentChanges, shipmentRecords, dayOfWeek, duration);
+			return getDateStatus(searchDate, incrementDate.plusDays(duration), shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
 		}
 		
 	}
@@ -221,7 +225,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return existed;
 	}
 	
-	private boolean isShipped(LocalDate date, List<ShipmentChange> shipmentChanges, List<ShipmentRecord> shipmentRecords) {
+	private boolean isShipped(LocalDate date, List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecords) {
 		
 		boolean matchChange = shipmentChanges.stream().anyMatch(shipmentChange -> {
 			return ShipmentStatus.shipmentDelivered.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())
@@ -229,10 +233,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 		});
 		
 		boolean recordMatch = false;
-		for (Iterator<ShipmentRecord> iterator = shipmentRecords.iterator(); iterator.hasNext();) {
-			ShipmentRecord shipmentRecord = iterator.next();
-			if(date.equals(DateUtil.toLocalDate(shipmentRecord.getDate()))
-					&& ShipmentStatus.shipmentDelivered.toString().equals(shipmentRecord.getShipmentType().getOptionName())){
+		for (Iterator<ShipmentRecordDetail> iterator = shipmentRecords.iterator(); iterator.hasNext();) {
+			ShipmentRecordDetail shipmentRecordDetail = iterator.next();
+			if(date.equals(DateUtil.toLocalDate(shipmentRecordDetail.getShipmentRecord().getDate()))
+					&& ShipmentStatus.shipmentDelivered.toString().equals(shipmentRecordDetail.getShipmentRecord().getShipmentType().getOptionName())){
 				recordMatch = true;
 			}
 		}
@@ -303,11 +307,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 
 	@Override
-	public List<ShipmentRecord> findRecordsByOrderId(int orderId) {
+	public List<ShipmentRecordDetail> findRecordDetailsByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
-		List<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
-		return shipmentRecords;
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
+		return shipmentRecordDetails;
 	}
 	
 	@Override
@@ -342,9 +346,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 			int orderId = customerOrder.getOrderId();
 			
 			List<ShipmentChange> shipmentChanges = this.findChangesByOrderId(orderId);
-			List<ShipmentRecord> shipmentRecords = this.findRecordsByOrderId(orderId);
+			List<ShipmentRecordDetail> shipmentRecordDetails = this.findRecordDetailsByOrderId(orderId);
 			
-			ConstantOption status = this.getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecords, 
+			ConstantOption status = this.getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, 
 					dayOfWeek, duration);
 			
 			if(status != null && (status.getOptionName().equals(shipmentDeliver.getOptionName()) 
@@ -385,4 +389,22 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return customerOrderPages;
 	}
 
+	@Override
+	public ShipmentRecord add(ShipmentRecord shipmentRecord, List<Integer> orderIds) {
+		shipmentRecord.setShipmentRecordDetails(getShipmentRecordDetails(shipmentRecord, orderIds));
+		shipmentRecord = shipmentRecordDAO.save(shipmentRecord);
+		return shipmentRecord;
+	}
+	
+	private List<ShipmentRecordDetail> getShipmentRecordDetails(ShipmentRecord shipmentRecord, List<Integer> orderIds) {
+		return orderIds.stream().map(orderId -> {
+			ShipmentRecordDetail shipmentRecordDetail = new ShipmentRecordDetail();
+			CustomerOrder customerOrder = new CustomerOrder();
+			customerOrder.setOrderId(orderId);
+			shipmentRecordDetail.setCustomerOrder(customerOrder);
+			shipmentRecordDetail.setValidFlag(VALID_FLAG.VALID.value());
+			shipmentRecordDetail.setShipmentRecord(shipmentRecord);
+			return shipmentRecordDetail;
+		}).collect(Collectors.toList());
+	}
 }

@@ -1,5 +1,7 @@
 package com.fruitpay.comm.utils;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 
@@ -10,6 +12,18 @@ public class AssertUtils {
 	public static boolean anyIsEmpty(String... strs){
 		for (int i = 0; i < strs.length; i++) {
 			if(isEmpty(strs[i])) 
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean anyIsEmpty(List<Integer> values){
+		return anyIsEmpty(values.toArray(new Integer[values.size()]));
+	}
+	
+	public static boolean anyIsEmpty(Integer... values){
+		for (int i = 0; i < values.length; i++) {
+			if(isEmpty(values[i])) 
 				return true;
 		}
 		return false;

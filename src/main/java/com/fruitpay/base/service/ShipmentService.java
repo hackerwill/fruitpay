@@ -14,6 +14,7 @@ import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.model.ShipmentRecordDetail;
 
 public interface ShipmentService {
 	
@@ -21,7 +22,7 @@ public interface ShipmentService {
 	
 	public List<ShipmentChange> findChangesByOrderId(int orderId);
 	
-	public List<ShipmentRecord> findRecordsByOrderId(int orderId);
+	public List<ShipmentRecordDetail> findRecordDetailsByOrderId(int orderId);
 
 	public ShipmentChange add(ShipmentChange shipmentChange);
 	
@@ -38,5 +39,7 @@ public interface ShipmentService {
 	public Page<CustomerOrder> listAllOrdersPageable(List<Integer> orderIds, int page, int size);
 	
 	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, int page, int size);
+	
+	public ShipmentRecord add(ShipmentRecord shipmentRecord, List<Integer> orderIds);
 	
 }
