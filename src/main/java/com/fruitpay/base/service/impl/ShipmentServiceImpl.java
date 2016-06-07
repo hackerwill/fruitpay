@@ -325,7 +325,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 		List<OrderStatus> orderStatues = staticDataService.getAllOrderStatus().stream()
 					.filter(orderStatus -> {
 						return orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.AlreadyCheckout.getStatus()
-								|| orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.CreditPaySuccessful.getStatus();
+								|| orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.CreditPaySuccessful.getStatus()
+								//即使已經取消了, 只要取消的日期沒到, 還是要繼續出
+								|| orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.AlreayCancel.getStatus();
 					}).collect(Collectors.toList());
 		
 		DayOfWeek dayOfWeek = date.getDayOfWeek();
