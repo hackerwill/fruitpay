@@ -449,12 +449,13 @@ public class ShipmentServiceImpl implements ShipmentService {
 	public ShipmentRecord invalidate(ShipmentRecord shipmentRecord) {
 		shipmentRecord.setValidFlag(VALID_FLAG.INVALID.value());
 		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByShipmentRecord(shipmentRecord);
-		shipmentRecordDetails.stream().forEach(detail -> {
+		shipmentRecordDetails = shipmentRecordDetails.stream().map(detail -> {
 			detail.setValidFlag(VALID_FLAG.INVALID.value());
-		});
+			return detail;
+		}).collect(Collectors.toList());
 		
+		shipmentRecord.setShipmentRecordDetails(shipmentRecordDetails);
 		shipmentRecordDAO.save(shipmentRecord);
-		shipmentRecordDetailDAO.save(shipmentRecordDetails);
 		return shipmentRecord;
 	}
 }
