@@ -292,11 +292,8 @@ public class DataUtil {
 	}
 	
 	public ShipmentRecord getshipmentRecord() {
-		ConstantOption shipmentType = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDelivered.toString());
 		ShipmentRecord shipmentRecord = new ShipmentRecord();
 		shipmentRecord.setDate(new Date());
-		shipmentRecord.setValidFlag(VALID_FLAG.VALID.value());
-		shipmentRecord.setShipmentType(shipmentType);
 		return shipmentRecord;
 	}
 

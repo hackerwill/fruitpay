@@ -352,7 +352,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 					dayOfWeek, duration);
 			
 			if(status != null && (status.getOptionName().equals(shipmentDeliver.getOptionName()) 
-					|| status.getOptionName().equals(shipmentReady.getOptionName()))) {
+					|| status.getOptionName().equals(shipmentReady.getOptionName()) 
+					|| status.getOptionName().equals(shipmentDelivered.getOptionName()))) {	//已出貨也要列入計算 因為有可能重新出
 				return true;
 			} else {
 				return false;
@@ -390,7 +391,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 
 	@Override
+	@Transactional
 	public ShipmentRecord add(ShipmentRecord shipmentRecord, List<Integer> orderIds) {
+		ConstantOption shipmentType = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentDelivered.toString());
+		shipmentRecord.setValidFlag(VALID_FLAG.VALID.value());
+		shipmentRecord.setShipmentType(shipmentType);
 		shipmentRecord.setShipmentRecordDetails(getShipmentRecordDetails(shipmentRecord, orderIds));
 		shipmentRecord = shipmentRecordDAO.save(shipmentRecord);
 		return shipmentRecord;
@@ -406,5 +411,50 @@ public class ShipmentServiceImpl implements ShipmentService {
 			shipmentRecordDetail.setShipmentRecord(shipmentRecord);
 			return shipmentRecordDetail;
 		}).collect(Collectors.toList());
+	}
+
+	@Override
+	public Page<ShipmentRecord> getShipmentRecordWithDetails(Date date, int page, int size) {
+		Page<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByDateAndValidFlag(date, VALID_FLAG.VALID.value(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "shipmentRecordId")));
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByShipmentRecordIn(shipmentRecords.getContent());
+		
+		shipmentRecords = shipmentRecords.map(shipmentRecord -> {
+			shipmentRecord.setShipmentRecordDetails(shipmentRecordDetails.stream()
+					.filter(detail -> {
+						return detail.getShipmentRecord().getShipmentRecordId().equals(shipmentRecord.getShipmentRecordId());
+					}).collect(Collectors.toList()));
+			return shipmentRecord;
+		});
+		
+		return shipmentRecords;
+	}
+
+	@Override
+	public ShipmentRecord findOneShipmentRecord(int shipmentRecordId) {
+		ShipmentRecord shipmentRecord = shipmentRecordDAO.findOne(shipmentRecordId);
+		return shipmentRecord;
+	}
+	
+	@Override
+	public ShipmentRecord findOneShipmentRecord(Date date) {
+		List<ShipmentRecord> shipmentRecords = shipmentRecordDAO.findByDateEqualsAndValidFlag(date, VALID_FLAG.VALID.value());
+		if(!shipmentRecords.isEmpty() && shipmentRecords.size() > 1) {
+			throw new HttpServiceException(ReturnMessageEnum.Shipment.HasMoreThanOneRecordInSameDay.getReturnMessage());
+		}
+		return shipmentRecords.size() == 0 ? null : shipmentRecords.get(0);
+	}
+
+	@Override
+	@Transactional
+	public ShipmentRecord invalidate(ShipmentRecord shipmentRecord) {
+		shipmentRecord.setValidFlag(VALID_FLAG.INVALID.value());
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByShipmentRecord(shipmentRecord);
+		shipmentRecordDetails.stream().forEach(detail -> {
+			detail.setValidFlag(VALID_FLAG.INVALID.value());
+		});
+		
+		shipmentRecordDAO.save(shipmentRecord);
+		shipmentRecordDetailDAO.save(shipmentRecordDetails);
+		return shipmentRecord;
 	}
 }

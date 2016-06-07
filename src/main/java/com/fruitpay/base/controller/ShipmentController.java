@@ -192,17 +192,59 @@ public class ShipmentController {
 	}
 	
 	@RequestMapping(value = "/shipmentRecord", method = RequestMethod.POST)
-	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody ShipmentRecord addShipmentRecord(@RequestBody ShipmentRecordPostBean shipmentRecordPostBean) {
 		ShipmentRecord shipmentRecord = shipmentRecordPostBean.getShipmentRecord();
 		List<Integer> orderIds = shipmentRecordPostBean.getOrderIds();
 		
 		if (AssertUtils.isEmpty(shipmentRecord) || AssertUtils.anyIsEmpty(orderIds))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		//時間格式設定
+		shipmentRecord.setDate(DateUtil.toDate(DateUtil.toLocalDate(shipmentRecord.getDate())));
+		
+		ShipmentRecord oldShipmentRecord = shipmentService.findOneShipmentRecord(shipmentRecord.getDate());
+		if(oldShipmentRecord != null) {
+			shipmentService.invalidate(oldShipmentRecord);
+		}
 		
 		ShipmentRecord shipmentrecord = shipmentService.add(shipmentRecord, orderIds);
 		
 		return shipmentrecord;
+	}
+	
+	@RequestMapping(value = "/shipmentRecord", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody Page<ShipmentRecord> getShipmentRecords(
+			@DateTimeFormat(pattern="yyyy-MM-dd") Date date,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+		
+		Page<ShipmentRecord> shipmentrecords = shipmentService.getShipmentRecordWithDetails(date, page, size);
+		return shipmentrecords;
+	}
+	
+	@RequestMapping(value = "/shipmentRecord/date/{startDate}", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody ShipmentRecord getShipmentRecord(@PathVariable String startDate) {
+		
+		if(AssertUtils.isEmpty(startDate)) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
+		ShipmentRecord shipmentrecord = shipmentService.findOneShipmentRecord(DateUtil.toDate(startDate));
+		return shipmentrecord;
+	}
+	
+	@RequestMapping(value = "/shipmentRecord/invalidate", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody ShipmentRecord invalidate(@RequestBody ShipmentRecord shipmentRecord) {
+		
+		if(AssertUtils.isEmpty(shipmentRecord)) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
+		shipmentRecord = shipmentService.invalidate(shipmentRecord);
+		return shipmentRecord;
 	}
 	
 	private class ShipmentPreview implements Serializable{

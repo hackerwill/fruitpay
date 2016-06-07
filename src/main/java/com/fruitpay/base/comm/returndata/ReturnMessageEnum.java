@@ -80,6 +80,18 @@ public class ReturnMessageEnum{
 			return rm;
 		}
 	}	
+	
+	public enum Shipment{
+		HasMoreThanOneRecordInSameDay(new ReturnMessage(Status.Failed.getStatus(), "同一天有超過兩筆出貨記錄", HttpStatus.FORBIDDEN));
+	
+		private ReturnMessage rm;
+		Shipment(ReturnMessage rm){
+			this.rm = rm;
+		}
+		public ReturnMessage getReturnMessage(){
+			return rm;
+		}
+	}	
 
 }
 

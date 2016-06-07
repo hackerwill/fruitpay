@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,28 @@ public class ShipmentControllerTest extends AbstractSpringJnitTest {
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.shipmentRecordId", notNullValue()));
+		
+		String date = DateUtil.parseDate(new Date(), "yyyy-MM-dd");
+		this.mockMvc.perform(get("/shipmentCtrl/shipmentRecord/date/" + date)
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.shipmentRecordId", notNullValue()));
+		
+		//再插入資料一次 系統應該將原本資料改成無效
+		this.mockMvc.perform(post("/shipmentCtrl/shipmentRecord")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(shipmentRecordPostBean)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.shipmentRecordId", notNullValue()));
+		
+		this.mockMvc.perform(get("/shipmentCtrl/shipmentRecord/date/" + date)
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.shipmentRecordId", notNullValue()));
+		
 	}
 	
 }

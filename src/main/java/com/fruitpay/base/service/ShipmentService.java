@@ -42,4 +42,12 @@ public interface ShipmentService {
 	
 	public ShipmentRecord add(ShipmentRecord shipmentRecord, List<Integer> orderIds);
 	
+	public Page<ShipmentRecord> getShipmentRecordWithDetails(Date date, int page, int size);
+	
+	public ShipmentRecord findOneShipmentRecord(int shipmentRecordId);
+	
+	public ShipmentRecord invalidate(ShipmentRecord shipmentRecord);
+	
+	public ShipmentRecord findOneShipmentRecord(Date date);
+	
 }
