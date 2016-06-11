@@ -5,5 +5,6 @@ public enum ShipmentStatus {
 	shipmentDelivered,
 	shipmentDeliver,
 	shipmentPulse,
-	shipmentCancel;
+	shipmentCancel,
+	shipmentReturn;
 }

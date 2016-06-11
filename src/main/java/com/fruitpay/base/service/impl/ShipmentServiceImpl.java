@@ -71,6 +71,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption shipmentCancel = null;
 	private ConstantOption shipmentDelivered = null;
 	private ConstantOption shipmentReady = null;
+	private ConstantOption shipmentReturn = null;
 	
 	@PostConstruct
 	public void init(){
@@ -79,6 +80,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 
 		shipmentCancel = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentCancel.toString()); 
 		shipmentReady = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReady.toString()); 
+		shipmentReturn = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReturn.toString()); 
 	}
 	
 	@Override
@@ -169,8 +171,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate,
 			List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails,  
 			DayOfWeek dayOfWeek, int duration){
-		
-		if(isShipped(searchDate, shipmentChanges, shipmentRecordDetails)){
+		if(isReturn(searchDate, shipmentChanges)) {
+			return shipmentReturn;
+		} else if(isShipped(searchDate, shipmentChanges, shipmentRecordDetails)){
 			return shipmentDelivered;
 		}else if(isCancel(searchDate, shipmentChanges)) {
 			return shipmentCancel;
@@ -272,31 +275,25 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return false;
 	}
 	
+	private boolean isReturn(LocalDate date, List<ShipmentChange> shipmentChanges){
+		return shipmentChanges.stream().anyMatch(shipmentChange -> {
+			return date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate())) 
+					&& ShipmentStatus.shipmentReturn.toString().equals(shipmentChange.getShipmentChangeType().getOptionName());
+		});
+	}
+	
 	private boolean isCancel(LocalDate date, List<ShipmentChange> shipmentChanges){
-		
-		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
-			ShipmentChange shipmentChange = iterator.next();
-			
-			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
-					&& ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
-				return true;
-			}
-		}
-		
-		return false;
+		return shipmentChanges.stream().anyMatch(shipmentChange -> {
+			return date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate())) 
+					&& ShipmentStatus.shipmentCancel.toString().equals(shipmentChange.getShipmentChangeType().getOptionName());
+		});
 	}
 	
 	private boolean isPulse(LocalDate date, List<ShipmentChange> shipmentChanges){
-		
-		for (Iterator<ShipmentChange> iterator = shipmentChanges.iterator(); iterator.hasNext();) {
-			ShipmentChange shipmentChange = iterator.next();
-			if(date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate()))
-					&& ShipmentStatus.shipmentPulse.toString().equals(shipmentChange.getShipmentChangeType().getOptionName())){
-				return true;
-			}
-		}
-		
-		return false;
+		return shipmentChanges.stream().anyMatch(shipmentChange -> {
+			return date.equals(DateUtil.toLocalDate(shipmentChange.getApplyDate())) 
+					&& ShipmentStatus.shipmentPulse.toString().equals(shipmentChange.getShipmentChangeType().getOptionName());
+		});
 	}
 	
 	@Override
