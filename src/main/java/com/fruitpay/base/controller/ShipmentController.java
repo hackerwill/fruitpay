@@ -133,7 +133,8 @@ public class ShipmentController {
 					.get();
 			shipmentChange.setCustomerOrder(matchOrder);
 			return shipmentChange;
-		}).collect(Collectors.toList());
+		}).sorted((a, b) -> a.getApplyDate().compareTo(b.getApplyDate()))
+		.collect(Collectors.toList());
 		
 		List<Map<String, Object>> map = shipmentChanges.stream().map(shipmentChange -> {
 			try {
