@@ -112,9 +112,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 		List<OrderComment> orderComments = customerOrderService.findCommentsByOrderId(customerOrder.getOrderId());
 		orderComment = orderComments.get(0);
 		
-		this.mockMvc.perform(delete("/orderCtrl/orderComment")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(orderComment)))
+		this.mockMvc.perform(delete("/orderCtrl/orderComment/" + orderComment.getCommentId())
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.validFlag", is(0)));
