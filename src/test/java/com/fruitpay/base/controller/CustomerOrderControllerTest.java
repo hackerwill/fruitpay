@@ -100,6 +100,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.orderId", is(order.getOrderId())));
 		
+		
+		
 	}
 	
 	@Test

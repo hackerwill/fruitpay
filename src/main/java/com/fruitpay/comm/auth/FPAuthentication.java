@@ -60,7 +60,7 @@ public class FPAuthentication {
 			FPSessionInfo serverInfo = FPSessionFactory.getInstance().getFPSessionMap().get(FPToken);
 			isValidate = serverInfo.getSessionId().equals(clientInfo.getSessionId())
 					&& serverInfo.getUserId().equals(clientInfo.getUserId())
-					&& serverInfo.getUserName().equals(clientInfo.getUserName());
+					&& serverInfo.getUserName() == null || serverInfo.getUserName().equals(clientInfo.getUserName());
 		} catch (Exception e) {
 			isValidate = false;
 			log.error("validateFPToken Fail", e);
