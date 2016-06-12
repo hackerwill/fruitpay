@@ -252,14 +252,36 @@ public class CustomerOrderController {
 	}
 	
 	@RequestMapping(value = "/orderComment", method = RequestMethod.POST)
-	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody OrderComment addOrderComment(@RequestBody OrderComment orderComment) {
 
 		if (AssertUtils.isEmpty(orderComment))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		
+		orderComment = customerOrderService.add(orderComment);	
+		return orderComment;
+	}
+	
+	@RequestMapping(value = "/orderComment", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody List<OrderComment> getComment(
+			@RequestParam(value = "orderId", required = true, defaultValue = "") int orderId) {
+
+		if (AssertUtils.isEmpty(orderId))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		
+		List<OrderComment> orderComments = customerOrderService.findCommentsByOrderId(orderId);
+		return orderComments;
+	}
+	
+	@RequestMapping(value = "/orderComment/{commentId}", method = RequestMethod.DELETE)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody OrderComment removeComment(@PathVariable int commentId) {
+
+		if (AssertUtils.isEmpty(commentId))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		
+		OrderComment orderComment = customerOrderService.invalidate(commentId);
 		return orderComment;
 	}
 

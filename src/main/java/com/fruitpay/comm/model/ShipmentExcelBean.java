@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.comm.annotation.ColumnName;
 import com.fruitpay.comm.utils.DateUtil;
@@ -40,6 +41,8 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	private Integer programNum;	//數量
 	@ColumnName("售價")
 	private Integer totalPrice; //售價
+	@ColumnName("註解")
+	private String comments; //註解
 	
 	public ShipmentExcelBean() {
 		super();
@@ -79,10 +82,18 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		this.temperate = "2";
 		
 		this.spec = "1";
+		
+		this.comments = customerOrder.getOrderComments() == null ? "" : getComments(customerOrder.getOrderComments());
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+	
+	private String getComments(List<OrderComment> orderComments) {
+		return orderComments.stream()
+				.map(orderComment -> orderComment.getComment())
+				.reduce("", (a, b) -> a.length() > 0 ? a + "," + b : b);
 	}
 	
 	private String getPayOnReceiveStr(CustomerOrder customerOrder){

@@ -152,7 +152,7 @@ public class ShipmentController {
 		
 		LocalDate localDate = DateUtil.toLocalDate(date);
 		
-		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingOrderPreference(orderIds);
+		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(orderIds);
 		
 		List<Map<String, Object>> map = customerOrders.stream().map(customerOrder -> {
 			try {

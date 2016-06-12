@@ -26,6 +26,7 @@ import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderProgram;
@@ -53,6 +54,13 @@ public class DataUtil {
 	StaticDataService staticDataService;
 	@Inject
 	LoginService loginService;
+	
+	public OrderComment getOrderComment(CustomerOrder customerOrder) {
+		OrderComment orderComment = new OrderComment();
+		orderComment.setComment("TEST");
+		orderComment.setCustomerOrder(customerOrder);
+		return orderComment;
+	}
 	
 	public AuthenticationInfo getAuthInfo(MockMvc mockMvc) throws UnsupportedEncodingException, Exception{
 		loginService.signup(this.getSignupCustomer());

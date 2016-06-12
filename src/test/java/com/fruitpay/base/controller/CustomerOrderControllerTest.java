@@ -18,6 +18,7 @@ import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -90,17 +91,33 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(jsonPath("$.receiverCellphone", is(customerOrder.getReceiverCellphone())));
 		
 		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
-		CustomerOrder order = customerOrders.get(0);
-		int orderId = order.getOrderId();
-		CustomerOrder searchOrder = new CustomerOrder();
-		searchOrder.setOrderId(orderId);
-		this.mockMvc.perform(get("/orderCtrl/order/" + orderId)
+		customerOrder = customerOrders.get(0);
+		//To prevent it from stackoverflow error must set required data only
+		CustomerOrder sendCustomer = new CustomerOrder();
+		sendCustomer.setOrderId(customerOrder.getOrderId());
+		OrderComment orderComment = dataUtil.getOrderComment(sendCustomer);
+		this.mockMvc.perform(post("/orderCtrl/orderComment")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytesByGson(orderComment)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.comment", is(orderComment.getComment())));
+		
+		this.mockMvc.perform(get("/orderCtrl/orderComment?orderId=" + customerOrder.getOrderId())
 				.contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-	   		.andExpect(jsonPath("$.orderId", is(order.getOrderId())));
+	   		.andExpect(jsonPath("$", hasSize(1)));
 		
+		List<OrderComment> orderComments = customerOrderService.findCommentsByOrderId(customerOrder.getOrderId());
+		orderComment = orderComments.get(0);
 		
+		this.mockMvc.perform(delete("/orderCtrl/orderComment")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(orderComment)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.validFlag", is(0)));
 		
 	}
 	

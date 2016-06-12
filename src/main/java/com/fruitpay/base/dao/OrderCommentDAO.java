@@ -11,4 +11,6 @@ public interface OrderCommentDAO extends JpaRepository<OrderComment, Integer> {
 	
 	List<OrderComment> findByCustomerOrder(CustomerOrder customerOrder);
 	
+	List<OrderComment> findByCustomerOrderInAndValidFlag(List<CustomerOrder> customerOrders, int validFlag);
+	
 }

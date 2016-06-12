@@ -212,21 +212,29 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
-	public List<CustomerOrder> findByOrderIdsIncludingOrderPreference(List<Integer> orderIds) {
+	public List<CustomerOrder> findByOrderIdsIncludingPreferenceAndComments(List<Integer> orderIds) {
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByOrderIdIn(orderIds);
 		List<OrderPreference> orderPreferences = orderPreferenceDAO.findByCustomerOrderIn(customerOrders);
+		List<OrderComment> orderComments = orderCommentDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
 		
 		customerOrders = customerOrders.stream().map(customerOrder -> {
 			List<OrderPreference> thisPreferences = orderPreferences.stream().filter(orderPreference -> {
 				return orderPreference.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId());
 			}).collect(Collectors.toList());
+			
+			List<OrderComment> thisOrderComments = orderComments.stream().filter(orderComment -> {
+				return orderComment.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId());
+			}).collect(Collectors.toList());
+			
 			customerOrder.setOrderPreferences(thisPreferences);
+			customerOrder.setOrderComments(thisOrderComments);
 			return customerOrder;
 		}).collect(Collectors.toList());
 		return customerOrders;
 	}
 
 	@Override
+	@Transactional
 	public OrderComment add(OrderComment orderComment) {
 		orderComment.setValidFlag(VALID_FLAG.VALID.value());
 		orderComment = orderCommentDAO.save(orderComment);
@@ -234,8 +242,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
-	public OrderComment invalidate(OrderComment orderComment) {
-		OrderComment origin = orderCommentDAO.findOne(orderComment.getCommentId());
+	@Transactional
+	public OrderComment invalidate(int commentId) {
+		OrderComment origin = orderCommentDAO.findOne(commentId);
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
 		
@@ -244,7 +253,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	@Override
-	public List<OrderComment> findCommnetsByOrderId(int orderId) {
+	public List<OrderComment> findCommentsByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
 		List<OrderComment> orderComments = orderCommentDAO.findByCustomerOrder(customerOrder);

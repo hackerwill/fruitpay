@@ -35,7 +35,7 @@ public interface CustomerOrderService {
 	
 	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition);
 	
-	public List<CustomerOrder> findByOrderIdsIncludingOrderPreference(List<Integer> orderIds);
+	public List<CustomerOrder> findByOrderIdsIncludingPreferenceAndComments(List<Integer> orderIds);
 	
 	public CustomerOrder findOneIncludingOrderPreference(Integer orderId);
 	
@@ -47,8 +47,8 @@ public interface CustomerOrderService {
 	
 	public OrderComment add(OrderComment orderComment);
 	
-	public OrderComment invalidate(OrderComment orderComment);
+	public OrderComment invalidate(int commentId);
 	
-	public List<OrderComment> findCommnetsByOrderId(int orderId);
+	public List<OrderComment> findCommentsByOrderId(int orderId);
 
 }
