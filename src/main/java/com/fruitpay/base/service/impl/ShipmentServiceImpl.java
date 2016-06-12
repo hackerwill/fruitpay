@@ -35,8 +35,10 @@ import com.fruitpay.base.dao.ShipmentRecordDetailDAO;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.ShipmentChange;
+import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
@@ -456,5 +458,24 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipmentRecord.setShipmentRecordDetails(shipmentRecordDetails);
 		shipmentRecordDAO.save(shipmentRecord);
 		return shipmentRecord;
+	}
+	
+	@Override
+	public Page<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition, int page, int size) {
+		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByConditions(
+				condition.getStartDate(),
+				condition.getEndDate(),
+				condition.getValidFlag(),
+				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
+		return shipmentChanges;
+	}
+	
+	@Override
+	public List<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition) {
+		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByConditions(
+				condition.getStartDate(),
+				condition.getEndDate(),
+				condition.getValidFlag());
+		return shipmentChanges;
 	}
 }

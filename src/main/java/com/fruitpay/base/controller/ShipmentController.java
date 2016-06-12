@@ -33,6 +33,7 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ShipmentChange;
+import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordPostBean;
@@ -40,7 +41,7 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
-import com.fruitpay.comm.model.OrderExcelBean;
+import com.fruitpay.comm.model.ShipmentChangeExcelBean;
 import com.fruitpay.comm.model.ShipmentExcelBean;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.DateUtil;
@@ -97,11 +98,59 @@ public class ShipmentController {
 	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody Page<ShipmentChange> getAllShipmentChanges(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-
-		Page<ShipmentChange> shipmentChanges = shipmentService.findByValidFlag(CommConst.VALID_FLAG.VALID, page, size);
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
+		
+		ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate);
+		Page<ShipmentChange> shipmentChanges = shipmentService.findAllByConditions(condition, page, size);
 
 		return shipmentChanges;
+	}
+	
+	@RequestMapping(value = "/exportShipmentChanges", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody HttpServletResponse exportShipmentRecords(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody  List<ShipmentChange> shipmentChanges,
+			@DateTimeFormat(pattern="yyyy-MM-dd") Date date,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
+		
+		if(shipmentChanges.isEmpty()) {
+			ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate);
+			shipmentChanges = shipmentService.findAllByConditions(condition);
+		}
+		
+		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(
+				shipmentChanges.stream()
+					.map(shipmentChange -> shipmentChange.getCustomerOrder().getOrderId())
+					.collect(Collectors.toList()));
+		
+		shipmentChanges = shipmentChanges.stream().map(shipmentChange -> {
+			CustomerOrder matchOrder = customerOrders.stream()
+					.filter(order -> order.getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId()))
+					.findFirst()
+					.get();
+			shipmentChange.setCustomerOrder(matchOrder);
+			return shipmentChange;
+		}).collect(Collectors.toList());
+		
+		List<Map<String, Object>> map = shipmentChanges.stream().map(shipmentChange -> {
+			try {
+				return new ShipmentChangeExcelBean(shipmentChange).getMap();
+			} catch (Exception e) {
+				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+			}
+		}).collect(Collectors.toList());
+		
+		try {
+			ExcelUtil.doExcelExport(request, response, "xls", map, new ShipmentChangeExcelBean().getColList());
+		} catch (Exception e) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
+		}
+
+		return response;
+		
 	}
 
 	@RequestMapping(value = "/shipmentChange/{orderId}", method = RequestMethod.GET)

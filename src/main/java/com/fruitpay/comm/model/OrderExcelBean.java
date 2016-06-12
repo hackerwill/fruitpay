@@ -1,12 +1,9 @@
 package com.fruitpay.comm.model;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.CustomerOrder;
