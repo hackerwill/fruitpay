@@ -29,6 +29,9 @@ public class OrderComment extends AbstractEntity {
 	
 	@Column(name="comment")
 	private String comment;
+	
+	@Column(name="valid_flag")
+	private int validFlag;
 
 	public Integer getCommentId() {
 		return commentId;
@@ -52,6 +55,14 @@ public class OrderComment extends AbstractEntity {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public int getValidFlag() {
+		return validFlag;
+	}
+
+	public void setValidFlag(int validFlag) {
+		this.validFlag = validFlag;
 	}
 
 }

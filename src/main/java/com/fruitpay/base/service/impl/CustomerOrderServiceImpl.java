@@ -228,23 +228,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public OrderComment add(OrderComment orderComment) {
+		orderComment.setValidFlag(VALID_FLAG.VALID.value());
 		orderComment = orderCommentDAO.save(orderComment);
 		return orderComment;
 	}
 
 	@Override
-	public OrderComment update(OrderComment orderComment) {
+	public OrderComment invalidate(OrderComment orderComment) {
 		OrderComment origin = orderCommentDAO.findOne(orderComment.getCommentId());
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
 		
-		BeanUtils.copyProperties(orderComment, origin);
-		origin = orderCommentDAO.save(origin);
+		origin.setValidFlag(VALID_FLAG.INVALID.value());
 		return origin;
 	}
 
 	@Override
-	public List<OrderComment> findOrderCommnetsByOrderId(int orderId) {
+	public List<OrderComment> findCommnetsByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
 		List<OrderComment> orderComments = orderCommentDAO.findByCustomerOrder(customerOrder);

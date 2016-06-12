@@ -47,8 +47,8 @@ public interface CustomerOrderService {
 	
 	public OrderComment add(OrderComment orderComment);
 	
-	public OrderComment update(OrderComment orderComment);
+	public OrderComment invalidate(OrderComment orderComment);
 	
-	public List<OrderComment> findOrderCommnetsByOrderId(int orderId);
+	public List<OrderComment> findCommnetsByOrderId(int orderId);
 
 }
