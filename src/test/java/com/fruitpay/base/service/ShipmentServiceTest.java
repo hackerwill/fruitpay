@@ -26,14 +26,14 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void testWithListAllOrdersByDate() throws Exception {
-		LocalDate nextFriday = calcNextFriday(LocalDate.now());
+		LocalDate nextMonday = calcNextMonday(LocalDate.now());
 		
-		List<Integer> customerOrders =  shipmentService.listAllOrderIdsByDate(nextFriday);
+		List<Integer> customerOrders =  shipmentService.listAllOrderIdsByDate(nextMonday);
 		Assert.assertNotEquals(customerOrders.size(), 0);
 	}
 	
-	private LocalDate calcNextFriday(LocalDate d) {
-		  return d.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+	private LocalDate calcNextMonday(LocalDate d) {
+		  return d.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 		}
 	
 }
