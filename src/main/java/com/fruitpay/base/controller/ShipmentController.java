@@ -62,7 +62,7 @@ public class ShipmentController {
 	@Inject
 	private StaticDataService staticDataService;
 	
-	private int[] lalaAreaPostCode = {
+	private Integer[] lalaAreaPostCode = {
 			 222 //新北市 深坑區
 			,223 //新北市 石碇區
 			,224 //新北市 瑞芳區
@@ -281,8 +281,8 @@ public class ShipmentController {
 
 	}
 	
-	private boolean checkInLala(int postCode) {
-		return Arrays.asList(lalaAreaPostCode).contains(postCode);
+	private boolean checkInLala(Integer postCode) {
+		return Arrays.asList(lalaAreaPostCode).stream().anyMatch(value -> value.equals(postCode));
 	}
 	
 	@RequestMapping(value = "/shipmentPreview", method = RequestMethod.GET)
