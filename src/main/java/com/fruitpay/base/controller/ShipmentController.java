@@ -236,7 +236,6 @@ public class ShipmentController {
 		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(orderIds);
 		
 	    Comparator<CustomerOrder> comparator = (o1, o2) -> {
-	    	//compare program
 	    	int programCompare;
 	    	if(o1.getOrderProgram().getProgramId() > o2.getOrderProgram().getProgramId()) {
 	    		programCompare = -1;
@@ -246,19 +245,17 @@ public class ShipmentController {
 	    		programCompare = 0;
 	    	}
 	    	
-	    	if(programCompare == 0) {
-	    		int postcode1 = Integer.valueOf(o1.getPostalCode().getPostCode());
-	    		int postcode2 = Integer.valueOf(o1.getPostalCode().getPostCode());
-	    		boolean postcode1Check = checkInLala(postcode1);
-	    		boolean postcode2Check = checkInLala(postcode2);
-	    		
-	    		if (postcode1Check && !postcode2Check) {
-	    			return 1;
-	    		} else if (postcode2Check && !postcode1Check) {
-	    			return -1;
-	    		} else {
-	    			return postcode2 - postcode1;
-	    		}
+	    	int postcode1 = Integer.valueOf(o1.getPostalCode().getPostCode());
+    		int postcode2 = Integer.valueOf(o1.getPostalCode().getPostCode());
+    		boolean postcode1Check = checkInLala(postcode1);
+    		boolean postcode2Check = checkInLala(postcode2);
+	    	
+	    	if (!postcode1Check && !postcode2Check) {
+	    		return -1 * programCompare;
+	    	} else if (postcode1Check && !postcode2Check) {
+	    		return 1;
+	    	} else if (!postcode1Check && postcode2Check) {
+	    		return -1;
 	    	} else {
 	    		return programCompare;
 	    	}
