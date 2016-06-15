@@ -55,5 +55,5 @@ public interface ShipmentService {
 	public Page<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition, int page, int size);
 	
 	public List<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition); 
-	
+
 }

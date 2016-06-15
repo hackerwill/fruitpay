@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,27 @@ public class ShipmentController {
 	private CustomerOrderService customerOrderService;
 	@Inject
 	private StaticDataService staticDataService;
+	
+	private int[] lalaAreaPostCode = {
+			 222 //新北市 深坑區
+			,223 //新北市 石碇區
+			,224 //新北市 瑞芳區
+			,226 //新北市 平溪區
+			,227 //新北市 雙溪區
+			,228 //新北市 貢寮區
+			,232 //新北市 坪林區
+			,233 //新北市 烏來區
+			,237 //新北市 三峽區
+			,238 //新北市 樹林區
+			,239 //新北市 鶯歌區
+			,243 //新北市 泰山區
+			,244 //新北市 林口區
+			,248 //新北市 五股區
+			,249 //新北市 八里區
+			,251 //新北市 淡水區
+			,252 //新北市 三芝區
+			,253 //新北市 石門區
+	};
 	
 	@RequestMapping(value = "/shipmentChange", method = RequestMethod.POST)
 	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
@@ -212,6 +235,37 @@ public class ShipmentController {
 		
 		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(orderIds);
 		
+	    Comparator<CustomerOrder> comparator = (o1, o2) -> {
+	    	//compare program
+	    	int programCompare;
+	    	if(o1.getOrderProgram().getProgramId() > o2.getOrderProgram().getProgramId()) {
+	    		programCompare = -1;
+	    	} else if(o1.getOrderProgram().getProgramId() < o2.getOrderProgram().getProgramId()) {
+	    		programCompare = 1;
+	    	} else {
+	    		programCompare = 0;
+	    	}
+	    	
+	    	if(programCompare == 0) {
+	    		int postcode1 = Integer.valueOf(o1.getPostalCode().getPostCode());
+	    		int postcode2 = Integer.valueOf(o1.getPostalCode().getPostCode());
+	    		boolean postcode1Check = checkInLala(postcode1);
+	    		boolean postcode2Check = checkInLala(postcode2);
+	    		
+	    		if (postcode1Check && !postcode2Check) {
+	    			return 1;
+	    		} else if (postcode2Check && !postcode1Check) {
+	    			return -1;
+	    		} else {
+	    			return postcode2 - postcode1;
+	    		}
+	    	} else {
+	    		return programCompare;
+	    	}
+	    };
+		 
+	    customerOrders = customerOrders.stream().sorted(comparator).collect(Collectors.toList());
+	    
 		List<Map<String, Object>> map = customerOrders.stream().map(customerOrder -> {
 			try {
 				return new ShipmentExcelBean(customerOrder, localDate.minusDays(1), localDate).getMap();
@@ -230,6 +284,10 @@ public class ShipmentController {
 
 	}
 	
+	private boolean checkInLala(int postCode) {
+		return Arrays.asList(lalaAreaPostCode).contains(postCode);
+	}
+	
 	@RequestMapping(value = "/shipmentPreview", method = RequestMethod.GET)
 	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody ShipmentPreview getShipmentPreview(
@@ -244,7 +302,6 @@ public class ShipmentController {
 		
 		List<Integer> orderIds = shipmentService.listAllOrderIdsByDate(localDate);
 		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersPageable(orderIds, page, size);
-		
 		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds);
 		return shipmentPreview;
 	}
