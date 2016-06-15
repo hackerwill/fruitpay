@@ -246,7 +246,7 @@ public class ShipmentController {
 	    	}
 	    	
 	    	int postcode1 = Integer.valueOf(o1.getPostalCode().getPostCode());
-    		int postcode2 = Integer.valueOf(o1.getPostalCode().getPostCode());
+    		int postcode2 = Integer.valueOf(o2.getPostalCode().getPostCode());
     		boolean postcode1Check = checkInLala(postcode1);
     		boolean postcode2Check = checkInLala(postcode2);
 	    	
