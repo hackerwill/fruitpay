@@ -35,7 +35,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND o.orderDate BETWEEN :startDate AND :endDate "
 			+ " AND STR(o.validFlag) like %:validFlag% " 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
-			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% ")
+			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
+			+ " AND o.receiverCellphone LIKE %:receiverCellphone% ")
 	public Page<CustomerOrder> findByConditions(
 			@Param("name") String name, 
 			@Param("orderId") String orderId, 
@@ -44,6 +45,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("validFlag") String validFlag, 
 			@Param("allowForeignFruits") String allowForeignFruits,
 			@Param("orderStatusId") String orderStatusId,
+			@Param("receiverCellphone") String receiverCellphone,
 			Pageable pageable);
 	
 	@Query("FROM CustomerOrder o where CAST(o.orderId as string) LIKE %:orderId% "
@@ -51,7 +53,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND o.orderDate BETWEEN :startDate AND :endDate "
 			+ " AND STR(o.validFlag) like %:validFlag% " 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
-			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% ")
+			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
+			+ " AND o.receiverCellphone LIKE %:receiverCellphone% ")
 	public List<CustomerOrder> findByConditions(
 			@Param("name") String name, 
 			@Param("orderId") String orderId, 
@@ -59,6 +62,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("endDate") Date endDate,
 			@Param("validFlag") String validFlag, 
 			@Param("allowForeignFruits") String allowForeignFruits,
-			@Param("orderStatusId") String orderStatusId);
+			@Param("orderStatusId") String orderStatusId,
+			@Param("receiverCellphone") String receiverCellphone);
 
 }

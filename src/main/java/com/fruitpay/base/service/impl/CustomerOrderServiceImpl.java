@@ -151,7 +151,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getEndDate(),
 				orderCondition.getValidFlag(),
 				orderCondition.getAllowForeignFruits(),
-				orderCondition.getOrderStatusId());
+				orderCondition.getOrderStatusId(),
+				orderCondition.getReceiverCellphone());
 		
 		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
 			CustomerOrder customerOrder = iterator.next();
@@ -171,6 +172,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getValidFlag(),
 				orderCondition.getAllowForeignFruits(),
 				orderCondition.getOrderStatusId(),
+				orderCondition.getReceiverCellphone(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}

@@ -189,12 +189,13 @@ public class CustomerOrderController {
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
 			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId,
+			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
 		name = name.toLowerCase();
 		
-		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId);
+		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone);
 		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;
@@ -210,10 +211,11 @@ public class CustomerOrderController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
+			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId) {
 		
 		if(customerOrders.size() == 0) {
-			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId);
+			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone);
 			customerOrders = customerOrderService.findAllByConditions(orderCondition);
 		} else {
 			customerOrders = customerOrders.stream().map(order -> {

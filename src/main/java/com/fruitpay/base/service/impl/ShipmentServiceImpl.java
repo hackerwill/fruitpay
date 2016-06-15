@@ -466,6 +466,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getStartDate(),
 				condition.getEndDate(),
 				condition.getValidFlag(),
+				condition.getOrderId(),
+				condition.getName(),
+				condition.getReceiverCellphone(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
 		return shipmentChanges;
 	}
@@ -475,6 +478,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByConditions(
 				condition.getStartDate(),
 				condition.getEndDate(),
+				condition.getOrderId(),
+				condition.getName(),
+				condition.getReceiverCellphone(),
 				condition.getValidFlag());
 		return shipmentChanges;
 	}

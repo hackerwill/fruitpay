@@ -59,7 +59,7 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		
 		this.payOnReceive = getPayOnReceiveStr(customerOrder);
 		
-		this.receiverName = customerOrder.getReceiverLastName() + customerOrder.getReceiverFirstName();
+		this.receiverName = customerOrder.getReceiverLastName().trim() + customerOrder.getReceiverFirstName().trim();
 		
 		this.receiverAddress = customerOrder.getPostalCode().getFullName() + customerOrder.getReceiverAddress();
 		

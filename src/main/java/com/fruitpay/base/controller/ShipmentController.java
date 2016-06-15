@@ -99,10 +99,14 @@ public class ShipmentController {
 	public @ResponseBody Page<ShipmentChange> getAllShipmentChanges(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
 		
-		ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate);
+		ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate, validFlag, orderId, name, receiverCellphone);
 		Page<ShipmentChange> shipmentChanges = shipmentService.findAllByConditions(condition, page, size);
 
 		return shipmentChanges;
@@ -113,11 +117,15 @@ public class ShipmentController {
 	public @ResponseBody HttpServletResponse exportShipmentRecords(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody  List<ShipmentChange> shipmentChanges,
 			@DateTimeFormat(pattern="yyyy-MM-dd") Date date,
+			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
 		
 		if(shipmentChanges.isEmpty()) {
-			ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate);
+			ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate, validFlag, orderId, name, receiverCellphone);
 			shipmentChanges = shipmentService.findAllByConditions(condition);
 		}
 		

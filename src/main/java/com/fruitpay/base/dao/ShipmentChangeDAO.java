@@ -23,18 +23,30 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 
 	@Query("FROM ShipmentChange s where "
 			+ " s.applyDate BETWEEN :startDate AND :endDate "
-			+ " AND STR(s.validFlag) like %:validFlag% ")
+			+ " AND STR(s.validFlag) like %:validFlag% "
+			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
+			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
+			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public Page<ShipmentChange> findByConditions(
 			@Param("startDate") Date startDate, 
 			@Param("endDate") Date endDate,
 			@Param("validFlag") String validFlag, 
+			@Param("orderId") String orderId, 
+			@Param("name") String name, 
+			@Param("receiverCellphone") String receiverCellphone,
 			Pageable pageable);
 	
 	@Query("FROM ShipmentChange s where "
 			+ " s.applyDate BETWEEN :startDate AND :endDate "
-			+ " AND STR(s.validFlag) like %:validFlag% ")
+			+ " AND STR(s.validFlag) like %:validFlag% "
+			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
+			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
+			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public List<ShipmentChange> findByConditions(
 			@Param("startDate") Date startDate, 
 			@Param("endDate") Date endDate,
-			@Param("validFlag") String validFlag);
+			@Param("validFlag") String validFlag,
+			@Param("orderId") String orderId, 
+			@Param("name") String name, 
+			@Param("receiverCellphone") String receiverCellphone);
 }

@@ -11,8 +11,11 @@ public class ShipmentChangeCondition implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private String validFlag;
+	private String orderId;
+	private String name;
+	private String receiverCellphone;
 	
-	public ShipmentChangeCondition(Date startDate, Date endDate) {
+	public ShipmentChangeCondition(Date startDate, Date endDate, String validFlag, String orderId, String name, String receiverCellphone) {
 		super();
 		
 		if(startDate == null){
@@ -23,7 +26,10 @@ public class ShipmentChangeCondition implements Serializable {
 		
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.validFlag = String.valueOf(VALID_FLAG.VALID.value());
+		this.validFlag = validFlag != null ? validFlag : String.valueOf(VALID_FLAG.VALID.value());
+		this.orderId = orderId;
+		this.name = name;
+		this.receiverCellphone = receiverCellphone;
 	}
 	
 	public Date getStartDate() {
@@ -45,5 +51,29 @@ public class ShipmentChangeCondition implements Serializable {
 
 	public void setValidFlag(String validFlag) {
 		this.validFlag = validFlag;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getReceiverCellphone() {
+		return receiverCellphone;
+	}
+
+	public void setReceiverCellphone(String receiverCellphone) {
+		this.receiverCellphone = receiverCellphone;
 	}
 }
