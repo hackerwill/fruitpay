@@ -238,9 +238,9 @@ public class ShipmentController {
 	    Comparator<CustomerOrder> comparator = (o1, o2) -> {
 	    	int programCompare;
 	    	if(o1.getOrderProgram().getProgramId() > o2.getOrderProgram().getProgramId()) {
-	    		programCompare = -1;
-	    	} else if(o1.getOrderProgram().getProgramId() < o2.getOrderProgram().getProgramId()) {
 	    		programCompare = 1;
+	    	} else if(o1.getOrderProgram().getProgramId() < o2.getOrderProgram().getProgramId()) {
+	    		programCompare = -1;
 	    	} else {
 	    		programCompare = 0;
 	    	}
