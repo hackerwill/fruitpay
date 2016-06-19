@@ -274,7 +274,12 @@ public class DataUtil {
 			Product product = iterator.next();
 			OrderPreference orderPreference = new OrderPreference();
 			orderPreference.setProduct(product);
-			orderPreference.setLikeDegree(Byte.parseByte("5"));
+			//亂數設定一些不喜歡的水果
+			if(Math.random() < 0.3) {
+				orderPreference.setLikeDegree(Byte.parseByte("0"));
+			} else {
+				orderPreference.setLikeDegree(Byte.parseByte("5"));
+			}
 			orderPreference.setCustomerOrder(customerOrder);
 			orderPreferences.add(orderPreference);
 		}

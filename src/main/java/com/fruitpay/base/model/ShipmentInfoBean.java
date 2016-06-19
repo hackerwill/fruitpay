@@ -8,6 +8,13 @@ public class ShipmentInfoBean implements Serializable {
 	private int shipmentRecordId;
 	private String name;
 	
+	public ShipmentInfoBean(int orderId, int shipmentRecordId, String name) {
+		super();
+		this.orderId = orderId;
+		this.shipmentRecordId = shipmentRecordId;
+		this.name = name;
+	}
+	
 	public int getOrderId() {
 		return orderId;
 	}

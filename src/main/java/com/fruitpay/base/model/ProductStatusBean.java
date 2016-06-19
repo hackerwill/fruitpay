@@ -25,10 +25,23 @@ public class ProductStatusBean implements Serializable {
 		}
 	}
 	
+	private int orderId;
 	private int shipmentRecordId;
 	private String status;
 	
+	public ProductStatusBean(int orderId, int shipmentRecordId, String status) {
+		super();
+		this.orderId = orderId;
+		this.shipmentRecordId = shipmentRecordId;
+		this.status = status;
+	}
 	
+	public int getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
 	public int getShipmentRecordId() {
 		return shipmentRecordId;
 	}

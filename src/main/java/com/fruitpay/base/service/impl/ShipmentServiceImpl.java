@@ -29,17 +29,24 @@ import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerOrderDAO;
+import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.dao.ShipmentChangeDAO;
 import com.fruitpay.base.dao.ShipmentRecordDAO;
 import com.fruitpay.base.dao.ShipmentRecordDetailDAO;
+import com.fruitpay.base.model.ChosenProductBean;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
+import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.OrderStatus;
+import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ProductStatusBean;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentInfoBean;
+import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -64,6 +71,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ShipmentRecordDAO shipmentRecordDAO;
 	@Inject
 	private CustomerOrderDAO customerOrderDAO;
+	@Inject
+	private OrderPreferenceDAO orderPreferenceDAO;
 	
 	//if one delivery day is pulse, the next delivery day plus day amount
 	private final int JUMP_DAY = 7;
@@ -74,6 +83,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption shipmentDelivered = null;
 	private ConstantOption shipmentReady = null;
 	private ConstantOption shipmentReturn = null;
+	private List<Product> cacheProducts = null;
 	
 	@PostConstruct
 	public void init(){
@@ -83,6 +93,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipmentCancel = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentCancel.toString()); 
 		shipmentReady = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReady.toString()); 
 		shipmentReturn = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReturn.toString()); 
+		cacheProducts = staticDataService.getAllProducts();
 	}
 	
 	@Override
@@ -314,10 +325,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 	
 	@Override
-	public List<Integer> listAllOrderIdsByDate(LocalDate date) {
-		
+	public List<CustomerOrder> listAllCustomerOrdersByDate(LocalDate date) {
 		if(date == null) 
-			return new ArrayList<Integer>();
+			return new ArrayList<CustomerOrder>();
 		
 		Constant deliveryDayConstant = staticDataService.getConstant(6);
 		List<ConstantOption> deliveryDays = deliveryDayConstant.getConstOptions();
@@ -335,12 +345,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 			.collect(Collectors.toList());
 		
 		if(deliveryDays.size() == 0)
-			return new ArrayList<Integer>();
+			return new ArrayList<CustomerOrder>();
 		
 		List<CustomerOrder> customerOrders = customerOrderDAO.findByValidFlagAndDeliveryDayAndOrderStatusIn(
 				VALID_FLAG.VALID.value(), deliveryDays.get(0), orderStatues);
 		
-		List<Integer> orderIds = customerOrders.stream().filter(customerOrder -> {
+		customerOrders = customerOrders.stream().filter(customerOrder -> {
 
 			LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
 			int duration = customerOrder.getShipmentPeriod().getDuration();
@@ -360,21 +370,27 @@ public class ShipmentServiceImpl implements ShipmentService {
 				return false;
 			}
 		}).map(customerOrder -> {
-			return customerOrder.getOrderId();
+			return customerOrder;
 		}).collect(Collectors.toList());
 		
 		//如果有客製需配送的日期 在這裡加入
-		List<Integer> customizedOrderIds = shipmentChangeDAO.findByApplyDateAndShipmentChangeTypeAndValidFlag(
+		List<CustomerOrder> customizedOrderIds = shipmentChangeDAO.findByApplyDateAndShipmentChangeTypeAndValidFlag(
 				DateUtil.toDate(date), shipmentDeliver, VALID_FLAG.VALID.value()).stream()
 				.map(shipmentChangeType -> {
-					return shipmentChangeType.getCustomerOrder().getOrderId();
+					return shipmentChangeType.getCustomerOrder();
 				}).collect(Collectors.toList());
 		
 		if(!customizedOrderIds.isEmpty()) {
-			orderIds.addAll(customizedOrderIds);
+			customerOrders.addAll(customizedOrderIds);
 		}
-		
-		return orderIds;
+		return customerOrders;
+	}
+	
+	@Override
+	public List<Integer> listAllOrderIdsByDate(LocalDate date) {
+		return listAllCustomerOrdersByDate(date).stream()
+				.map(CustomerOrder -> CustomerOrder.getOrderId())
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -483,5 +499,71 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getReceiverCellphone(),
 				condition.getValidFlag());
 		return shipmentChanges;
+	}
+
+	@Override
+	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<Integer> productIds) {
+		List<CustomerOrder> customerOrders =  this.listAllCustomerOrdersByDate(date);	
+		List<OrderPreference> orderPreferences =  orderPreferenceDAO.findByCustomerOrderIn(customerOrders);
+		
+		List<ShipmentInfoBean> shipmentInfoBeans = customerOrders.stream().map(customerOrder -> {
+			return new ShipmentInfoBean(customerOrder.getOrderId(), 0, 
+					customerOrder.getReceiverLastName().trim() + customerOrder.getReceiverFirstName().trim());
+		}).collect(Collectors.toList());
+		
+		List<ChosenProductBean> chosenProductBeans = productIds.stream().map(productId -> {
+			return cacheProducts.stream()
+					.filter(product -> product.getProductId().equals(productId))
+					.findFirst()
+					.get();
+		})
+		.map(product -> {
+			List<ProductStatusBean> productStatusBeans = customerOrders.stream().map(customeOrder -> {
+				List<OrderPreference> preferences = orderPreferences.stream()
+						.filter(preference -> preference.getCustomerOrder().getOrderId().equals(customeOrder.getOrderId()))
+						.filter(orderPreference -> orderPreference.getProduct().getProductId().equals(product.getProductId()))
+						.collect(Collectors.toList());
+				
+				String status;
+				if(!preferences.isEmpty() && preferences.get(0).getLikeDegree() == 0) {
+					status = ProductStatusBean.STATUS.UNLIKE.value();
+				} else {
+					status = ProductStatusBean.STATUS.NO.value();
+				}
+				return new ProductStatusBean(customeOrder.getOrderId(), 0, status);
+			}).collect(Collectors.toList());
+			return new ChosenProductBean(product.getProductId(), product.getProductName(), productStatusBeans);
+		}).collect(Collectors.toList());
+		
+		ShipmentPreferenceBean shipmentPreferenceBean = new ShipmentPreferenceBean(
+				0, DateUtil.toDate(date), shipmentInfoBeans, chosenProductBeans);
+		
+		//print(shipmentPreferenceBean);
+		return shipmentPreferenceBean;
+	}
+	
+	private void print(ShipmentPreferenceBean shipmentPreferenceBean) {
+		StringBuilder title = new StringBuilder();
+		title.append("訂單編號\t");
+		title.append("姓名\t");
+		shipmentPreferenceBean.getChosenProductBeans().forEach(product -> {
+			title.append(product.getProductName() + "\t");
+		});
+		logger.info(title.toString());
+		
+		shipmentPreferenceBean.getShipmentInfoBeans().forEach(info -> {
+			StringBuilder content = new StringBuilder();
+			content.append(info.getOrderId() + "\t");
+			content.append(info.getName() + "\t");
+			shipmentPreferenceBean.getChosenProductBeans().forEach(product -> {
+				ProductStatusBean productStatusBean = product.getProductStatusBeans().stream()
+					.filter(statusBean -> statusBean.getOrderId() == info.getOrderId())
+					.findFirst()
+					.get();
+				
+				content.append(productStatusBean.getStatus() + "\t");
+			});
+			logger.info(content.toString());
+		});
 	}
 }

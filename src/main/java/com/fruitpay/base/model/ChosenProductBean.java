@@ -9,6 +9,13 @@ public class ChosenProductBean implements Serializable {
 	private String productName;
 	private List<ProductStatusBean> productStatusBeans;
 
+	public ChosenProductBean(int productId, String productName, List<ProductStatusBean> productStatusBeans) {
+		super();
+		this.productId = productId;
+		this.productName = productName;
+		this.productStatusBeans = productStatusBeans;
+	}
+	
 	public int getProductId() {
 		return productId;
 	}

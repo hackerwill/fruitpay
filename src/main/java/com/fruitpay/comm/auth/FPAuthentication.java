@@ -2,14 +2,12 @@ package com.fruitpay.comm.auth;
 
 import java.net.InetAddress;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.AuthenticationException;
 
-import com.fruitpay.comm.service.RoleService;
 import com.fruitpay.comm.session.FPSessionUtil;
 import com.fruitpay.comm.session.model.FPSessionFactory;
 import com.fruitpay.comm.session.model.FPSessionInfo;

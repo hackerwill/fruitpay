@@ -8,16 +8,18 @@ public class ShipmentPreferenceBean implements Serializable {
 	
 	private int shipmentRecordId;
 	private Date date;
-	
 	private List<ShipmentInfoBean> shipmentInfoBeans;
+	private List<ChosenProductBean> chosenProductBeans;
 	
-	private List<ChosenProductBean> chosenProductBean;
-
-	public List<ShipmentInfoBean> getShipmentInfoBeans() {
-		return shipmentInfoBeans;
+	
+	public ShipmentPreferenceBean(int shipmentRecordId, Date date, List<ShipmentInfoBean> shipmentInfoBeans,
+			List<ChosenProductBean> chosenProductBeans) {
+		super();
+		this.shipmentRecordId = shipmentRecordId;
+		this.date = date;
+		this.shipmentInfoBeans = shipmentInfoBeans;
+		this.chosenProductBeans = chosenProductBeans;
 	}
-	
-	
 	
 	public Date getDate() {
 		return date;
@@ -34,13 +36,14 @@ public class ShipmentPreferenceBean implements Serializable {
 	public void setShipmentInfoBeans(List<ShipmentInfoBean> shipmentInfoBeans) {
 		this.shipmentInfoBeans = shipmentInfoBeans;
 	}
-
-	public List<ChosenProductBean> getChosenProductBean() {
-		return chosenProductBean;
+	public List<ShipmentInfoBean> getShipmentInfoBeans() {
+		return shipmentInfoBeans;
 	}
-
-	public void setChosenProductBean(List<ChosenProductBean> chosenProductBean) {
-		this.chosenProductBean = chosenProductBean;
+	public List<ChosenProductBean> getChosenProductBeans() {
+		return chosenProductBeans;
+	}
+	public void setChosenProductBeans(List<ChosenProductBean> chosenProductBeans) {
+		this.chosenProductBeans = chosenProductBeans;
 	}
 	
 	

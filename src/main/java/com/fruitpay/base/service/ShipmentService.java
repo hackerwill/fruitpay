@@ -5,16 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import com.fruitpay.base.comm.CommConst;
-import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
-import com.fruitpay.base.model.OrderCondition;
-import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
 
@@ -38,6 +35,8 @@ public interface ShipmentService {
 	
 	public List<Integer> listAllOrderIdsByDate(LocalDate date);
 	
+	public List<CustomerOrder> listAllCustomerOrdersByDate(LocalDate date);
+	
 	public Page<CustomerOrder> listAllOrdersPageable(List<Integer> orderIds, int page, int size);
 	
 	public Page<CustomerOrder> findByOrderIdIn(List<Integer> orderIds, int page, int size);
@@ -55,5 +54,7 @@ public interface ShipmentService {
 	public Page<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition, int page, int size);
 	
 	public List<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition); 
+	
+	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<Integer> productIds); 
 
 }

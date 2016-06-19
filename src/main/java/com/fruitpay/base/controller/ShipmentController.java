@@ -37,6 +37,7 @@ import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordPostBean;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -299,7 +300,14 @@ public class ShipmentController {
 		
 		List<Integer> orderIds = shipmentService.listAllOrderIdsByDate(localDate);
 		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersPageable(orderIds, page, size);
-		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds);
+		
+		List<CustomerOrder> duplicatedCustomerOrders = customerOrders.getContent().stream()
+				.filter(thisOrder -> {
+					return customerOrders.getContent().stream().filter(order -> {
+						return order.getCustomer().getCustomerId().equals(thisOrder.getCustomer().getCustomerId());
+					}).count() > 1;
+				}).collect(Collectors.toList());
+		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds, duplicatedCustomerOrders);
 		return shipmentPreview;
 	}
 	
@@ -362,11 +370,13 @@ public class ShipmentController {
 	private class ShipmentPreview implements Serializable{
 		Page<CustomerOrder> customerOrders;
 		List<Integer> orderIds;
+		List<CustomerOrder> duplicateOrders;
 		
-		public ShipmentPreview(Page<CustomerOrder> customerOrders, List<Integer> orderIds) {
+		public ShipmentPreview(Page<CustomerOrder> customerOrders, List<Integer> orderIds, List<CustomerOrder> duplicateOrders) {
 			super();
 			this.customerOrders = customerOrders;
 			this.orderIds = orderIds;
+			this.duplicateOrders = duplicateOrders;
 		}
 		public Page<CustomerOrder> getCustomerOrders() {
 			return customerOrders;
@@ -380,6 +390,29 @@ public class ShipmentController {
 		public void setOrderIds(List<Integer> orderIds) {
 			this.orderIds = orderIds;
 		}
+		public List<CustomerOrder> getDuplicateOrders() {
+			return duplicateOrders;
+		}
+		public void setDuplicateOrders(List<CustomerOrder> duplicateOrders) {
+			this.duplicateOrders = duplicateOrders;
+		}
+	}
+	
+	@RequestMapping(value = "/shipmentPreference", method = RequestMethod.GET)
+	//@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody ShipmentPreferenceBean getShipmentPreference(
+			@RequestParam(value = "productIdsStr", required = false, defaultValue = "0") String productIdsStr,
+			@DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
+		
+		if(AssertUtils.isEmpty(productIdsStr) || date == null) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
+		List<Integer> productIds = Arrays.asList(productIdsStr.split(",")).stream()
+				.map(productId -> Integer.valueOf(productId))
+				.collect(Collectors.toList());
+		ShipmentPreferenceBean shipmentPreferenceBean = shipmentService.findInitialShipmentPreference(DateUtil.toLocalDate(date), productIds);
+		return shipmentPreferenceBean;
 	}
 
 }
