@@ -15,6 +15,7 @@ import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ProductItem;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 
@@ -25,6 +26,8 @@ public interface StaticDataService {
 	public PostalCode getPostalCode(Integer postId);
 	
 	public List<Product> getAllProducts();
+	
+	public List<ProductItem> getAllProductItems();
 	
 	public List<OrderPlatform> getAllOrderPlatform();
 	
@@ -70,7 +73,7 @@ public interface StaticDataService {
 	
 	public String getNextReceiveDayStr(Date nowTime, DayOfWeek dayOfWeek);
 	
+	public int getNextReceiveDayOfWeek(Date nowTime);
+	
 	public LocalDate getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek);
-
-
 }

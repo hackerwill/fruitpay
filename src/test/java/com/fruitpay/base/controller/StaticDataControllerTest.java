@@ -13,12 +13,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fruitpay.base.controller.StaticDataController;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.model.SelectOption;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
@@ -28,7 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,6 +74,16 @@ public class StaticDataControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.content", hasSize(greaterThan(0))));
+	}
+	
+	@Test
+	@Transactional
+	public void findProductItemsShouldReturnList() throws Exception{
+		this.mockMvc.perform(get("/staticDataCtrl/productItem")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$", hasSize(greaterThan(0))));
 	}
 	
 	@Test

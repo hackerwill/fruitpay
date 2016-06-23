@@ -10,6 +10,8 @@ import com.fruitpay.base.model.ShipmentRecordDetail;
 
 public interface ShipmentRecordDetailDAO extends JpaRepository<ShipmentRecordDetail, Integer> {
 
+	public List<ShipmentRecordDetail> findByCustomerOrderInAndValidFlag(List<CustomerOrder> customerOrders, int validFlag);
+
 	public List<ShipmentRecordDetail> findByCustomerOrderAndValidFlag(CustomerOrder customerOrder, int validFlag);
 
 	public List<ShipmentRecordDetail> findByShipmentRecordIn(List<ShipmentRecord> shipmentRecords);

@@ -14,6 +14,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="OrderStatus.findAll", query="SELECT o FROM OrderStatus o")
+@Cacheable
 public class OrderStatus extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 

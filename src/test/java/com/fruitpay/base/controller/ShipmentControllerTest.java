@@ -47,8 +47,6 @@ public class ShipmentControllerTest extends AbstractSpringJnitTest {
 	@Inject
 	private CustomerOrderService customerOrderService;
 	@Inject
-	private ShipmentService shipmentService;
-	@Inject
 	private DataUtil dataUtil;
 	
 	private MockMvc mockMvc;

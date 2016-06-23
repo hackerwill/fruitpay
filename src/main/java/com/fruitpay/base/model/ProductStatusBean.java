@@ -28,12 +28,14 @@ public class ProductStatusBean implements Serializable {
 	private int orderId;
 	private int shipmentRecordId;
 	private String status;
+	private StatusInteger requiredAmount;
 	
-	public ProductStatusBean(int orderId, int shipmentRecordId, String status) {
+	public ProductStatusBean(int orderId, int shipmentRecordId, String status, StatusInteger requiredAmount) {
 		super();
 		this.orderId = orderId;
 		this.shipmentRecordId = shipmentRecordId;
 		this.status = status;
+		this.requiredAmount = requiredAmount;
 	}
 	
 	public int getOrderId() {
@@ -53,5 +55,11 @@ public class ProductStatusBean implements Serializable {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public StatusInteger getRequiredAmount() {
+		return requiredAmount;
+	}
+	public void setRequiredAmount(StatusInteger requiredAmount) {
+		this.requiredAmount = requiredAmount;
 	}
 }

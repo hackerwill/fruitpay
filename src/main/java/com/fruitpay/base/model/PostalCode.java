@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @NamedQuery(name="PostalCode.findAll", query="SELECT p FROM PostalCode p")
+@Cacheable
 public class PostalCode extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 

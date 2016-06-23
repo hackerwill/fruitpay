@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="OrderProgram.findAll", query="SELECT o FROM OrderProgram o")
+@Cacheable
 public class OrderProgram extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -33,6 +34,9 @@ public class OrderProgram extends AbstractEntity implements Serializable {
 	
 	@Column(name="img_link")
 	private String imgLink;
+	
+	@Column(name="amount")
+	private Integer amount;
 
 	public OrderProgram() {
 	}
@@ -75,6 +79,14 @@ public class OrderProgram extends AbstractEntity implements Serializable {
 
 	public void setImgLink(String imgLink) {
 		this.imgLink = imgLink;
+	}
+
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
 	}
 	
 }

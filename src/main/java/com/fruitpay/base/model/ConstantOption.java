@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @NamedQuery(name="ConstOption.findAll", query="SELECT c FROM ConstantOption c")
+@Cacheable
 public class ConstantOption extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 

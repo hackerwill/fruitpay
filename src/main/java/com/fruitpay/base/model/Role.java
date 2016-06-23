@@ -2,6 +2,7 @@ package com.fruitpay.base.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
+@Cacheable
 public class Role extends AbstractEntity implements Serializable{
 	
 	@Id

@@ -10,12 +10,15 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +35,10 @@ import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ProductItem;
+import com.fruitpay.base.model.ProductStatusBean;
 import com.fruitpay.base.model.ShipmentPreferenceBean;
+import com.fruitpay.base.model.StatusInteger;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
@@ -55,6 +61,7 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	
 	@Before
 	@Transactional
+	@Rollback(true)
     public void setup() throws Exception {
 		// Process mock annotations
         MockitoAnnotations.initMocks(this);
@@ -66,7 +73,6 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	
 	@Transactional
 	private void addOrders() throws Exception {
-		
 		Customer customer = dataUtil.getBackgroundCustomer();
 		customer = customerService.saveCustomer(customer);
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
@@ -112,12 +118,12 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void testWithExportShipmentPreferences() throws Exception {
-		List<Product> products = staticDataService.getAllProducts();
+		List<ProductItem> productItems = staticDataService.getAllProductItems();
 		LocalDate nextShipmentMonday = staticDataService.getNextReceiveDay(new Date(), DayOfWeek.MONDAY);
-		List<Integer> productIds = products.stream()
-			.map(product -> {
+		List<String> productIds = productItems.stream()
+			.map(productItem -> {
 				if(Math.random() < 0.2) {
-					return product.getProductId();
+					return productItem.getCategoryItemId();
 				} else {
 					return null;
 				}
@@ -127,8 +133,39 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 		
 		ShipmentPreferenceBean shipmentPreferenceBean =  shipmentService.findInitialShipmentPreference(nextShipmentMonday, productIds);
 		
-		Assert.assertTrue(shipmentPreferenceBean.getChosenProductBeans().size() > 0);
+		Assert.assertTrue(shipmentPreferenceBean.getChosenProductItemBeans().size() > 0);
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testWithCalculateShipmentPreferences() throws Exception {
+		List<ProductItem> productItems = staticDataService.getAllProductItems();
+		LocalDate nextShipmentMonday = staticDataService.getNextReceiveDay(new Date(), DayOfWeek.MONDAY);
+		List<String> productIds = productItems.stream()
+			.map(productItem -> {
+				if(Math.random() < 0.2) {
+					return productItem.getCategoryItemId();
+				} else {
+					return null;
+				}
+			})
+			.filter(product -> product != null)
+			.collect(Collectors.toList());
 		
+		ShipmentPreferenceBean shipmentPreferenceBean =  shipmentService.findInitialShipmentPreference(nextShipmentMonday, productIds);
+
+		List<ProductStatusBean> productStatusBeans = shipmentPreferenceBean.getChosenProductItemBeans().get(0).getProductStatusBeans();
+		StatusInteger requiredAmount = productStatusBeans.get(0).getRequiredAmount();
+		requiredAmount.setStatus(StatusInteger.Status.fixed.toString());
+		if(requiredAmount.getInteger().equals(0)) {
+			requiredAmount.setInteger(1);
+		} else {
+			requiredAmount.setInteger(0);
+		}
+		productStatusBeans.get(0).setRequiredAmount(requiredAmount);
+		
+		shipmentService.calculate(shipmentPreferenceBean);
 		
 	}
 	

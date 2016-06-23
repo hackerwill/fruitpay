@@ -401,17 +401,17 @@ public class ShipmentController {
 	@RequestMapping(value = "/shipmentPreference", method = RequestMethod.GET)
 	//@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody ShipmentPreferenceBean getShipmentPreference(
-			@RequestParam(value = "productIdsStr", required = false, defaultValue = "0") String productIdsStr,
+			@RequestParam(value = "categoryItemIdsStr", required = false, defaultValue = "0") String categoryItemIdsStr,
 			@DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
 		
-		if(AssertUtils.isEmpty(productIdsStr) || date == null) {
+		if(AssertUtils.isEmpty(categoryItemIdsStr) || date == null) {
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 		}
 		
-		List<Integer> productIds = Arrays.asList(productIdsStr.split(",")).stream()
-				.map(productId -> Integer.valueOf(productId))
+		List<String> categoryItemIds = Arrays.asList(categoryItemIdsStr.split(",")).stream()
+				.map(categoryItemId -> categoryItemId)
 				.collect(Collectors.toList());
-		ShipmentPreferenceBean shipmentPreferenceBean = shipmentService.findInitialShipmentPreference(DateUtil.toLocalDate(date), productIds);
+		ShipmentPreferenceBean shipmentPreferenceBean = shipmentService.findInitialShipmentPreference(DateUtil.toLocalDate(date), categoryItemIds);
 		return shipmentPreferenceBean;
 	}
 

@@ -17,6 +17,8 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 
 	public Page<ShipmentChange> findByValidFlag(int validFlag, Pageable pageable);
 	
+	public List<ShipmentChange> findByCustomerOrderInAndValidFlag(List<CustomerOrder> customerOrders, int validFlag);
+	
 	public List<ShipmentChange> findByCustomerOrderAndValidFlag(CustomerOrder customerOrder, int validFlag);
 	
 	public List<ShipmentChange> findByApplyDateAndShipmentChangeTypeAndValidFlag(Date applyDate, ConstantOption shipmentChangeType,int validFlag);

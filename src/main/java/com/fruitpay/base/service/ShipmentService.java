@@ -14,6 +14,7 @@ import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
+import com.fruitpay.base.model.StatusInteger;
 
 public interface ShipmentService {
 	
@@ -55,6 +56,12 @@ public interface ShipmentService {
 	
 	public List<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition); 
 	
-	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<Integer> productIds); 
+	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<String> categoryItemIds); 
+	
+	public ShipmentPreferenceBean calculate(ShipmentPreferenceBean shipmentPreferenceBean); 
 
+	public List<List<StatusInteger>> calculate(List<Integer> colLimits, List<Integer> rowLimits, List<List<StatusInteger>> statusIntegerLists); 
+	
+	public String printCalculatedResult(List<Integer> colLimits, List<Integer> rowLimits, List<List<StatusInteger>> statusIntegerLists); 
+	
 }

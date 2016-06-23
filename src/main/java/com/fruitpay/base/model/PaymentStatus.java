@@ -11,6 +11,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="PaymentStatus.findAll", query="SELECT p FROM PaymentStatus p")
+@Cacheable
 public class PaymentStatus extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 

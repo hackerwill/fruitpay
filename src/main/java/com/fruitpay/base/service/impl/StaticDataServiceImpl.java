@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;
@@ -29,6 +30,7 @@ import com.fruitpay.base.dao.OrderStatusDAO;
 import com.fruitpay.base.dao.PaymentModeDAO;
 import com.fruitpay.base.dao.PostalCodeDAO;
 import com.fruitpay.base.dao.ProductDAO;
+import com.fruitpay.base.dao.ProductItemDAO;
 import com.fruitpay.base.dao.ShipmentDayDAO;
 import com.fruitpay.base.dao.ShipmentPeriodDAO;
 import com.fruitpay.base.model.Constant;
@@ -39,8 +41,10 @@ import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ProductItem;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
+import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.SelectOption;
 import com.fruitpay.comm.utils.DateUtil;
 
@@ -67,11 +71,20 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	private ShipmentDayDAO shipmentDayDAO;
 	@Inject
 	private ConstantOptionDAO constantOptionDAO;
+	@Inject
+	private ProductItemDAO productItemDAO;
 	
 	List<Constant> consantList = null;
 	List<SelectOption> countList = null;
 	Map<String, List<SelectOption>> towershipMap = null;
 	Map<String, List<SelectOption>> villageMap = null;
+	private Integer BUFFER_DAY = null;
+	
+	@PostConstruct
+	public void init() {
+		ConstantOption bufferDayOption = this.getConstantOptionByName("bufferDay");
+		BUFFER_DAY = Integer.valueOf(bufferDayOption.getOptionDesc());
+	}
 	
 	private boolean isOffIslands(Integer countyCode){
 		return countyCode == 9007 || countyCode == 9020 || countyCode == 10016;
@@ -198,11 +211,12 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	}
 	
 	public LocalDate getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
-		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
+		//規則 : 提前n天，若出貨日是2016/01/06，只要時間早於4天前的凌晨0:00，都會延到下一周
 		LocalDate now = DateUtil.toLocalDate(nowTime);//下一個收貨日
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
+		
 		//提前的天數
-		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(4);
+		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(BUFFER_DAY);
 		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
 		
 		boolean greaterThanNow = compareTimeGreaterThanNow(
@@ -279,6 +293,20 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 		Constant constant = new Constant();
 		constant.setConstId(constId);
 		return constantOptionDAO.findByConstant(constant, new PageRequest(page, size, new Sort(Sort.Direction.ASC, "orderNo")));
+	}
+
+
+	@Override
+	public List<ProductItem> getAllProductItems() {
+		List<ProductItem> productItems = productItemDAO.findAll();
+		return productItems;
+	}
+
+
+	@Override
+	public int getNextReceiveDayOfWeek(Date nowTime) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

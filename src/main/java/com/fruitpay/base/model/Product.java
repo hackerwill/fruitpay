@@ -1,9 +1,11 @@
 package com.fruitpay.base.model;
 
 import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 /**
@@ -12,12 +14,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  */
 @Entity
 @NamedQuery(name="Product.findAll", query="SELECT p FROM Product p")
+@Cacheable
 public class Product extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="product_id")
 	private Integer productId;
+	
+	@Column(name="category_id", unique=true, length=5)
+	private String categoryId;
 	
 	@Column(name="product_english_name")
 	private String productEnglishName;
@@ -32,9 +38,9 @@ public class Product extends AbstractEntity implements Serializable {
 	@Column(name="image_link")
 	private String imageLink;
 
-	@ManyToOne
-	@JoinColumn(name="unit_id")
-	private Unit unit;
+	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private List<ProductItem> productItems;
 
 	public Product() {
 	}
@@ -45,6 +51,14 @@ public class Product extends AbstractEntity implements Serializable {
 
 	public void setProductEnglishName(String productEnglishName) {
 		this.productEnglishName = productEnglishName;
+	}
+
+	public String getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public String getImageLink() {
@@ -79,13 +93,12 @@ public class Product extends AbstractEntity implements Serializable {
 		this.productName = productName;
 	}
 
-	public Unit getUnit() {
-		return unit;
+	public List<ProductItem> getProductItems() {
+		return productItems;
 	}
 
-	public void setUnit(Unit unit) {
-		this.unit = unit;
+	public void setProductItems(List<ProductItem> productItems) {
+		this.productItems = productItems;
 	}
-
 
 }

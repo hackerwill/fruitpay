@@ -29,6 +29,7 @@ import com.fruitpay.base.model.OrderStatus;
 import com.fruitpay.base.model.PaymentMode;
 import com.fruitpay.base.model.PostalCode;
 import com.fruitpay.base.model.Product;
+import com.fruitpay.base.model.ProductItem;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
@@ -55,6 +56,12 @@ public class StaticDataController {
 	public @ResponseBody List<Product> getAllProducts(){
 		List<Product> products = staticDataService.getAllProducts();
 		return products;
+	}
+	
+	@RequestMapping(value = "/productItem", method = RequestMethod.GET)
+	public @ResponseBody List<ProductItem> getAllProductItems(){
+		List<ProductItem> productItems = staticDataService.getAllProductItems();
+		return productItems;
 	}
 	
 	@RequestMapping(value = "/orderPlatforms", method = RequestMethod.GET)
