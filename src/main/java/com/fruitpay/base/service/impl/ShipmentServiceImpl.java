@@ -616,10 +616,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 				}
 			}
 			List<ProductStatusBean> productStatusBeans = shipmentPreferenceBean.getShipmentInfoBeans().stream().map(shipmentInfoBean -> {
-				OrderPreference preference = shipmentInfoBean.getOrderPreferences().stream()
+				Optional<OrderPreference> preferenceOptional = shipmentInfoBean.getOrderPreferences().stream()
 						.filter(orderPreference -> orderPreference.getProduct().getProductId().equals(productItem.getProduct().getProductId()))
-						.findFirst()
-						.get();
+						.findFirst();
+				
+				OrderPreference preference = preferenceOptional.isPresent() ? preferenceOptional.get() : null;
 				
 				String status;
 				StatusInteger statusInteger = null;
