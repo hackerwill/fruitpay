@@ -296,7 +296,8 @@ public class ShipmentController {
 	    
 		List<Map<String, Object>> map = customerOrders.stream().map(customerOrder -> {
 			try {
-				return new ShipmentExcelBean(customerOrder, localDate.minusDays(1), localDate).getMap();
+				String isLala = checkInLala(Integer.valueOf(customerOrder.getPostalCode().getPostCode())) ? "1" : "";
+				return new ShipmentExcelBean(customerOrder, localDate.minusDays(1), localDate, isLala).getMap();
 			} catch (Exception e) {
 				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 			}

@@ -11,6 +11,18 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class ShipmentExcelBean extends AbstractExcelBean {
 	
+	@ColumnName("不吃水果")
+	private String unlike; //不吃水果
+	@ColumnName("數量")
+	private Integer programNum;	//數量
+	@ColumnName("售價")
+	private Integer totalPrice; //售價
+	@ColumnName("註解")
+	private String comments; //註解
+	@ColumnName("客戶註解")
+	private String customerComments; //客戶註解
+	@ColumnName("LaLa")
+	private String isLala; 
 	@ColumnName("收件人名稱")
 	private String receiverName;	//收件人名稱
 	@ColumnName("收件人地址")
@@ -26,7 +38,7 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	@ColumnName("品名")
 	private String programName; //品名
 	@ColumnName("備註")
-	private String remark;	//備註
+	private String remark;	//收貨方式
 	@ColumnName("溫層")
 	private String temperate;	//溫層
 	@ColumnName("規格")
@@ -35,27 +47,21 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	private String shipmentTime; //配送時段
 	@ColumnName("貨到付款")
 	private String payOnReceive; //貨到付款
-	@ColumnName("不吃水果")
-	private String unlike; //不吃水果
-	@ColumnName("數量")
-	private Integer programNum;	//數量
-	@ColumnName("售價")
-	private Integer totalPrice; //售價
-	@ColumnName("註解")
-	private String comments; //註解
 	
 	public ShipmentExcelBean() {
 		super();
 	}
 	
-	public ShipmentExcelBean(CustomerOrder customerOrder, LocalDate shipmentDate, LocalDate deliveryDate) {
+	public ShipmentExcelBean(CustomerOrder customerOrder, LocalDate shipmentDate, LocalDate deliveryDate, String isLala) {
 		super();
 		try {
 		this.shipmentTime = String.valueOf(customerOrder.getShipmentTime().getOptionId() - 4); //轉成要的數字格式
 		
 		this.unlike = getUnlikeStr(customerOrder, customerOrder.getOrderPreferences());
 		
-		this.remark = customerOrder.getRemark();
+		this.remark = customerOrder.getReceiveWay().getOptionDesc();
+		
+		this.customerComments = customerOrder.getRemark();
 		
 		this.payOnReceive = getPayOnReceiveStr(customerOrder);
 		
@@ -82,6 +88,8 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		this.temperate = "2";
 		
 		this.spec = "1";
+		
+		this.isLala = isLala;
 		
 		this.comments = customerOrder.getOrderComments() == null ? "" : getComments(customerOrder.getOrderComments());
 		} catch(Exception e) {
