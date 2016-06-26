@@ -32,6 +32,7 @@ import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ShipmentChange;
@@ -39,6 +40,7 @@ import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.model.ShipmentRecordPostBean;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
@@ -152,14 +154,24 @@ public class ShipmentController {
 			ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate, validFlag, orderId, name, receiverCellphone);
 			shipmentChanges = shipmentService.findAllByConditions(condition);
 		}
+		ConstantOption shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 
 		
 		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(
 				shipmentChanges.stream()
 					.map(shipmentChange -> shipmentChange.getCustomerOrder().getOrderId())
 					.collect(Collectors.toList()));
 		
+		List<ShipmentChange> allShipmentChanges = shipmentService.findShipmentChangesByCustomerOrders(customerOrders);
+		List<ShipmentRecordDetail> allShipmentRecordDetails = shipmentService.findShipmentRecordDetailsByCustomerOrders(customerOrders);
+		List<ShipmentChange> allPauseShipmentChanges = allShipmentChanges.stream().filter(ShipmentChange -> {
+			return ShipmentChange.getShipmentChangeType().getOptionName().equals(shipmentPulse.getOptionName());
+		}).collect(Collectors.toList());
+		
+		
+		//計算總出貨次數
+		List<CustomerOrder> customerOrderWithCountMofieds = shipmentService.countShipmentTimes(customerOrders);
 		shipmentChanges = shipmentChanges.stream().map(shipmentChange -> {
-			CustomerOrder matchOrder = customerOrders.stream()
+			CustomerOrder matchOrder = customerOrderWithCountMofieds.stream()
 					.filter(order -> order.getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId()))
 					.findFirst()
 					.get();
@@ -169,8 +181,26 @@ public class ShipmentController {
 		.collect(Collectors.toList());
 		
 		List<Map<String, Object>> map = shipmentChanges.stream().map(shipmentChange -> {
-			try {
-				return new ShipmentChangeExcelBean(shipmentChange).getMap();
+			List<ShipmentChange> pauseShipmentChanges = allPauseShipmentChanges.stream()
+				.filter(PauseShipmentChange -> {
+					return PauseShipmentChange.getCustomerOrder().getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId());
+				}).sorted((a, b) -> a.getApplyDate().compareTo(b.getApplyDate()))
+				.collect(Collectors.toList());
+			
+			List<ShipmentChange> thisShipmentChanges = allShipmentChanges.stream()
+					.filter(PauseShipmentChange -> {
+						return PauseShipmentChange.getCustomerOrder().getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId());
+					}).sorted((a, b) -> a.getApplyDate().compareTo(b.getApplyDate()))
+					.collect(Collectors.toList());
+			
+			List<ShipmentRecordDetail> thisShipmentRecordDetails = allShipmentRecordDetails.stream()
+					.filter(shipmentRecordDetail -> {
+						return shipmentRecordDetail.getCustomerOrder().getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId());
+					})
+					.collect(Collectors.toList());
+ 			try {
+ 				LocalDate nextShipmentDate = shipmentService.getNextNeedShipmentDate(shipmentChange.getCustomerOrder(), thisShipmentChanges, thisShipmentRecordDetails);
+				return new ShipmentChangeExcelBean(shipmentChange, pauseShipmentChanges, nextShipmentDate).getMap();
 			} catch (Exception e) {
 				throw new HttpServiceException(ReturnMessageEnum.Common.UnexpectedError.getReturnMessage());
 			}
@@ -193,7 +223,7 @@ public class ShipmentController {
 		if (AssertUtils.isEmpty(orderId))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
 
-		List<ShipmentChange> shipmentChanges = shipmentService.findChangesByOrderId(orderId);
+		List<ShipmentChange> shipmentChanges = shipmentService.findShipmentChangesByOrderId(orderId);
 
 		return shipmentChanges;
 	}
@@ -412,6 +442,22 @@ public class ShipmentController {
 				.map(categoryItemId -> categoryItemId)
 				.collect(Collectors.toList());
 		ShipmentPreferenceBean shipmentPreferenceBean = shipmentService.findInitialShipmentPreference(DateUtil.toLocalDate(date), categoryItemIds);
+		return shipmentPreferenceBean;
+	}
+	
+	@RequestMapping(value = "/shipmentPreferenceCalculate", method = RequestMethod.POST)
+	//@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody ShipmentPreferenceBean getShipmentPreferenceCal(
+			@RequestParam(value = "categoryItemIdsStr", required = false, defaultValue = "0") String categoryItemIdsStr,
+			@RequestBody ShipmentPreferenceBean shipmentPreferenceBean) {
+		if(AssertUtils.isEmpty(categoryItemIdsStr) || shipmentPreferenceBean == null) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		}
+		
+		List<String> categoryItemIds = Arrays.asList(categoryItemIdsStr.split(",")).stream()
+				.map(categoryItemId -> categoryItemId)
+				.collect(Collectors.toList());
+		shipmentPreferenceBean = shipmentService.calculate(shipmentPreferenceBean, categoryItemIds);
 		return shipmentPreferenceBean;
 	}
 

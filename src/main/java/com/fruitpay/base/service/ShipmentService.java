@@ -7,10 +7,14 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.CommConst.VALID_FLAG;
+import com.fruitpay.base.model.ChosenProductItemBean;
+import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentInfoBean;
 import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
@@ -20,9 +24,13 @@ public interface ShipmentService {
 	
 	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size);
 	
-	public List<ShipmentChange> findChangesByOrderId(int orderId);
+	public List<ShipmentChange> findShipmentChangesByOrderId(int orderId);
 	
-	public List<ShipmentRecordDetail> findRecordDetailsByOrderId(int orderId);
+	public List<ShipmentChange> findShipmentChangesByCustomerOrders(List<CustomerOrder> customerOrders);
+	
+	public List<ShipmentRecordDetail> findShipmentRecordDetailsByOrderId(int orderId);
+	
+	public List<ShipmentRecordDetail> findShipmentRecordDetailsByCustomerOrders(List<CustomerOrder> customerOrders);
 
 	public ShipmentChange add(ShipmentChange shipmentChange);
 	
@@ -58,10 +66,20 @@ public interface ShipmentService {
 	
 	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<String> categoryItemIds); 
 	
-	public ShipmentPreferenceBean calculate(ShipmentPreferenceBean shipmentPreferenceBean); 
+	public ShipmentPreferenceBean calculate(ShipmentPreferenceBean shipmentPreferenceBean, List<String> categoryItemIds); 
 
-	public List<List<StatusInteger>> calculate(List<Integer> colLimits, List<Integer> rowLimits, List<List<StatusInteger>> statusIntegerLists); 
+	public List<List<StatusInteger>> calculate(List<Integer> colLimits, List<Integer> rowLimits, List<List<StatusInteger>> statusIntegers, List<ChosenProductItemBean> chosenProductItemBeans, List<ShipmentInfoBean> shipmentInfoBeans);
+	
+	public List<ChosenProductItemBean> calculateChosenProductItemBeans(List<ChosenProductItemBean> chosenProductItemBeans, List<ShipmentInfoBean> shipmentInfoBeans);
 	
 	public String printCalculatedResult(List<Integer> colLimits, List<Integer> rowLimits, List<List<StatusInteger>> statusIntegerLists); 
+	
+	public int countShipmentTimes(CustomerOrder customerOrder);
+	
+	public List<CustomerOrder> countShipmentTimes(List<CustomerOrder> customerOrders);
+	
+	public int countShipmentTimes(CustomerOrder customerOrder, List<ShipmentRecordDetail> shipmentRecordDetails, List<ShipmentChange> shipmentChanges);
+
+	public LocalDate getNextNeedShipmentDate(CustomerOrder customerOrder, List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails);
 	
 }

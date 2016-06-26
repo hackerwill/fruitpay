@@ -39,7 +39,6 @@ public class Product extends AbstractEntity implements Serializable {
 	private String imageLink;
 
 	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
-	@JsonManagedReference
 	private List<ProductItem> productItems;
 
 	public Product() {

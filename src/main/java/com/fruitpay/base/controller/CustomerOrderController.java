@@ -83,7 +83,6 @@ public class CustomerOrderController {
 			OrderPreference orderPreference = iterator.next();
 			orderPreference.setCustomerOrder(customerOrder);
 		}
-		customerOrder.setShipmentCount(3);
 		customerOrder = customerOrderService.addCustomerOrder(customerOrder);
 
 		return customerOrder;

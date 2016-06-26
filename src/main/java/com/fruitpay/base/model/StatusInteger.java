@@ -12,6 +12,10 @@ public class StatusInteger implements Serializable {
 	private String status;
 	private Integer integer;
 	
+	public StatusInteger() {
+		super();
+	}
+	
 	public StatusInteger(String status, Integer integer) {
 		super();
 		this.status = status;

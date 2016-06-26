@@ -32,8 +32,17 @@ public class CustomerServiceImpl implements CustomerService {
 		if(origin == null)
 			throw new HttpServiceException(ReturnMessageEnum.Login.AccountNotFound.getReturnMessage());
 		
+		String firstName = customer.getFirstName();
+		String lastName = customer.getLastName();
+		if(!AssertUtils.isEmpty(firstName)) {
+			customer.setFirstName(firstName.trim());
+		}
+		if(!AssertUtils.isEmpty(lastName)) {
+			customer.setLastName(lastName.trim());
+		}
 		if(AssertUtils.isEmpty(customer.getPassword()))
 			customer.setPassword(origin.getPassword());
+		
 		BeanUtils.copyProperties(customer, origin);
 		
 		return origin;
@@ -68,6 +77,14 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Customer saveCustomer(Customer customer) {
+		String firstName = customer.getFirstName();
+		String lastName = customer.getLastName();
+		if(!AssertUtils.isEmpty(firstName)) {
+			customer.setFirstName(firstName.trim());
+		}
+		if(!AssertUtils.isEmpty(lastName)) {
+			customer.setLastName(lastName.trim());
+		}
 		customerDAO.saveAndFlush(customer);
 		return customer;
 	}

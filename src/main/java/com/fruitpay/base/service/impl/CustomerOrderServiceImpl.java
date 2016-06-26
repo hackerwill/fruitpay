@@ -36,6 +36,7 @@ import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.FieldChangeRecordService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.utils.AssertUtils;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -86,6 +87,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		if(customerOrder.getCustomer() == null) {
 			customerOrder.setCustomer(origin.getCustomer());
 		}
+		String receiverFirstName = customerOrder.getReceiverFirstName();
+		String receiverLastName = customerOrder.getReceiverLastName();
+		if(!AssertUtils.isEmpty(receiverFirstName)) {
+			customerOrder.setReceiverFirstName(receiverFirstName);
+		}
+		if(!AssertUtils.isEmpty(receiverLastName)) {
+			customerOrder.setReceiverLastName(receiverLastName);
+		}
 		BeanUtils.copyProperties(customerOrder, origin);
 		origin = customerOrderDAO.saveAndFlush(origin);
 		customerService.update(customerOrder.getCustomer());
@@ -95,6 +104,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Override
 	@Transactional
 	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		String receiverFirstName = customerOrder.getReceiverFirstName();
+		String receiverLastName = customerOrder.getReceiverLastName();
+		if(!AssertUtils.isEmpty(receiverFirstName)) {
+			customerOrder.setReceiverFirstName(receiverFirstName);
+		}
+		if(!AssertUtils.isEmpty(receiverLastName)) {
+			customerOrder.setReceiverLastName(receiverLastName);
+		}
 		customerOrder.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		customerOrder = customerOrderDAO.saveAndFlush(customerOrder);
 		return customerOrder;

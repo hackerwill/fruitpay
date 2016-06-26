@@ -15,6 +15,9 @@ public class ShipmentPreferenceBean implements Serializable {
 	private List<ShipmentInfoBean> shipmentInfoBeans;
 	private List<ChosenProductItemBean> chosenProductItemBeans;
 	
+	public ShipmentPreferenceBean() {
+		super();
+	}
 	
 	public ShipmentPreferenceBean(int shipmentRecordId, Date date, List<ShipmentInfoBean> shipmentInfoBeans,
 			List<ChosenProductItemBean> chosenProductItemBeans) {

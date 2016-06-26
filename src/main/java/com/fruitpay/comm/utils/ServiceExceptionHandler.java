@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.hibernate.exception.DataException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,11 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     		status = HttpStatus.INTERNAL_SERVER_ERROR;
     	}
     	ExceptionLog exceptionLog = new ExceptionLog(status.toString(), returnMessage.getMessage(), getIp(req));
-    	exceptionLogDAO.save(exceptionLog);
+    	try {
+    		exceptionLogDAO.save(exceptionLog);
+    	} catch (Exception e) {
+    		logger.error("Unable To save the exception record because the mesage String is to long. Message:" + exceptionLog.getMessage());
+    	}
     	return new ResponseEntity<Object>(returnMessage, status);
     }
     

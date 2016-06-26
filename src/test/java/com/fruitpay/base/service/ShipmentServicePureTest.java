@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.model.StatusInteger;
 import com.fruitpay.base.service.impl.ShipmentServiceImpl;
 import com.fruitpay.comm.utils.ListTranspose;
@@ -22,7 +23,7 @@ public class ShipmentServicePureTest {
 		testWithData(rowLimits, colLimits);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=HttpServiceException.class)
 	public void testCalculateWithoutEnoughColumnShouldThrowIllegalArgumentException() {
 		List<Integer> rowLimits = Arrays.asList(new Integer[]{5, 6});
 		List<Integer> colLimits = Arrays.asList(new Integer[]{100, 200, 30, 50, 70});
@@ -30,7 +31,7 @@ public class ShipmentServicePureTest {
 		testWithData(rowLimits, colLimits);
 	}
 		
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=HttpServiceException.class)
 	public void testWithPureCalcaulteShouldThrowIllegalArgumentException() {
 		List<Integer> rowLimits = Arrays.asList(new Integer[]{5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5});
 		List<Integer> colLimits = Arrays.asList(new Integer[]{100, 200, 30, 50, 70, 20});
@@ -38,7 +39,7 @@ public class ShipmentServicePureTest {
 		testWithData(rowLimits, colLimits);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=HttpServiceException.class)
 	public void testWithRealCase() {
 		List<Integer> rowLimits = Arrays.asList(new Integer[]{
 				5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 
@@ -69,7 +70,7 @@ public class ShipmentServicePureTest {
 		Assert.assertTrue(statusIntegerLists.size() == colLimits.size());
 		
 		ShipmentServiceImpl shipmentService = new ShipmentServiceImpl();
-		statusIntegerLists = shipmentService.calculate(rowLimits, colLimits, statusIntegerLists);
+		statusIntegerLists = shipmentService.calculate(rowLimits, colLimits, statusIntegerLists, null, null);
 		
 		shipmentService.printCalculatedResult(colLimits, rowLimits, statusIntegerLists);
 		
@@ -111,7 +112,7 @@ public class ShipmentServicePureTest {
 		rowList.add(new StatusInteger(StatusInteger.Status.none.toString(), 0));
 		
 		ShipmentServiceImpl shipmentService = new ShipmentServiceImpl();
-		rowList = shipmentService.getRandomRowList(rowList, requiredAmount);
+		rowList = shipmentService.getRandomRowList(rowList, requiredAmount, 0);
 		Assert.assertTrue(rowList.get(1).getInteger().equals(1));
 		Assert.assertTrue(rowList.get(2).getInteger().equals(0));
 		

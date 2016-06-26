@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -50,6 +52,7 @@ import com.fruitpay.base.model.StatusInteger;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
+import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.comm.utils.ListTranspose;
 
@@ -96,7 +99,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 	
 	@Override
-	public List<ShipmentChange> findChangesByOrderId(int orderId) {
+	public List<ShipmentChange> findShipmentChangesByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
 		List<ShipmentChange> ShipmentChanges = shipmentChangeDAO.findByCustomerOrderAndValidFlag(
@@ -150,25 +153,23 @@ public class ShipmentServiceImpl implements ShipmentService {
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrdersByValidFlag(orderId, VALID_FLAG.VALID.value());
 		if(customerOrder == null)
 			throw new HttpServiceException(ReturnMessageEnum.Order.OrderNotFound.getReturnMessage());
-		DayOfWeek dayOfWeek = DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()));
-		List<ShipmentChange> shipmentChanges = this.findChangesByOrderId(orderId);
-		List<ShipmentRecordDetail> shipmentRecordDetails = this.findRecordDetailsByOrderId(orderId);
-		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
-		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
 		int duration = customerOrder.getShipmentPeriod().getDuration();
+		DayOfWeek dayOfWeek = DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()));
+		List<ShipmentChange> shipmentChanges = this.findShipmentChangesByOrderId(orderId);
+		List<ShipmentRecordDetail> shipmentRecordDetails = this.findShipmentRecordDetailsByOrderId(orderId);
+		List<ShipmentDeliveryStatus> deliveryStatuses = new ArrayList<ShipmentDeliveryStatus>();
+		
+		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
 		//檢查是否有時間在第一次之前 若有的話 以最早的為主
-		firstDeliveryDate = checkAndModifiedDeliveryDate(firstDeliveryDate, shipmentChanges, shipmentRecordDetails);
-				
+		startDate = checkAndModifiedStartDate(firstDeliveryDate, shipmentChanges, shipmentRecordDetails);
+		
 		//unnecessary to count
 		if(endDate.before(DateUtil.toDate(firstDeliveryDate)))
 			return new ArrayList<ShipmentDeliveryStatus>();
-		
-		if(startDate.before(DateUtil.toDate(firstDeliveryDate)))
-			startDate = DateUtil.toDate(firstDeliveryDate);
 		LocalDate date = DateUtil.toLocalDate(startDate);
 		
 		while(!date.isAfter(DateUtil.toLocalDate(endDate))){
-			ConstantOption shipmentChangeType = getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
+			ConstantOption shipmentChangeType = this.getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
 			if(shipmentChangeType != null){
 				ShipmentDeliveryStatus deliveryStatus = new ShipmentDeliveryStatus();
 				deliveryStatus.setApplyDate(DateUtil.toDate(date));
@@ -181,9 +182,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return deliveryStatuses;
 	}
 	
-	private LocalDate checkAndModifiedDeliveryDate(LocalDate firstDeliveryDate, List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails) {
+	private Date checkAndModifiedStartDate(LocalDate firstDeliveryDate, List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails) {
 		List<LocalDate> sortDateList = new ArrayList<>();
-		sortDateList.addAll(shipmentChanges.stream().map(shipmentChange -> {
+		sortDateList.addAll(shipmentChanges.stream()
+			.map(shipmentChange -> {
 			return DateUtil.toLocalDate(shipmentChange.getApplyDate());
 		}).collect(Collectors.toList()));
 		sortDateList.addAll(shipmentRecordDetails.stream().map(shipmentRecordDetail -> {
@@ -195,7 +197,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 			firstDeliveryDate = firstDeliveryDate.compareTo(minDate) > 0 ? minDate : firstDeliveryDate;
 		}
 		
-		return firstDeliveryDate;
+		return DateUtil.toDate(firstDeliveryDate);
 	}
 	
 	private ConstantOption getDateStatus(LocalDate searchDate, LocalDate incrementDate,
@@ -335,7 +337,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	}
 
 	@Override
-	public List<ShipmentRecordDetail> findRecordDetailsByOrderId(int orderId) {
+	public List<ShipmentRecordDetail> findShipmentRecordDetailsByOrderId(int orderId) {
 		CustomerOrder customerOrder = new CustomerOrder();
 		customerOrder.setOrderId(orderId);
 		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
@@ -379,7 +381,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 				return shipmentRecordDetail.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId());
 			}).collect(Collectors.toList());
 			LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
-			firstDeliveryDate = checkAndModifiedDeliveryDate(firstDeliveryDate, shipmentChanges, shipmentRecordDetails);
 			
 			ConstantOption status = this.getDateStatus(date, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, 
 					dayOfWeek, duration);
@@ -406,6 +407,38 @@ public class ShipmentServiceImpl implements ShipmentService {
 			customerOrders.addAll(customizedOrderIds);
 		}
 		return customerOrders;
+	}
+	
+	@Override
+	public LocalDate getNextNeedShipmentDate(CustomerOrder customerOrder, List<ShipmentChange> shipmentChanges, List<ShipmentRecordDetail> shipmentRecordDetails) {
+		int duration = customerOrder.getShipmentPeriod().getDuration();
+		DayOfWeek dayOfWeek = DayOfWeek.of(Integer.valueOf(customerOrder.getDeliveryDay().getOptionName()));
+		LocalDate firstDeliveryDate = staticDataService.getNextReceiveDay(customerOrder.getOrderDate(), dayOfWeek);
+		//檢查是否有時間在第一次之前 若有的話 以最早的為主
+	    
+		//因為下方會加一天 所以從昨天開始查
+		LocalDate maxDate = LocalDate.now().plusDays(90);
+		LocalDate searchDate = LocalDate.now().minusDays(1); 
+		ConstantOption status = null;
+		//若該筆訂單已經取消 不用進入計算
+		if(shipmentChanges.stream().anyMatch(shipmentChange -> {
+			return shipmentCancel.getOptionName().equals(shipmentChange.getShipmentChangeType().getOptionName());
+		})) {
+			return null;
+		}
+		
+		do {
+			searchDate = searchDate.plusDays(1);
+			
+			status = this.getDateStatus(searchDate, firstDeliveryDate, shipmentChanges, shipmentRecordDetails, dayOfWeek, duration);
+			//多加一個條件 若往後查三個月 還沒找到資料 也跳出
+			if(searchDate.isAfter(maxDate)) {
+				return null;
+			}
+		} while(status == null || !(shipmentDeliver.getOptionName().equals(status.getOptionName()) || 
+				shipmentReady.getOptionName().equals(status.getOptionName())));
+		
+		return searchDate;
 	}
 	
 	@Override
@@ -526,13 +559,33 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<String> categoryItemIds) {
 		List<CustomerOrder> customerOrders =  this.listAllCustomerOrdersByDate(date);	
+		if(customerOrders.isEmpty()) {
+			throw new HttpServiceException(ReturnMessageEnum.ShipmentPrerence.CanNotFindMatchedRowData.getReturnMessage());
+		}
 		List<OrderPreference> orderPreferences = orderPreferenceDAO.findByCustomerOrderIn(customerOrders);
 		List<ShipmentInfoBean> shipmentInfoBeans = customerOrders.stream().map(customerOrder -> {
-			return new ShipmentInfoBean(customerOrder.getOrderId(), 0, 
+			List<OrderPreference> preferences = orderPreferences.stream()
+					.filter(preference -> preference.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId()))
+					.collect(Collectors.toList());
+			return new ShipmentInfoBean(customerOrder.getOrderId(), 
+					0, 
 					customerOrder.getReceiverLastName().trim() + customerOrder.getReceiverFirstName().trim(),
-					0, customerOrder.getOrderProgram().getAmount());
+					0, 
+					customerOrder.getOrderProgram().getAmount(), preferences,
+					customerOrder.getAllowForeignFruits(),
+					customerOrder.getOrderProgram().getProgramId());
 		}).collect(Collectors.toList());
 		
+		ShipmentPreferenceBean shipmentPreferenceBean = new ShipmentPreferenceBean(
+				0, DateUtil.toDate(date), shipmentInfoBeans, null);
+		
+		shipmentPreferenceBean = this.calculate(shipmentPreferenceBean, categoryItemIds);
+		
+		return shipmentPreferenceBean;
+	}
+	
+	@Override
+	public ShipmentPreferenceBean calculate(ShipmentPreferenceBean shipmentPreferenceBean, List<String> categoryItemIds) {
 		List<ChosenProductItemBean> chosenProductItemBeans = categoryItemIds.stream().map(categoryItemId -> {
 			return cacheProductItems.stream().filter(cacheProductItem -> {
 				return cacheProductItem.getCategoryItemId().equals(categoryItemId);
@@ -551,146 +604,292 @@ public class ShipmentServiceImpl implements ShipmentService {
 			}
 		})
 		.map(productItem -> {
-			List<ProductStatusBean> productStatusBeans = customerOrders.stream().map(customeOrder -> {
-				List<OrderPreference> preferences = orderPreferences.stream()
-						.filter(preference -> preference.getCustomerOrder().getOrderId().equals(customeOrder.getOrderId()))
+			//如果原本已經有的話 直接回傳即可
+			if(shipmentPreferenceBean.getChosenProductItemBeans() != null && !shipmentPreferenceBean.getChosenProductItemBeans().isEmpty()) {
+				ChosenProductItemBean foundChosenProductItemBean = shipmentPreferenceBean.getChosenProductItemBeans().stream().filter(thisChosenProductItemBean -> {
+					return thisChosenProductItemBean.getProductItemId() == productItem.getProductItemId();
+				})
+				.findFirst()
+				.get();
+				if(foundChosenProductItemBean != null) {
+					return foundChosenProductItemBean;
+				}
+			}
+			List<ProductStatusBean> productStatusBeans = shipmentPreferenceBean.getShipmentInfoBeans().stream().map(shipmentInfoBean -> {
+				OrderPreference preference = shipmentInfoBean.getOrderPreferences().stream()
 						.filter(orderPreference -> orderPreference.getProduct().getProductId().equals(productItem.getProduct().getProductId()))
-						.collect(Collectors.toList());
+						.findFirst()
+						.get();
 				
 				String status;
 				StatusInteger statusInteger = null;
-				if(!preferences.isEmpty() && preferences.get(0).getLikeDegree() == 0) {
+				if(preference != null && (preference.getLikeDegree() == 0
+						|| isNotLikeForeign(productItem, shipmentInfoBean))) {
 					status = ProductStatusBean.STATUS.UNLIKE.value();
 					statusInteger = new StatusInteger(StatusInteger.Status.fixed.toString(), 0);
 				} else {
 					status = ProductStatusBean.STATUS.NO.value();
 					statusInteger = new StatusInteger(StatusInteger.Status.none.toString(), 0);
 				}
-				return new ProductStatusBean(customeOrder.getOrderId(), 0, status, statusInteger);
+				return new ProductStatusBean(shipmentInfoBean.getOrderId(), 0, status, statusInteger);
 			}).collect(Collectors.toList());
-			//計算某一個產品的總數
-			int count = productStatusBeans.stream()
-				.map(productStatusBean -> {
-					return productStatusBean.getStatus().equals(ProductStatusBean.STATUS.UNLIKE.value()) ? 0 : Integer.valueOf(productStatusBean.getStatus());
-				})
-				.reduce(0, (a,b) -> {
-					return a + b;
-				});
-			return new ChosenProductItemBean(productItem.getProductItemId(), productItem.getName(), productStatusBeans, null, 0.0);
+			return new ChosenProductItemBean(
+					productItem.getProductItemId(), 
+					productItem.getName(), 
+					productStatusBeans, 
+					null, 
+					0,
+					0, 
+					productItem.getUnit().getOptionDesc(),
+					productItem.getFamilyAmount(),
+					productItem.getSingleAmount());
 		})
 		.collect(Collectors.toList());
+		shipmentPreferenceBean.setChosenProductItemBeans(chosenProductItemBeans);
 		
-		ShipmentPreferenceBean shipmentPreferenceBean = new ShipmentPreferenceBean(
-				0, DateUtil.toDate(date), shipmentInfoBeans, chosenProductItemBeans);
+		//限制每一個產品數量加總不能大於最大的限制
+		List<Integer> rowLimits = shipmentPreferenceBean.getShipmentInfoBeans().stream().map(shipmentInfoBean -> {
+			return shipmentInfoBean.getRequiredAmount();
+		}).collect(Collectors.toList());
 		
-		shipmentPreferenceBean = this.calculate(shipmentPreferenceBean);
+		//比對水果數量 確定扣掉不喜歡的水果數量是否大於需要的數量
+		//分成兩組 一組是吻合的 另一組是不吻合的
+		List<Integer> unsatisfiedList = getNeedMinusUnlikeSatisfiedIndex(shipmentPreferenceBean.getChosenProductItemBeans(), rowLimits);
+
+		List<List<ProductStatusBean>> unsatisfiedProductStatusBeanLists = new ArrayList<>();
+		List<ShipmentInfoBean> shipmentInfoBeans = shipmentPreferenceBean.getShipmentInfoBeans();
+		List<ShipmentInfoBean> unsatisfiedShipmentInfoBeans = new ArrayList<>();
+		List<ShipmentInfoBean> satisfiedShipmentInfoBeans = new ArrayList<>();
+		
+		int count = 0;
+		for(ShipmentInfoBean shipmentInfoBean : shipmentInfoBeans) {
+			if(unsatisfiedList.contains(count)) {
+				shipmentInfoBean.setErrorStatus("可選擇水果不足");
+				unsatisfiedShipmentInfoBeans.add(shipmentInfoBean);
+			} else {
+				shipmentInfoBean.setErrorStatus(null);
+				satisfiedShipmentInfoBeans.add(shipmentInfoBean);
+			}
+			count ++;
+		};
+		
+		for(ChosenProductItemBean chosenProductItemBean : shipmentPreferenceBean.getChosenProductItemBeans()) {
+			count = 0;
+			List<ProductStatusBean> unsatisfiedProductStatusBeans = new ArrayList<>();
+			List<ProductStatusBean> satisfiedProductStatusBeans = new ArrayList<>();
+			for(ProductStatusBean productStatusBean : chosenProductItemBean.getProductStatusBeans()) {
+				if(unsatisfiedList.contains(count)) {
+					unsatisfiedProductStatusBeans.add(productStatusBean);
+				} else {
+					satisfiedProductStatusBeans.add(productStatusBean);
+				}
+				count ++;
+			};
+			//只把吻合的拿去計算
+			chosenProductItemBean.setProductStatusBeans(satisfiedProductStatusBeans);
+			unsatisfiedProductStatusBeanLists.add(unsatisfiedProductStatusBeans);
+		};
+		
+		if(!satisfiedShipmentInfoBeans.isEmpty()) {
+			chosenProductItemBeans = shipmentPreferenceBean.getChosenProductItemBeans().stream()
+					.map(chosenProductItemBean -> {
+						int maxLimitWithUnit = chosenProductItemBean.getMaxLimitWithUnit() != null ? chosenProductItemBean.getMaxLimitWithUnit() : getInitMaxLimitWithUnit(satisfiedShipmentInfoBeans, chosenProductItemBean); //計算上限
+						chosenProductItemBean.setMaxLimitWithUnit(maxLimitWithUnit);
+						return chosenProductItemBean;
+					}).collect(Collectors.toList());
+			
+			chosenProductItemBeans = this.calculateChosenProductItemBeans(chosenProductItemBeans, satisfiedShipmentInfoBeans);
+		}
+		
+		count = 0;
+		for(ChosenProductItemBean chosenProductItemBean : chosenProductItemBeans) {
+			List<ProductStatusBean> productStatusBeans = chosenProductItemBean.getProductStatusBeans();
+			productStatusBeans.addAll(0, unsatisfiedProductStatusBeanLists.get(count));
+			count++;
+		}
+		
+		unsatisfiedShipmentInfoBeans.addAll(satisfiedShipmentInfoBeans);
+		shipmentPreferenceBean.setChosenProductItemBeans(chosenProductItemBeans);
+		shipmentPreferenceBean.setShipmentInfoBeans(unsatisfiedShipmentInfoBeans);
 		
 		return shipmentPreferenceBean;
 	}
 	
-	public ShipmentPreferenceBean calculate(ShipmentPreferenceBean shipmentPreferenceBean) {
-		//先跑邏輯一: 限制每一個產品數量加總不能大於最大的限制 若沒有設定限制則排到所有出貨單都排滿為止
-		//再跑邏輯二: 限制每一張出貨單的數量都必須要剛好等於需要的數量
-		List<Integer> rowLimits = shipmentPreferenceBean.getShipmentInfoBeans().stream().map(ShipmentInfoBean -> {
-			return ShipmentInfoBean.getRequiredAmount();
-		}).collect(Collectors.toList());
+	private int getInitMaxLimitWithUnit(List<ShipmentInfoBean> satisfiedShipmentInfoBeans, ChosenProductItemBean chosenProductItemBean) {
+		return satisfiedShipmentInfoBeans.stream().map(shipmentInfoBean -> {
+			return getRequiredAmountForProgram(shipmentInfoBean.getProgramId(), chosenProductItemBean);
+		}).mapToInt(Integer::intValue)
+		.sum();
+	}
+	
+	private int getRequiredAmountForProgram(int programId, ChosenProductItemBean chosenProductItemBean) {
+		if(programId == 1) {
+			return chosenProductItemBean.getSingleAmount();
+		} else {
+			return chosenProductItemBean.getFamilyAmount();
+		}
+	}
+	
+	private boolean isNotLikeForeign(ProductItem productItem, ShipmentInfoBean shipmentInfoBean) {
+		if(productItem.getIsForeign() == 1 && "N".equals(shipmentInfoBean.getAllowForeignFruits())) {
+			return true;
+		} else {
+			return false;
+		}
 		
-		List<ChosenProductItemBean> chosenProductItemBeans = shipmentPreferenceBean.getChosenProductItemBeans().stream()
-			.map(chosenProductItemBean -> {
-				int maxLimit = chosenProductItemBean.getMaxLimit() != null ? chosenProductItemBean.getMaxLimit() : rowLimits.size(); //若沒限制的話只要等於所有訂單數量即可
-				chosenProductItemBean.setMaxLimit(maxLimit);
-				return chosenProductItemBean;
-			}).collect(Collectors.toList());
-		
-		List<Integer> colLimits = chosenProductItemBeans.stream().map(chosenProductItemBean -> {
-			return chosenProductItemBean.getMaxLimit();
-		}).collect(Collectors.toList());
-		
+	}
+	
+	private List<Integer> getNeedMinusUnlikeSatisfiedIndex(List<ChosenProductItemBean> chosenProductItemBeans, List<Integer> rowLimits) {
 		List<List<StatusInteger>> statusIntegerLists = chosenProductItemBeans.stream().map(chosenProductItemBean -> {
 			return chosenProductItemBean.getProductStatusBeans().stream().map(productStatusBean -> {
 				return productStatusBean.getRequiredAmount();
 			}).collect(Collectors.toList());
 		}).collect(Collectors.toList());
 		
-		statusIntegerLists = this.calculate(rowLimits, colLimits, statusIntegerLists);
+		List<List<StatusInteger>> rowLists = ListTranspose.transpose(statusIntegerLists);
+		int row = 0;
+		List<Integer> unsatisfiedList = new ArrayList<>();
+		for(List<StatusInteger> rowList: rowLists) {
+			int rowLimit = rowLimits.get(row);
+			int totalCount = rowList.stream().filter(statusInteger -> {
+				return statusInteger.getStatus().equals(StatusInteger.Status.fixed.toString());
+			}).map(statusInteger -> {
+				return statusInteger.getInteger();
+			}).reduce(0, (a, b) -> a + b);
+			int needAmount = rowLimit - totalCount;
+			
+			List<StatusInteger> filterdList = rowList.stream().filter(statusInteger -> {
+				return !statusInteger.getStatus().equals(StatusInteger.Status.fixed.toString());
+			}).map(statusInteger -> {
+				statusInteger.setInteger(0);
+				return statusInteger;
+			}).collect(Collectors.toList());
+			
+			if (needAmount > filterdList.size()) {
+				unsatisfiedList.add(row);
+			}
+			row++;
+		}
+		return unsatisfiedList;
+	}
+	
+	@Override
+	public List<ChosenProductItemBean> calculateChosenProductItemBeans(List<ChosenProductItemBean> chosenProductItemBeans, List<ShipmentInfoBean> shipmentInfoBeans) {
+		List<Integer> rowLimits = shipmentInfoBeans.stream().map(shipmentInfoBean -> {
+			return shipmentInfoBean.getRequiredAmount();
+		}).collect(Collectors.toList());
+		List<Integer> colLimits = chosenProductItemBeans.stream().map(chosenProductItemBean -> {
+			return chosenProductItemBean.getMaxLimitWithUnit();
+		}).collect(Collectors.toList());
+		List<List<StatusInteger>> statusIntegerLists = chosenProductItemBeans.stream().map(chosenProductItemBean -> {
+			return chosenProductItemBean.getProductStatusBeans().stream().map(productStatusBean -> {
+				return productStatusBean.getRequiredAmount();
+			}).collect(Collectors.toList());
+		}).collect(Collectors.toList());
 		
+		statusIntegerLists = this.calculate(rowLimits, colLimits, statusIntegerLists, chosenProductItemBeans, shipmentInfoBeans);
 		int col = 0;
 		for(ChosenProductItemBean chosenProductItemBean: chosenProductItemBeans) {
 			int row = 0;
+			int actualTotalWithUnit = 0;
+			int acutalTotalFamily = 0;
+			int acutalTotalSingle = 0;
+			int actualTotal = chosenProductItemBean.getProductStatusBeans().stream()
+					.map(productStatusBean -> {
+						return productStatusBean.getRequiredAmount().getInteger();
+					})
+					.mapToInt(Integer::intValue)
+					.sum();
 			for(ProductStatusBean productStatusBean: chosenProductItemBean.getProductStatusBeans()) {
+				ShipmentInfoBean shipmentInfoBean = shipmentInfoBeans.get(row);
 				productStatusBean.setRequiredAmount(statusIntegerLists.get(col).get(row));
+				if(shipmentInfoBean.getProgramId() == 1) {
+					acutalTotalSingle += productStatusBean.getRequiredAmount().getInteger();
+				} else {
+					acutalTotalFamily += productStatusBean.getRequiredAmount().getInteger();
+				}
+				actualTotalWithUnit += getRequiredAmountForProgram(shipmentInfoBean.getProgramId(), chosenProductItemBean) 
+						* productStatusBean.getRequiredAmount().getInteger();
 				row++;
 			}
+			chosenProductItemBean.setActualTotalFamily(acutalTotalFamily);
+			chosenProductItemBean.setActualTotalSingle(acutalTotalSingle);
+			chosenProductItemBean.setActualTotal(actualTotal);
+			chosenProductItemBean.setActualTotalWithUnit(actualTotalWithUnit);
 			col++;
 		}
-		chosenProductItemBeans.stream().map(chosenProductItemBean -> {
-			int actualTotal = chosenProductItemBean.getProductStatusBeans().stream()
-				.map(productStatusBean -> {
-					return productStatusBean.getRequiredAmount().getInteger();
-				})
-				.mapToInt(Integer::intValue)
-				.sum();
-			chosenProductItemBean.setActualTotal(actualTotal);
-			return chosenProductItemBean;
-		}).collect(Collectors.toList());
-		shipmentPreferenceBean.setChosenProductItemBeans(chosenProductItemBeans);
 		
-		
-		return shipmentPreferenceBean;
-	}
-
-	@Override
-	public List<List<StatusInteger>> calculate(List<Integer> rowLimits, List<Integer> colLimits,
-			List<List<StatusInteger>> statusIntegerLists) {
- 		if(colLimits.size() < Collections.max(rowLimits)) {
-			throw new IllegalArgumentException("The column number must be equal or greater then row max required amount.");
-		};
-		
-		if(rowLimits.stream().mapToInt(Integer::intValue).sum() > colLimits.stream().mapToInt(Integer::intValue).sum()) {
-			throw new IllegalArgumentException("The column sum must be equal or greater then row sum.");
-		}
-		
-		try{
-		//隨機產生一組巢狀陣列 必須要每張的出貨單數量都滿足 產生完之後再檢查是否有通過每一種水果的上限的檢查
-			statusIntegerLists = this.getRandomLists(statusIntegerLists, rowLimits, colLimits);
-		} catch(StackOverflowError e) {
-			String list = printCalculatedResult(colLimits, rowLimits, statusIntegerLists);
-			throw new IllegalArgumentException("Unable to calculate matched map. Please check you conditions." + list);
-		}
-		return statusIntegerLists;
+		return chosenProductItemBeans;
+	
 	}
 	
-	public List<List<StatusInteger>> getRandomLists(List<List<StatusInteger>> statusIntegerLists, List<Integer> rowLimits, List<Integer> colLimits) {
+	@Override
+	public List<List<StatusInteger>> calculate(List<Integer> rowLimits, List<Integer> colLimits,
+			List<List<StatusInteger>> statusIntegerLists, List<ChosenProductItemBean> chosenProductItemBeans, List<ShipmentInfoBean> shipmentInfoBeans) {
+		try {
+			//隨機產生一組巢狀陣列 必須要每張的出貨單數量都滿足 產生完之後再檢查是否有通過每一種水果的上限的檢查
+			statusIntegerLists = this.getRandomLists(statusIntegerLists, rowLimits, colLimits, chosenProductItemBeans, shipmentInfoBeans);
+			return statusIntegerLists;
+		} catch(StackOverflowError e) {
+			String list = printCalculatedResult(colLimits, rowLimits, statusIntegerLists);
+			ReturnMessage message = ReturnMessageEnum.ShipmentPrerence.UnableToGetResult.getReturnMessage();
+			ReturnMessage returnMessage = new ReturnMessage(message.getErrorCode(), 
+					message.getMessage() + list, message.getStatus());
+			throw new HttpServiceException(returnMessage);
+		}
+	}
+	
+	public List<List<StatusInteger>> getRandomLists(List<List<StatusInteger>> statusIntegerLists, List<Integer> rowLimits, List<Integer> colLimits, List<ChosenProductItemBean> chosenProductItemBeans,  List<ShipmentInfoBean> shipmentInfoBeans) {
 		List<List<StatusInteger>> rowLists = ListTranspose.transpose(statusIntegerLists);
 		
 		int row = 0;
 		for(List<StatusInteger> rowList: rowLists) {
-			rowList = getRandomRowList(rowList, rowLimits.get(row));
+			rowList = getRandomRowList(rowList, rowLimits.get(row), row);
 			row++;
 		}
 		
-		if(checkConstraints(statusIntegerLists, colLimits)) {
+		//檢查數量是否通過單位數量匹配
+		if(checkConstraints(statusIntegerLists, colLimits, chosenProductItemBeans, shipmentInfoBeans)) {
 			return statusIntegerLists;
 		} else {
-			return getRandomLists(statusIntegerLists, rowLimits, colLimits);
+			return getRandomLists(statusIntegerLists, rowLimits, colLimits, chosenProductItemBeans, shipmentInfoBeans);
 		}
 	}
 	
-	public boolean checkConstraints(List<List<StatusInteger>> statusIntegerLists, List<Integer> colLimits) {
-		int i = 0;
-		for(List<StatusInteger> statusIntegerList: statusIntegerLists) {
-			int totalCount = statusIntegerList.stream().map(statusInteger -> {
-				return statusInteger.getInteger();
-			}).reduce(0, (a, b) -> a + b);
-			if(totalCount > colLimits.get(i)) {
-				return false;
+	public boolean checkConstraints(List<List<StatusInteger>> statusIntegerLists, List<Integer> colLimits, List<ChosenProductItemBean> chosenProductItemBeans, List<ShipmentInfoBean> shipmentInfoBeans) {
+		if(chosenProductItemBeans == null || shipmentInfoBeans == null) {
+			int i = 0;
+			for(List<StatusInteger> statusIntegerList: statusIntegerLists) {
+				int totalCount = statusIntegerList.stream().map(statusInteger -> {
+					return statusInteger.getInteger();
+				}).reduce(0, (a, b) -> a + b);
+				if(totalCount > colLimits.get(i)) {
+					return false;
+				}
+				i++;
 			}
-			i++;
+			return true;
+		} else {
+			int col = 0;
+			for(List<StatusInteger> statusIntegerList: statusIntegerLists) {
+				int row = 0;
+				int totalCount = 0;
+				ChosenProductItemBean chosenProductItemBean = chosenProductItemBeans.get(col);
+				for(StatusInteger statusInteger: statusIntegerList) {
+					ShipmentInfoBean shipmentInfoBean = shipmentInfoBeans.get(row);
+					totalCount += this.getRequiredAmountForProgram(shipmentInfoBean.getProgramId(), chosenProductItemBean) * statusInteger.getInteger();
+					row++;
+				}
+				if(totalCount > colLimits.get(col)) {
+					return false;
+				}
+				col++;
+			}
+			return true;
 		}
-		return true;
 	}
 	
-	public List<StatusInteger> getRandomRowList(List<StatusInteger> rowList, int requiredAmount) {
+	public List<StatusInteger> getRandomRowList(List<StatusInteger> rowList, int requiredAmount, int index) {
 		int totalCount = rowList.stream().filter(statusInteger -> {
 			return statusInteger.getStatus().equals(StatusInteger.Status.fixed.toString());
 		}).map(statusInteger -> {
@@ -698,7 +897,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}).reduce(0, (a, b) -> a + b);
 		int needAmount = requiredAmount - totalCount;
 		if(needAmount < 0) {
-			throw new IllegalArgumentException("The needAmount shouldn't be negative value. ");
+			throw new HttpServiceException(ReturnMessageEnum.ShipmentPrerence.RequiredFruitAmountIsNotEnoughForUser.getReturnMessage());
 		}
 		
 		List<StatusInteger> filterdList = rowList.stream().filter(statusInteger -> {
@@ -709,7 +908,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}).collect(Collectors.toList());
 		
 		if(needAmount > filterdList.size()) {
-			throw new IllegalArgumentException("Required fruit amount is not enough for user, please do some modification");
+			throw new HttpServiceException(ReturnMessageEnum.ShipmentPrerence.RequiredFruitAmountIsNotEnoughForUser.getReturnMessage());
 		}
 		//隨機塞值
 		Collections.shuffle(filterdList);
@@ -747,5 +946,110 @@ public class ShipmentServiceImpl implements ShipmentService {
 		return sb.toString();
 	}
 	
-	
+	@Override
+	public List<CustomerOrder> countShipmentTimes(List<CustomerOrder> customerOrders) {
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
+		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
+		customerOrders = customerOrders.stream().map(customerOrder -> {
+			List<ShipmentRecordDetail> matchedShipmentRecordDetails = shipmentRecordDetails.stream().filter(shipmentRecordDetail-> {
+				return customerOrder.getOrderId().equals(shipmentRecordDetail.getCustomerOrder().getOrderId());
+			}).collect(Collectors.toList());
+			
+			List<ShipmentChange> matchedShipmentChanges = shipmentChanges.stream().filter(shipmentChange-> {
+				return customerOrder.getOrderId().equals(shipmentChange.getCustomerOrder().getOrderId());
+			}).collect(Collectors.toList());
+			
+			int total = this.countShipmentTimes(customerOrder, matchedShipmentRecordDetails, matchedShipmentChanges);
+			customerOrder.setShipmentCount(total);
+			return customerOrder;
+		}).collect(Collectors.toList());
+		
+		return customerOrders;
+	}
+
+	@Override
+	public int countShipmentTimes(CustomerOrder customerOrder) {
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
+		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByCustomerOrderAndValidFlag(customerOrder, VALID_FLAG.VALID.value());
+		return this.countShipmentTimes(customerOrder, shipmentRecordDetails, shipmentChanges);
+	}
+
+	@Override
+	public int countShipmentTimes(CustomerOrder customerOrder, List<ShipmentRecordDetail> shipmentRecordDetails,
+			List<ShipmentChange> shipmentChanges) {
+		//計算邏輯
+		//最原始的出貨記錄 (記錄到2016/06/24)
+		//出貨記錄已出貨 出貨修改已出貨 ++ (2016/06/24之前的記錄就不看)
+		//出貨記錄已退貨 --(2016/06/24之前的記錄就不看)
+		//需要判斷每一天若同一天有其他紀錄的話 以出貨修改為主 出貨修改優先順序則是已退貨 > 已出貨 
+		if(shipmentRecordDetails.isEmpty()) {
+			shipmentRecordDetails = new ArrayList<>();
+		}
+		if(shipmentChanges.isEmpty()) {
+			shipmentChanges = new ArrayList<>();
+		}
+		List<Date> allDates = shipmentRecordDetails.stream().map(shipmentRecordDetail -> {
+			return shipmentRecordDetail.getShipmentRecord().getDate();
+		}).collect(Collectors.toList());
+		
+		allDates.addAll(shipmentChanges.stream().map(shipmentChange -> {
+			return shipmentChange.getApplyDate();
+		}).collect(Collectors.toList()));
+		
+		final List<ShipmentRecordDetail> fixedShipmentRecordDetails = shipmentRecordDetails;
+		final List<ShipmentChange> fixedShipmentChanges = shipmentChanges;
+		
+		int total = allDates.stream().filter(date -> {
+			return date.after(DateUtil.toDate("2016-06-24"));
+		}).map(date -> {
+			List<ShipmentRecordDetail> matchedShipmentRecordDetails = fixedShipmentRecordDetails.stream().filter(shipmentRecordDetail -> {
+				return shipmentRecordDetail.getShipmentRecord().getDate().equals(date);
+			}).collect(Collectors.toList());
+			
+			List<ShipmentChange> matchedshipmentChanges = fixedShipmentChanges.stream().filter(shipmentChange -> {
+				return shipmentChange.getApplyDate().equals(date);
+			}).collect(Collectors.toList());
+			
+			//退貨
+			boolean foundReturn = matchedshipmentChanges.stream().anyMatch(shipmentChange -> {
+				return shipmentChange.getApplyDate().equals(date) && 
+						shipmentChange.getShipmentChangeType().getOptionName().equals(shipmentReturn.getOptionName().toString());
+			});
+			
+			//在記錄或者是變更裡面發現都是有
+			boolean foundDelivered = matchedshipmentChanges.stream().anyMatch(shipmentChange -> {
+				return shipmentChange.getApplyDate().equals(date) && 
+						shipmentChange.getShipmentChangeType().getOptionName().equals(shipmentDelivered.getOptionName().toString());
+			}) || matchedShipmentRecordDetails.stream().anyMatch(shipmentRecordDetail -> {
+				return shipmentRecordDetail.getShipmentRecord().getDate().equals(date);
+			});
+			
+			
+			int count = 0;
+			if(foundReturn) {
+				count --;
+			}
+			
+			if(foundDelivered) {
+				count ++;
+			}
+			return count;
+		}).reduce(0, (a, b) -> a + b);
+		
+		return total + (customerOrder.getShipmentCount() == null ? 0 : customerOrder.getShipmentCount());
+	}
+
+	@Override
+	public List<ShipmentChange> findShipmentChangesByCustomerOrders(
+			List<CustomerOrder> customerOrders) {
+		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
+		return shipmentChanges;
+	}
+
+	@Override
+	public List<ShipmentRecordDetail> findShipmentRecordDetailsByCustomerOrders(List<CustomerOrder> customerOrders) {
+		List<ShipmentRecordDetail> shipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
+		return shipmentRecordDetails;
+	}
+
 }
