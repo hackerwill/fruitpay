@@ -81,9 +81,9 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		
 		this.programName = customerOrder.getOrderProgram().getProgramName() + "(" +  customerOrder.getShipmentPeriod().getPeriodName() + ")";
 		
-		this.shipmentDay = DateUtil.parseLocalDate(shipmentDate, "dd/MM/yyyy");
+		this.shipmentDay = DateUtil.parseLocalDate(shipmentDate, "yyyyMMdd");
 		
-		this.deliveryDay = DateUtil.parseLocalDate(deliveryDate, "dd/MM/yyyy");
+		this.deliveryDay = DateUtil.parseLocalDate(deliveryDate, "yyyyMMdd");
 		
 		this.temperate = "2";
 		
