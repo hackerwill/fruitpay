@@ -30,7 +30,6 @@ import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
-import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.ProductItem;
 import com.fruitpay.base.model.ProductStatusBean;
 import com.fruitpay.base.model.ShipmentChange;

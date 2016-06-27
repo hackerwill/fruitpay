@@ -7,9 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.fruitpay.base.comm.CommConst;
-import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.model.ChosenProductItemBean;
-import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
