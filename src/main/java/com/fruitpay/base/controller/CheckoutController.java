@@ -32,7 +32,7 @@ import com.fruitpay.comm.utils.DateUtil;
 
 @Controller
 @RequestMapping("checkoutCtrl")
-public class checkoutController {
+public class CheckoutController {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -120,3 +120,4 @@ public class checkoutController {
 	}
 	
 }
+
