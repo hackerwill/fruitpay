@@ -533,8 +533,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public Page<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition, int page, int size) {
 		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByConditions(
-				condition.getStartDate(),
-				condition.getEndDate(),
+				condition.getDeliverStartDate(),
+				condition.getDeliverEndDate(),
+				condition.getUpdateStartDate(),
+				condition.getUpdateEndDate(),
 				condition.getValidFlag(),
 				condition.getOrderId(),
 				condition.getName(),
@@ -546,8 +548,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public List<ShipmentChange> findAllByConditions(ShipmentChangeCondition condition) {
 		List<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByConditions(
-				condition.getStartDate(),
-				condition.getEndDate(),
+				condition.getDeliverStartDate(),
+				condition.getDeliverEndDate(),
+				condition.getUpdateStartDate(),
+				condition.getUpdateEndDate(),
 				condition.getOrderId(),
 				condition.getName(),
 				condition.getReceiverCellphone(),

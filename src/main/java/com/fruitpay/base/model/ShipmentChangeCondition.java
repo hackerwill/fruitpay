@@ -8,41 +8,69 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class ShipmentChangeCondition implements Serializable {
 	
-	private Date startDate;
-	private Date endDate;
+	private Date deliverStartDate;
+	private Date deliverEndDate;
+	private Date updateStartDate;
+	private Date updateEndDate;
 	private String validFlag;
 	private String orderId;
 	private String name;
 	private String receiverCellphone;
 	
-	public ShipmentChangeCondition(Date startDate, Date endDate, String validFlag, String orderId, String name, String receiverCellphone) {
+	public ShipmentChangeCondition(Date deliverStartDate, Date deliverEndDate, 
+			Date updateStartDate, Date updateEndDate, String validFlag, String orderId, String name, String receiverCellphone) {
 		super();
 		
-		if(startDate == null){
-			startDate = new Date(0L);
+		if(deliverStartDate == null){
+			deliverStartDate = new Date(0L);
+		}
+		if(updateStartDate == null){
+			updateStartDate = new Date(0L);
 		}
 		
-		if(endDate == null) endDate = DateUtil.getMaxDate();
+		if(deliverEndDate == null) deliverEndDate = DateUtil.getMaxDate();
+		if(updateEndDate == null) updateEndDate = DateUtil.getMaxDate();
 		
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.deliverStartDate = deliverStartDate;
+		this.deliverEndDate = deliverEndDate;
+		this.updateStartDate = updateStartDate;
+		this.updateEndDate = updateEndDate;
 		this.validFlag = validFlag != null ? validFlag : String.valueOf(VALID_FLAG.VALID.value());
 		this.orderId = orderId;
 		this.name = name;
 		this.receiverCellphone = receiverCellphone;
 	}
-	
-	public Date getStartDate() {
-		return startDate;
+
+	public Date getDeliverStartDate() {
+		return deliverStartDate;
 	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+
+	public void setDeliverStartDate(Date deliverStartDate) {
+		this.deliverStartDate = deliverStartDate;
 	}
-	public Date getEndDate() {
-		return endDate;
+
+	public Date getDeliverEndDate() {
+		return deliverEndDate;
 	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+
+	public void setDeliverEndDate(Date deliverEndDate) {
+		this.deliverEndDate = deliverEndDate;
+	}
+
+	public Date getUpdateStartDate() {
+		return updateStartDate;
+	}
+
+	public void setUpdateStartDate(Date updateStartDate) {
+		this.updateStartDate = updateStartDate;
+	}
+
+	public Date getUpdateEndDate() {
+		return updateEndDate;
+	}
+
+	public void setUpdateEndDate(Date updateEndDate) {
+		this.updateEndDate = updateEndDate;
 	}
 
 	public String getValidFlag() {

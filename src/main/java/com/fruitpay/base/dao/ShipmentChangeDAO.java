@@ -24,14 +24,17 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 	public List<ShipmentChange> findByApplyDateAndShipmentChangeTypeAndValidFlag(Date applyDate, ConstantOption shipmentChangeType,int validFlag);
 
 	@Query("FROM ShipmentChange s where "
-			+ " s.applyDate BETWEEN :startDate AND :endDate "
+			+ " s.applyDate BETWEEN :deliveryStartDate AND :deliveryEndDate "
+			+ " AND s.updateDate BETWEEN :updateStartDate AND :updateEndDate "
 			+ " AND STR(s.validFlag) like %:validFlag% "
 			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
 			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
 			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public Page<ShipmentChange> findByConditions(
-			@Param("startDate") Date startDate, 
-			@Param("endDate") Date endDate,
+			@Param("deliveryStartDate") Date deliveryStartDate, 
+			@Param("deliveryEndDate") Date deliveryEndDate,
+			@Param("updateStartDate") Date updateStartDate, 
+			@Param("updateEndDate") Date updateEndDate,
 			@Param("validFlag") String validFlag, 
 			@Param("orderId") String orderId, 
 			@Param("name") String name, 
@@ -39,14 +42,17 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			Pageable pageable);
 	
 	@Query("FROM ShipmentChange s where "
-			+ " s.applyDate BETWEEN :startDate AND :endDate "
+			+ " s.applyDate BETWEEN :deliveryStartDate AND :deliveryEndDate "
+			+ " AND s.updateDate BETWEEN :updateStartDate AND :updateEndDate "
 			+ " AND STR(s.validFlag) like %:validFlag% "
 			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
 			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
 			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public List<ShipmentChange> findByConditions(
-			@Param("startDate") Date startDate, 
-			@Param("endDate") Date endDate,
+			@Param("deliveryStartDate") Date deliveryStartDate, 
+			@Param("deliveryEndDate") Date deliveryEndDate,
+			@Param("updateStartDate") Date updateStartDate, 
+			@Param("updateEndDate") Date updateEndDate,
 			@Param("validFlag") String validFlag,
 			@Param("orderId") String orderId, 
 			@Param("name") String name, 

@@ -129,10 +129,12 @@ public class ShipmentController {
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
-			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
+			@RequestParam(value = "deliverStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverStartDate,
+			@RequestParam(value = "deliverEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverEndDate,
+			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateStartDate,
+			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateEndDate) {
 		
-		ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate, validFlag, orderId, name, receiverCellphone);
+		ShipmentChangeCondition condition = new ShipmentChangeCondition(deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
 		Page<ShipmentChange> shipmentChanges = shipmentService.findAllByConditions(condition, page, size);
 
 		return shipmentChanges;
@@ -147,11 +149,13 @@ public class ShipmentController {
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
-			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
+			@RequestParam(value = "deliverStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverStartDate,
+			@RequestParam(value = "deliverEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverEndDate,
+			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateStartDate,
+			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateEndDate) {
 		
 		if(shipmentChanges.isEmpty()) {
-			ShipmentChangeCondition condition = new ShipmentChangeCondition(startDate, endDate, validFlag, orderId, name, receiverCellphone);
+			ShipmentChangeCondition condition = new ShipmentChangeCondition(deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
 			shipmentChanges = shipmentService.findAllByConditions(condition);
 		}
 		ConstantOption shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 
@@ -267,28 +271,42 @@ public class ShipmentController {
 		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(orderIds);
 		
 	    Comparator<CustomerOrder> comparator = (o1, o2) -> {
-	    	int programCompare;
-	    	if(o1.getOrderProgram().getProgramId() > o2.getOrderProgram().getProgramId()) {
-	    		programCompare = 1;
-	    	} else if(o1.getOrderProgram().getProgramId() < o2.getOrderProgram().getProgramId()) {
-	    		programCompare = -1;
+	    	int compare;
+	    	//家庭在上 單人在下
+	    	//依配送時段區分
+	    	int programId1 = o1.getOrderProgram().getProgramId();
+	    	int programId2 = o2.getOrderProgram().getProgramId();
+	    	
+	    	int deliveryTime1 = o1.getShipmentTime().getOptionId();
+	    	int deliveryTime2 = o2.getShipmentTime().getOptionId();
+	    	if(programId1 > programId2) {
+	    		compare = 1;
+	    	} else if(programId1 < programId2) {
+	    		compare = -1;
 	    	} else {
-	    		programCompare = 0;
+	    		if(deliveryTime1 > deliveryTime2) {
+	    			compare = 1;
+	    		} else if (deliveryTime1 < deliveryTime2) {
+	    			compare = -1;
+	    		} else {
+	    			compare = 0;
+	    		}
 	    	}
 	    	
+	    	//黑貓在上 拉拉在下
 	    	int postcode1 = Integer.valueOf(o1.getPostalCode().getPostCode());
     		int postcode2 = Integer.valueOf(o2.getPostalCode().getPostCode());
     		boolean postcode1Check = checkInLala(postcode1);
     		boolean postcode2Check = checkInLala(postcode2);
 	    	
 	    	if (!postcode1Check && !postcode2Check) {
-	    		return -1 * programCompare;
+	    		return -1 * compare;
 	    	} else if (postcode1Check && !postcode2Check) {
 	    		return 1;
 	    	} else if (!postcode1Check && postcode2Check) {
 	    		return -1;
 	    	} else {
-	    		return programCompare;
+	    		return compare;
 	    	}
 	    };
 		 
