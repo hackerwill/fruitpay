@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.BeanUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,10 +20,12 @@ import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderComment;
+import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
+import com.fruitpay.base.service.OrderPreferenceService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.DateUtil;
@@ -56,6 +59,8 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	private ShipmentService shipmentService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	private OrderPreferenceService orderPreferenceService;
 	@Inject
 	private DataUtil dataUtil;
 	
@@ -118,6 +123,72 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.validFlag", is(0)));
 		
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void addOrderAndTestUpdatePreference() throws Exception {
+		Customer customer = dataUtil.getBackgroundCustomer();
+		customer = customerService.saveCustomer(customer);
+		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
+		
+		CheckoutPostBean checkoutPostBean = new CheckoutPostBean();
+		checkoutPostBean.setCustomer(customer);
+		checkoutPostBean.setCustomerOrder(customerOrder);
+		
+		this.mockMvc.perform(post("/orderCtrl/order")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.receiverCellphone", is(customerOrder.getReceiverCellphone())));
+		
+		customer = customerService.findByEmail(dataUtil.getBackgroundCustomer().getEmail());
+		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
+		customerOrder = customerOrders.get(0);
+		
+		List<OrderPreference> orderPreferences = orderPreferenceService.findByCustomerOrder(customerOrder.getOrderId());
+		
+		Assert.assertTrue(orderPreferences.size() > 0);
+		List<OrderPreference> copyOrderPreferences = new ArrayList<>();
+		for(OrderPreference preference : orderPreferences) {
+			OrderPreference copyOrderPreference = new OrderPreference();
+			BeanUtils.copyProperties(preference, copyOrderPreference);
+			copyOrderPreferences.add(copyOrderPreference);
+		}
+		
+		
+		int originLikeDegree = orderPreferences.get(0).getLikeDegree();
+		
+		//change preference
+		if(originLikeDegree == 3) {
+			copyOrderPreferences.get(0).setLikeDegree((byte)0);
+		} else {
+			copyOrderPreferences.get(0).setLikeDegree((byte)3);
+		}
+		
+		//delete preference
+		copyOrderPreferences = copyOrderPreferences.subList(0, 1);
+		
+		this.mockMvc.perform(post("/orderCtrl/orderPreferences/" + customerOrder.getOrderId())
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(copyOrderPreferences)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$", hasSize(1)));
+		
+		//test add another
+		List<OrderPreference> anotherPreferences = dataUtil.getOrderPreferences();
+		anotherPreferences = anotherPreferences.subList(1, 3); //first one is existed one, add another two
+		copyOrderPreferences.addAll(anotherPreferences);
+		
+		this.mockMvc.perform(post("/orderCtrl/orderPreferences/" + customerOrder.getOrderId())
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(copyOrderPreferences)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$", hasSize(3)));
 	}
 	
 	@Test

@@ -207,6 +207,25 @@ public class DataUtil {
 		return getCustomerOrder(7);
 	}
 	
+	public List<OrderPreference> getOrderPreferences() {
+		List<Product> products = staticDataService.getAllProducts();
+		List<OrderPreference> orderPreferences = new ArrayList<>();
+		for (Iterator<Product> iterator = products.iterator(); iterator.hasNext();) {
+			Product product = iterator.next();
+			OrderPreference orderPreference = new OrderPreference();
+			orderPreference.setProduct(product);
+			//亂數設定一些不喜歡的水果
+			if(Math.random() < 0.3) {
+				orderPreference.setLikeDegree(Byte.parseByte("0"));
+			} else {
+				orderPreference.setLikeDegree(Byte.parseByte("5"));
+			}
+			orderPreferences.add(orderPreference);
+		}
+		
+		return orderPreferences;
+	}
+	
 	public CustomerOrder getCustomerOrder(int shipmentDuration){
 		
 		PostalCode postalCode = staticDataService.getPostalCode(1001);

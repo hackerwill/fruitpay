@@ -252,6 +252,18 @@ public class CustomerOrderController {
 		return OrderPreferences;
 	}
 	
+	@RequestMapping(value = "/orderPreferences/{orderId}", method = RequestMethod.POST)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody List<OrderPreference> updateOrderPreferences(@PathVariable int orderId, @RequestBody List<OrderPreference> orderPreferences) {
+
+		if (orderPreferences == null || orderPreferences.isEmpty())
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		List<OrderPreference> OrderPreferences = orderPreferenceService.updateOrderPreferences(orderId, orderPreferences);
+
+		return OrderPreferences;
+	}
+	
 	@RequestMapping(value = "/orderComment", method = RequestMethod.POST)
 	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody OrderComment addOrderComment(@RequestBody OrderComment orderComment) {
