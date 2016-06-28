@@ -278,7 +278,7 @@ public class DataUtil {
 		customerOrder.setReceiptWay(receiptWay);
 		customerOrder.setDeliveryDay(deliveryDay);
 		customerOrder.setAllowForeignFruits("Y");
-		customerOrder.setProgramNum(1);
+		customerOrder.setProgramNum((int)(Math.random() * 2) + 1);
 		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));
 		customerOrder.setRemark("test");

@@ -11,6 +11,8 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class ShipmentExcelBean extends AbstractExcelBean {
 	
+	@ColumnName("訂單編號")
+	private String orderId; //訂單編號
 	@ColumnName("不吃水果")
 	private String unlike; //不吃水果
 	@ColumnName("數量")
@@ -55,6 +57,8 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	public ShipmentExcelBean(CustomerOrder customerOrder, LocalDate shipmentDate, LocalDate deliveryDate, String isLala) {
 		super();
 		try {
+			
+		this.orderId = String.valueOf(customerOrder.getOrderId());
 		this.shipmentTime = String.valueOf(customerOrder.getShipmentTime().getOptionId() - 4); //轉成要的數字格式
 		
 		this.unlike = getUnlikeStr(customerOrder, customerOrder.getOrderPreferences());

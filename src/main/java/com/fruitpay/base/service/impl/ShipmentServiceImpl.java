@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -570,11 +571,14 @@ public class ShipmentServiceImpl implements ShipmentService {
 			List<OrderPreference> preferences = orderPreferences.stream()
 					.filter(preference -> preference.getCustomerOrder().getOrderId().equals(customerOrder.getOrderId()))
 					.collect(Collectors.toList());
-			return new ShipmentInfoBean(customerOrder.getOrderId(), 
+			return new ShipmentInfoBean(
+					customerOrder.getOrderId(), 
 					0, 
+					customerOrder.getProgramNum(),
 					customerOrder.getReceiverLastName().trim() + customerOrder.getReceiverFirstName().trim(),
 					0, 
-					customerOrder.getOrderProgram().getAmount(), preferences,
+					customerOrder.getOrderProgram().getAmount() * customerOrder.getProgramNum(),
+					preferences,
 					customerOrder.getAllowForeignFruits(),
 					customerOrder.getOrderProgram().getProgramId());
 		}).collect(Collectors.toList());
@@ -703,6 +707,19 @@ public class ShipmentServiceImpl implements ShipmentService {
 					}).collect(Collectors.toList());
 			
 			chosenProductItemBeans = this.calculateChosenProductItemBeans(chosenProductItemBeans, satisfiedShipmentInfoBeans);
+			//增加箱子號碼
+			int i = 0;
+			for(ShipmentInfoBean shipmentInfoBean : satisfiedShipmentInfoBeans) {
+				int programNum = shipmentInfoBean.getProgramNum();
+				StringJoiner joiner = new StringJoiner(",");
+				int j = 1;
+				while(j <= programNum) {
+					joiner.add(String.valueOf(i + j));
+					j++;
+				}
+				shipmentInfoBean.setBoxNo(joiner.toString());
+				i += shipmentInfoBean.getProgramNum();
+			}
 		}
 		
 		count = 0;

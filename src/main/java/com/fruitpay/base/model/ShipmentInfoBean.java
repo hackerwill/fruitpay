@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ShipmentInfoBean implements Serializable {
 
+	private String boxNo;
+	private int programNum;
 	private int orderId;
 	private int shipmentRecordId;
 	private String name;
@@ -19,10 +21,11 @@ public class ShipmentInfoBean implements Serializable {
 		
 	}
 	
-	public ShipmentInfoBean(int orderId, int shipmentRecordId, String name, int actualNum, Integer requiredAmount, 
+	public ShipmentInfoBean(int orderId, int shipmentRecordId, int programNum, String name, int actualNum, Integer requiredAmount, 
 			List<OrderPreference> orderPreferences, String allowForeignFruits, int programId) {
 		super();
 		this.orderId = orderId;
+		this.programNum = programNum;
 		this.shipmentRecordId = shipmentRecordId;
 		this.name = name;
 		this.actualNum = actualNum;
@@ -31,6 +34,23 @@ public class ShipmentInfoBean implements Serializable {
 		this.allowForeignFruits = allowForeignFruits;
 		this.programId = programId;
 	}
+	
+	public String getBoxNo() {
+		return boxNo;
+	}
+
+	public void setBoxNo(String boxNo) {
+		this.boxNo = boxNo;
+	}
+
+	public int getProgramNum() {
+		return programNum;
+	}
+
+	public void setProgramNum(int programNum) {
+		this.programNum = programNum;
+	}
+
 	public int getProgramId() {
 		return programId;
 	}
