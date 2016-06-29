@@ -38,7 +38,7 @@ public class TaskScheduler {
 	@Inject
 	private ScheduledRecordDAO scheduledRecordDAO;
 	
-	@Scheduled(cron="0 0 6-24 * * *")
+	@Scheduled(cron="0 0 6-23 * * *")
 	public void calulcateShipmentData() {
 		cachedService.setShipmentPreviewBean();
 	}
