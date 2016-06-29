@@ -32,7 +32,7 @@ public class TaskScheduler {
 	@Inject
 	private ScheduledRecordDAO scheduledRecordDAO;
 	
-	@Scheduled(cron="22 0 * * * *")
+	@Scheduled(cron="0 0 22 * * *")
 	public void shipmentRecord() {
 		logger.debug("Enter TaskScheduler.shipmentRecord");
 		ScheduledRecord scheduledRecord = new ScheduledRecord();
