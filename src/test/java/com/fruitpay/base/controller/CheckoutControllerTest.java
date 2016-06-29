@@ -147,7 +147,7 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(customerOrder)))
 	   		.andExpect(status().isOk())
-	   		.andExpect(content().string("449"));
+	   		.andExpect(content().string(String.valueOf(customerOrder.getProgramNum() * 449)));
 	} 
 
 }
