@@ -133,7 +133,7 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())))
-	   		.andExpect(jsonPath("$.totalPrice", is(449)));
+	   		.andExpect(jsonPath("$.totalPrice", is(449 * customerOrder.getProgramNum())));
 		
 	}
 	
