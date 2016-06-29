@@ -3,6 +3,7 @@ package com.fruitpay.base.service.impl;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -11,8 +12,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fruitpay.base.dao.ScheduledRecordDAO;
+import com.fruitpay.base.model.CachedBean;
+import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ScheduledRecord;
 import com.fruitpay.base.model.ShipmentRecord;
+import com.fruitpay.base.service.CachedService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.comm.utils.DateUtil;
 
@@ -30,13 +34,19 @@ public class TaskScheduler {
 	@Inject
 	private ShipmentService shipmentService;
 	@Inject
+	private CachedService cachedService;
+	@Inject
 	private ScheduledRecordDAO scheduledRecordDAO;
+	
+	@Scheduled(cron="0 0 6-24 * * *")
+	public void calulcateShipmentData() {
+		cachedService.setShipmentPreviewBean();
+	}
 	
 	@Scheduled(cron="0 0 22 * * *")
 	public void shipmentRecord() {
 		logger.debug("Enter TaskScheduler.shipmentRecord");
 		ScheduledRecord scheduledRecord = new ScheduledRecord();
-		scheduledRecord.setCreateDate(new Date());
 		scheduledRecord.setMethodName("shipmentRecord");
 		
 		try {
@@ -59,6 +69,7 @@ public class TaskScheduler {
 			scheduledRecord.setIsSuccessful(IsSuccessful.N.name());
 			scheduledRecord.setMessage(getErrorMessage(e));
 		} finally {
+			scheduledRecord.setCreateDate(new Date());
 			scheduledRecordDAO.save(scheduledRecord);
 		}
 		

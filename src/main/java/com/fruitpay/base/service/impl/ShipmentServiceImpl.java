@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.dao.ShipmentChangeDAO;
 import com.fruitpay.base.dao.ShipmentRecordDAO;
 import com.fruitpay.base.dao.ShipmentRecordDetailDAO;
+import com.fruitpay.base.model.CachedBean;
 import com.fruitpay.base.model.ChosenProductItemBean;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
@@ -49,6 +51,7 @@ import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.model.StatusInteger;
+import com.fruitpay.base.service.CachedService;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
@@ -75,6 +78,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private CustomerOrderDAO customerOrderDAO;
 	@Inject
 	private OrderPreferenceDAO orderPreferenceDAO;
+	@Inject
+	private CachedService cachedService;
 	
 	//if one delivery day is pulse, the next delivery day plus day amount
 	private final int JUMP_DAY = 7;
@@ -347,7 +352,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public List<CustomerOrder> listAllCustomerOrdersByDate(LocalDate date) {
 		if(date == null) 
-			return new ArrayList<CustomerOrder>();
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		List<CustomerOrder> customerOrders = null;
 		
 		Constant deliveryDayConstant = staticDataService.getConstant(6);
 		List<ConstantOption> deliveryDays = deliveryDayConstant.getConstOptions();
@@ -365,9 +372,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 			.collect(Collectors.toList());
 		
 		if(deliveryDays.size() == 0)
-			return new ArrayList<CustomerOrder>();
+			return new ArrayList<>();
 		
-		List<CustomerOrder> customerOrders = customerOrderDAO.findByValidFlagAndDeliveryDayAndOrderStatusIn(
+		customerOrders = customerOrderDAO.findByValidFlagAndDeliveryDayAndOrderStatusIn(
 				VALID_FLAG.VALID.value(), deliveryDays.get(0), orderStatues);
 		List<ShipmentChange> allShipmentChanges = shipmentChangeDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
 		List<ShipmentRecordDetail> allShipmentRecordDetails = shipmentRecordDetailDAO.findByCustomerOrderInAndValidFlag(customerOrders, VALID_FLAG.VALID.value());
@@ -406,6 +413,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		if(!customizedOrderIds.isEmpty()) {
 			customerOrders.addAll(customizedOrderIds);
 		}
+		
 		return customerOrders;
 	}
 	
@@ -443,7 +451,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 	
 	@Override
 	public List<Integer> listAllOrderIdsByDate(LocalDate date) {
-		return listAllCustomerOrdersByDate(date).stream()
+		List<CustomerOrder> customerOrders = listAllCustomerOrdersByDate(date);
+		if(customerOrders.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		return customerOrders.stream()
 				.map(CustomerOrder -> CustomerOrder.getOrderId())
 				.collect(Collectors.toList());
 	}
@@ -563,9 +576,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public ShipmentPreferenceBean findInitialShipmentPreference(LocalDate date, List<String> categoryItemIds) {
 		List<CustomerOrder> customerOrders =  this.listAllCustomerOrdersByDate(date);	
-		if(customerOrders.isEmpty()) {
-			throw new HttpServiceException(ReturnMessageEnum.ShipmentPrerence.CanNotFindMatchedRowData.getReturnMessage());
-		}
+		
 		List<OrderPreference> orderPreferences = orderPreferenceDAO.findByCustomerOrderIn(customerOrders);
 		List<ShipmentInfoBean> shipmentInfoBeans = customerOrders.stream().map(customerOrder -> {
 			List<OrderPreference> preferences = orderPreferences.stream()

@@ -30,15 +30,18 @@ import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.model.CachedBean;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentChangeCondition;
 import com.fruitpay.base.model.ShipmentDeliveryStatus;
+import com.fruitpay.base.model.ShipmentDisplayRecord;
 import com.fruitpay.base.model.ShipmentPreferenceBean;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.model.ShipmentRecordPostBean;
+import com.fruitpay.base.service.CachedService;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
@@ -61,6 +64,8 @@ public class ShipmentController {
 	private CustomerOrderService customerOrderService;
 	@Inject
 	private StaticDataService staticDataService;
+	@Inject
+	private CachedService cachedService;
 	
 	private Integer[] lalaAreaPostCode = {
 			 100 //臺北市 中正區
@@ -335,19 +340,37 @@ public class ShipmentController {
 		return Arrays.asList(lalaAreaPostCode).stream().anyMatch(value -> value.equals(postCode));
 	}
 	
+	@RequestMapping(value = "/shipmentDisplayRecord", method = RequestMethod.GET)
+	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
+	public @ResponseBody List<ShipmentDisplayRecord> getShipmentDisplayRecord(
+			@RequestParam(value = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate) {
+		List<ShipmentDisplayRecord> shipmentDisplayRecords = cachedService.getShipmentDisplayRecords();
+		return shipmentDisplayRecords;
+	}
+	
 	@RequestMapping(value = "/shipmentPreview", method = RequestMethod.GET)
 	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
 	public @ResponseBody ShipmentPreview getShipmentPreview(
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(value = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate,
 			@DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
-		
+
 		LocalDate localDate = null;
-		if(date != null){
+		if(date == null){
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		} else {
 			localDate = DateUtil.toLocalDate(date);	
 		}
 		
-		List<Integer> orderIds = shipmentService.listAllOrderIdsByDate(localDate);
+		CachedBean<List<CustomerOrder>> customerOrderCacheBean = cachedService.getShipmentPreviewBean(localDate, forceUpdate);
+		if(customerOrderCacheBean.getValue() == null) {
+			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
+		}
+		
+		List<Integer> orderIds = customerOrderCacheBean.getValue().stream().map(customerOrder -> {
+			return customerOrder.getOrderId();
+		}).collect(Collectors.toList());
 		Page<CustomerOrder> customerOrders = shipmentService.listAllOrdersPageable(orderIds, page, size);
 		
 		List<CustomerOrder> duplicatedCustomerOrders = customerOrders.getContent().stream()
@@ -356,7 +379,7 @@ public class ShipmentController {
 						return order.getCustomer().getCustomerId().equals(thisOrder.getCustomer().getCustomerId());
 					}).count() > 1;
 				}).collect(Collectors.toList());
-		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrders, orderIds, duplicatedCustomerOrders);
+		ShipmentPreview shipmentPreview = new ShipmentPreview(customerOrderCacheBean.getDate(), customerOrders, orderIds, duplicatedCustomerOrders);
 		return shipmentPreview;
 	}
 	
@@ -420,12 +443,20 @@ public class ShipmentController {
 		Page<CustomerOrder> customerOrders;
 		List<Integer> orderIds;
 		List<CustomerOrder> duplicateOrders;
+		private Date date;
 		
-		public ShipmentPreview(Page<CustomerOrder> customerOrders, List<Integer> orderIds, List<CustomerOrder> duplicateOrders) {
+		public ShipmentPreview(Date date, Page<CustomerOrder> customerOrders, List<Integer> orderIds, List<CustomerOrder> duplicateOrders) {
 			super();
+			this.date = date;
 			this.customerOrders = customerOrders;
 			this.orderIds = orderIds;
 			this.duplicateOrders = duplicateOrders;
+		}
+		public Date getDate() {
+			return date;
+		}
+		public void setDate(Date date) {
+			this.date = date;
 		}
 		public Page<CustomerOrder> getCustomerOrders() {
 			return customerOrders;

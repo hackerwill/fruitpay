@@ -25,7 +25,7 @@ public class DateUtil {
 	}
 	
 	public static LocalDate toLocalDate(String dateStr, String pattern){
-		return LocalDate.parse("2005-nov-12", DateTimeFormatter.ofPattern(pattern));	
+		return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(pattern));	
 	}
 	
 	public static LocalDate toLocalDate(Date date){
