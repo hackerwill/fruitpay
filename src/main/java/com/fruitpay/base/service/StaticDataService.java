@@ -21,6 +21,8 @@ import com.fruitpay.base.model.ShipmentPeriod;
 
 public interface StaticDataService {
 	
+	public int getMappingDayOfWeek(int dayOfWeek);
+	
 	public List<PostalCode> getAllPostalCodes();
 	
 	public PostalCode getPostalCode(Integer postId);

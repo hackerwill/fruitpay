@@ -162,13 +162,7 @@ public class StaticDataController {
 	
 	private int returnNextDayOfWeek() {
 		int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
-		if(dayOfWeek == 1 || dayOfWeek == 2 || dayOfWeek == 3){
-			return 1;
-		}else if(dayOfWeek == 4 || dayOfWeek == 5) {
-			return 3;
-		}else{
-			return 5;
-		}
+		return staticDataService.getMappingDayOfWeek(dayOfWeek);
 	}
 	
 	@RequestMapping(value = "/adminConstant", method = RequestMethod.GET)

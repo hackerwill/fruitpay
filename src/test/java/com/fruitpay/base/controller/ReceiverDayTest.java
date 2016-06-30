@@ -21,6 +21,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.service.EmailSendService;
 import com.fruitpay.comm.service.impl.EmailContentFactory.MailType;
+import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.util.AbstractSpringJnitTest;
 import com.fruitpay.util.DataUtil;
 import com.fruitpay.util.TestUtil;
@@ -32,7 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -60,6 +63,16 @@ public class ReceiverDayTest extends AbstractSpringJnitTest{
         		.build();
  
     }
+	
+	@Test
+	public void getReceiveDayWithShipmentCount() throws Exception {
+		Date date = DateUtil.toDate("20160630", "yyyyMMdd");
+		
+		String nextReceiveDay = staticDataService.getNextReceiveDayStr(date, DayOfWeek.WEDNESDAY);
+		//Assert.assertEquals("12-30", nextReceiveDay);
+		
+		
+	}
 
 	@Test
 	public void getReceiveDay() throws Exception {

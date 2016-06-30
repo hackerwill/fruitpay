@@ -566,10 +566,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getDeliverEndDate(),
 				condition.getUpdateStartDate(),
 				condition.getUpdateEndDate(),
+				condition.getValidFlag(),
 				condition.getOrderId(),
 				condition.getName(),
-				condition.getReceiverCellphone(),
-				condition.getValidFlag());
+				condition.getReceiverCellphone());
 		return shipmentChanges;
 	}
 

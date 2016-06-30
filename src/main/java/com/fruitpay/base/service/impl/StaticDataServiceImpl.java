@@ -1,5 +1,6 @@
 package com.fruitpay.base.service.impl;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,11 +11,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fruitpay.base.comm.exception.HttpServiceException;
+import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.ConstantDAO;
 import com.fruitpay.base.dao.ConstantOptionDAO;
 import com.fruitpay.base.dao.OrderPlatformDAO;
@@ -47,10 +52,12 @@ import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.SelectOption;
 import com.fruitpay.comm.utils.DateUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 @Service
-public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDataService {
-
+public class StaticDataServiceImpl implements StaticDataService {
+	private final Logger logger = Logger.getLogger(this.getClass());
 	@Inject
 	private PostalCodeDAO postalCodeDAO;
 	@Inject
@@ -79,11 +86,32 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	Map<String, List<SelectOption>> towershipMap = null;
 	Map<String, List<SelectOption>> villageMap = null;
 	private Integer BUFFER_DAY = null;
+	List<DateMapping> dataMappings = null;
 	
 	@PostConstruct
 	public void init() {
 		ConstantOption bufferDayOption = this.getConstantOptionByName("bufferDay");
 		BUFFER_DAY = Integer.valueOf(bufferDayOption.getOptionDesc());
+		String dateMappingJson = this.getConstantOptionByName("dateMappingJson").getOptionDesc();
+		Gson gson = new Gson();
+		dataMappings =  gson.fromJson(dateMappingJson, new TypeToken<List<DateMapping>>(){}.getType());
+	}
+	
+	private class DateMapping implements Serializable {
+		private Integer dayOfWeek;
+		private Integer mappingDayOfWeek;
+		public Integer getDayOfWeek() {
+			return dayOfWeek;
+		}
+		public void setDayOfWeek(Integer dayOfWeek) {
+			this.dayOfWeek = dayOfWeek;
+		}
+		public Integer getMappingDayOfWeek() {
+			return mappingDayOfWeek;
+		}
+		public void setMappingDayOfWeek(Integer mappingDayOfWeek) {
+			this.mappingDayOfWeek = mappingDayOfWeek;
+		}
 	}
 	
 	private boolean isOffIslands(Integer countyCode){
@@ -100,6 +128,20 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 		return optionList.parallelStream()
 				.distinct()
 				.collect(Collectors.toList());
+	}
+	
+	@Override
+	public int getMappingDayOfWeek(int dayOfWeek) {
+		Optional<DateMapping> mappingOptional = this.dataMappings.stream().filter(dateMapping -> {
+			return dateMapping.getDayOfWeek().equals(dayOfWeek);
+		}).findFirst();
+		
+		if(mappingOptional.isPresent()) {
+			return mappingOptional.get().getMappingDayOfWeek();
+		} else {
+			throw new HttpServiceException(ReturnMessageEnum.Common.NotFound.getReturnMessage());
+		}
+		
 	}
 
 	@Override
@@ -193,26 +235,18 @@ public class StaticDataServiceImpl implements com.fruitpay.base.service.StaticDa
 	
 	@Override
 	public String getNextReceiveDayStr(Date nowTime, DayOfWeek dayOfWeek){
-		//規則 : 提前兩天，若出貨日是2016/01/06，只要時間早於2天前的凌晨0:00，也就是說2016/01/04 00:00，都會延到下一周
+		//規則 : 提前n天，若出貨日是2016/01/06，只要時間早於n天前的凌晨0:00，都會延到下一周
 		LocalDate now = DateUtil.toLocalDate(nowTime);
 		//下一個收貨日
-		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
-		//提前的天數
-		LocalDate stopDayOfThisWeek = receiveDayOfThisWeek.minusDays(4);
-		LocalDateTime stopDayTimeOfThisWeek = stopDayOfThisWeek.atTime(0, 0);
-		
-		boolean greaterThanNow = compareTimeGreaterThanNow(
-				Date.from(stopDayTimeOfThisWeek.atZone(ZoneId.systemDefault()).toInstant()), 
-				nowTime);
-		if(!greaterThanNow)
-			receiveDayOfThisWeek = receiveDayOfThisWeek.with(TemporalAdjusters.next(dayOfWeek));
+		LocalDate receiveDayOfThisWeek = this.getNextReceiveDay(nowTime, dayOfWeek);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
 		return receiveDayOfThisWeek.format(formatter);
 	}
 	
 	public LocalDate getNextReceiveDay(Date nowTime, DayOfWeek dayOfWeek){
 		//規則 : 提前n天，若出貨日是2016/01/06，只要時間早於4天前的凌晨0:00，都會延到下一周
-		LocalDate now = DateUtil.toLocalDate(nowTime);//下一個收貨日
+		LocalDate now = DateUtil.toLocalDate(nowTime);
+		//下一個收貨日
 		LocalDate receiveDayOfThisWeek = now.with(TemporalAdjusters.nextOrSame(dayOfWeek));
 		
 		//提前的天數

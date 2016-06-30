@@ -22,6 +22,8 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	private String type;	//類型
 	@ColumnName("異動原因")
 	private String reason;	//異動原因
+	@ColumnName("付款方式")
+	private String paymentMode;	//付款方式
 	@ColumnName("下次配送日")
 	private String nextShipmentDate;	//下次配送日
 	@ColumnName("暫停次數")
@@ -48,6 +50,7 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 		this.updateUser = shipmentChange.getUpdateUserName();
 		this.updateDate = DateUtil.parseDate(shipmentChange.getUpdateDate(), "yyyy年MM月dd日");
 		this.reason = shipmentChange.getReason();
+		this.paymentMode = shipmentChange.getCustomerOrder().getPaymentMode().getPaymentModeName();
 		this.pauseTimes = String.valueOf(orderPauseChanges.size());
 		this.pauseDates = formatPauseDates(orderPauseChanges);
 		this.nextShipmentDate = nextShipmentLocalDate == null ? "已取消" : DateUtil.parseLocalDate(nextShipmentLocalDate, "yyyy年MM月dd日");
@@ -59,70 +62,6 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 		}).collect(Collectors.toList());
 		
 		return String.join(System.lineSeparator(), pauseDates);
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getReceiverName() {
-		return receiverName;
-	}
-
-	public void setReceiverName(String receiverName) {
-		this.receiverName = receiverName;
-	}
-
-	public String getShipmentCount() {
-		return shipmentCount;
-	}
-
-	public void setShipmentCount(String shipmentCount) {
-		this.shipmentCount = shipmentCount;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getApplyDate() {
-		return applyDate;
-	}
-
-	public void setApplyDate(String applyDate) {
-		this.applyDate = applyDate;
-	}
-
-	public String getUpdateUser() {
-		return updateUser;
-	}
-
-	public void setUpdateUser(String updateUser) {
-		this.updateUser = updateUser;
-	}
-
-	public String getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(String updateDate) {
-		this.updateDate = updateDate;
 	}
 	
 }

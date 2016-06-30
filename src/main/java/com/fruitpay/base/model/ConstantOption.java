@@ -27,10 +27,10 @@ public class ConstantOption extends AbstractEntity implements Serializable {
 	@Column(name="option_name")
 	private String optionName;
 
-	@Column(name="option_desc")
+	@Column(name="option_desc", length=512)
 	private String optionDesc;
 	
-	@Column(name="valid_flag")
+	@Column(name="valid_flag", nullable=false)
 	private int validFlag;
 
 	@Column(name="order_no")
