@@ -9,6 +9,7 @@ import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.comm.annotation.ColumnName;
+import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.comm.utils.StringUtil;
 
 public class OrderExcelBean extends AbstractExcelBean {
@@ -22,7 +23,7 @@ public class OrderExcelBean extends AbstractExcelBean {
 	@ColumnName("平台")
 	private String platformName;	//平台
 	@ColumnName("訂單日期")
-	private Date orderDate;	//訂單日期
+	private String orderDate;	//訂單日期
 	@ColumnName("訂單編號")
 	private String orderId;	//訂單編號
 	@ColumnName("配送時段")
@@ -69,6 +70,8 @@ public class OrderExcelBean extends AbstractExcelBean {
 	private String deliveryDay; //出貨日
 	@ColumnName("數量")
 	private Integer programNum;	//數量
+	@ColumnName("配送次數")
+	private Integer shipmentCount;	//配送次數
 	
 	public OrderExcelBean() {
 		super();
@@ -85,8 +88,8 @@ public class OrderExcelBean extends AbstractExcelBean {
 		
 		this.platformName = customerOrder.getOrderPlatform().getPlatformName();
 		
-		this.orderDate = customerOrder.getOrderDate();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy年M月dd日");
+
+		this.orderDate = DateUtil.parseDate(customerOrder.getOrderDate(), "yyyy年M月dd日 HH點mm分");
 		
 		this.orderId = String.valueOf(customerOrder.getOrderId());
 		
@@ -134,6 +137,8 @@ public class OrderExcelBean extends AbstractExcelBean {
 		
 		this.programNum = customerOrder.getProgramNum();
 		
+		this.shipmentCount = customerOrder.getShipmentCount();
+		
 	}
 	
 	
@@ -167,286 +172,6 @@ public class OrderExcelBean extends AbstractExcelBean {
 			}
 		}
 		return str.toString();
-	}
-
-
-	public String getOrderStatus() {
-		return orderStatus;
-	}
-
-
-	public void setOrderStatus(String orderStatus) {
-		this.orderStatus = orderStatus;
-	}
-
-
-	public String getProgramName() {
-		return programName;
-	}
-
-
-	public void setProgramName(String programName) {
-		this.programName = programName;
-	}
-
-
-	public String getPeriodName() {
-		return periodName;
-	}
-
-
-	public void setPeriodName(String periodName) {
-		this.periodName = periodName;
-	}
-
-
-	public String getPlatformName() {
-		return platformName;
-	}
-
-
-	public void setPlatformName(String platformName) {
-		this.platformName = platformName;
-	}
-
-
-	public Date getOrderDate() {
-		return orderDate;
-	}
-
-
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
-	}
-
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-
-
-	public String getShipmentTime() {
-		return shipmentTime;
-	}
-
-
-	public void setShipmentTime(String shipmentTime) {
-		this.shipmentTime = shipmentTime;
-	}
-
-
-	public String getUnlike() {
-		return unlike;
-	}
-
-
-	public void setUnlike(String unlike) {
-		this.unlike = unlike;
-	}
-
-
-	public String getReceiveWay() {
-		return receiveWay;
-	}
-
-
-	public void setReceiveWay(String receiveWay) {
-		this.receiveWay = receiveWay;
-	}
-
-
-	public String getRemark() {
-		return remark;
-	}
-
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-
-	public String getPayOnReceive() {
-		return payOnReceive;
-	}
-
-
-	public void setPayOnReceive(String payOnReceive) {
-		this.payOnReceive = payOnReceive;
-	}
-
-
-	public String getReceiverName() {
-		return receiverName;
-	}
-
-
-	public void setReceiverName(String receiverName) {
-		this.receiverName = receiverName;
-	}
-
-
-	public String getReceiverAddress() {
-		return receiverAddress;
-	}
-
-
-	public void setReceiverAddress(String receiverAddress) {
-		this.receiverAddress = receiverAddress;
-	}
-
-
-	public String getReceiverCellphone() {
-		return receiverCellphone;
-	}
-
-
-	public void setReceiverCellphone(String receiverCellphone) {
-		this.receiverCellphone = receiverCellphone;
-	}
-
-
-	public String getReceiverHousePhone() {
-		return receiverHousePhone;
-	}
-
-
-	public void setReceiverHousePhone(String receiverHousePhone) {
-		this.receiverHousePhone = receiverHousePhone;
-	}
-
-
-	public String getEmail() {
-		return email;
-	}
-
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-
-	public Integer getTotalPrice() {
-		return totalPrice;
-	}
-
-
-	public void setTotalPrice(Integer totalPrice) {
-		this.totalPrice = totalPrice;
-	}
-
-
-	public String getComingFrom() {
-		return comingFrom;
-	}
-
-
-	public void setComingFrom(String comingFrom) {
-		this.comingFrom = comingFrom;
-	}
-
-
-	public String getCustomerReponse() {
-		return customerReponse;
-	}
-
-
-	public void setCustomerReponse(String customerReponse) {
-		this.customerReponse = customerReponse;
-	}
-
-
-	public String getName() {
-		return name;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public String getCellphone() {
-		return cellphone;
-	}
-
-
-	public void setCellphone(String cellphone) {
-		this.cellphone = cellphone;
-	}
-
-
-	public String getHousePhone() {
-		return housePhone;
-	}
-
-
-	public void setHousePhone(String housePhone) {
-		this.housePhone = housePhone;
-	}
-
-
-	public String getCoupons() {
-		return coupons;
-	}
-
-
-	public void setCoupons(String coupons) {
-		this.coupons = coupons;
-	}
-
-
-	public String getReceiptType() {
-		return receiptType;
-	}
-
-
-	public void setReceiptType(String receiptType) {
-		this.receiptType = receiptType;
-	}
-
-
-	public String getReceiptTitle() {
-		return receiptTitle;
-	}
-
-
-	public void setReceiptTitle(String receiptTitle) {
-		this.receiptTitle = receiptTitle;
-	}
-
-
-	public String getReceiptVatNumber() {
-		return receiptVatNumber;
-	}
-
-
-	public void setReceiptVatNumber(String receiptVatNumber) {
-		this.receiptVatNumber = receiptVatNumber;
-	}
-
-
-	public String getDeliveryDay() {
-		return deliveryDay;
-	}
-
-
-	public void setDeliveryDay(String deliveryDay) {
-		this.deliveryDay = deliveryDay;
-	}
-
-
-	public Integer getProgramNum() {
-		return programNum;
-	}
-
-
-	public void setProgramNum(Integer programNum) {
-		this.programNum = programNum;
 	}
 
 }

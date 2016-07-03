@@ -37,6 +37,7 @@ import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.OrderPreferenceService;
+import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
 import com.fruitpay.comm.model.EnumMapOrder;
@@ -64,6 +65,8 @@ public class CustomerOrderController {
 	private StaticDataService staticDataService;
 	@Inject
 	private EmailSendService emailSendService;
+	@Inject
+	private ShipmentService shipmentService;
 
 	@RequestMapping(value = "/order", method = RequestMethod.POST)
 	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
@@ -190,11 +193,12 @@ public class CustomerOrderController {
 			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason) {
 
 		name = name.toLowerCase();
 		
-		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone);
+		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
 		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;
@@ -211,11 +215,13 @@ public class CustomerOrderController {
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
-			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId) {
+			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId,
+			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason) {
 		
 		if(customerOrders.size() == 0) {
-			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone);
+			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
 			customerOrders = customerOrderService.findAllByConditions(orderCondition);
+			customerOrders = shipmentService.countShipmentTimes(customerOrders);
 		} else {
 			customerOrders = customerOrders.stream().map(order -> {
 				return customerOrderService.findOneIncludingOrderPreference(order.getOrderId());

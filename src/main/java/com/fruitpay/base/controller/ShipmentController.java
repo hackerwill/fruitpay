@@ -176,7 +176,6 @@ public class ShipmentController {
 			return ShipmentChange.getShipmentChangeType().getOptionName().equals(shipmentPulse.getOptionName());
 		}).collect(Collectors.toList());
 		
-		
 		//計算總出貨次數
 		List<CustomerOrder> customerOrderWithCountMofieds = shipmentService.countShipmentTimes(customerOrders);
 		shipmentChanges = shipmentChanges.stream().map(shipmentChange -> {

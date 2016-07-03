@@ -10,8 +10,6 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	
-	@ColumnName("申請日期")
-	private String applyDate;	//日期
 	@ColumnName("訂單編號")
 	private String orderId;	//訂單編號
 	@ColumnName("收件人")
@@ -24,6 +22,12 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	private String reason;	//異動原因
 	@ColumnName("付款方式")
 	private String paymentMode;	//付款方式
+	@ColumnName("配送方案")
+	private String orderProgram; //配送方案
+	@ColumnName("配送週期")
+	private String shipmentPeriod;	//配送週期
+	@ColumnName("申請日期")
+	private String applyDate;	//日期
 	@ColumnName("下次配送日")
 	private String nextShipmentDate;	//下次配送日
 	@ColumnName("暫停次數")
@@ -52,6 +56,8 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 		this.reason = shipmentChange.getReason();
 		this.paymentMode = shipmentChange.getCustomerOrder().getPaymentMode().getPaymentModeName();
 		this.pauseTimes = String.valueOf(orderPauseChanges.size());
+		this.orderProgram = shipmentChange.getCustomerOrder().getOrderProgram().getProgramName();
+		this.shipmentPeriod = shipmentChange.getCustomerOrder().getShipmentPeriod().getPeriodName();
 		this.pauseDates = formatPauseDates(orderPauseChanges);
 		this.nextShipmentDate = nextShipmentLocalDate == null ? "已取消" : DateUtil.parseLocalDate(nextShipmentLocalDate, "yyyy年MM月dd日");
 	}

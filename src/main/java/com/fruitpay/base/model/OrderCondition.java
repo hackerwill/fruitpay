@@ -18,8 +18,9 @@ public class OrderCondition implements Serializable {
 	private String allowForeignFruits;
 	private String orderStatusId;
 	private String receiverCellphone;
+	private String shipmentChangeReason;
 
-	public OrderCondition(String orderId, String name, Date startDate, Date endDate, String validFlag, String allowForeignFruits, String orderStatusId, String receiverCellphone) {
+	public OrderCondition(String orderId, String name, Date startDate, Date endDate, String validFlag, String allowForeignFruits, String orderStatusId, String receiverCellphone, String shipmentChangeReason) {
 		super();
 		
 		if(startDate == null){
@@ -36,7 +37,16 @@ public class OrderCondition implements Serializable {
 		this.allowForeignFruits = allowForeignFruits;
 		this.orderStatusId = orderStatusId;
 		this.receiverCellphone = receiverCellphone;
+		this.shipmentChangeReason = shipmentChangeReason;
 		
+	}
+
+	public String getShipmentChangeReason() {
+		return shipmentChangeReason;
+	}
+
+	public void setShipmentChangeReason(String shipmentChangeReason) {
+		this.shipmentChangeReason = shipmentChangeReason;
 	}
 
 	public String getReceiverCellphone() {
