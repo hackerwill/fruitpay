@@ -161,7 +161,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition) {
-		List<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
+		List<CustomerOrder> customerOrders = AssertUtils.isEmpty(orderCondition.getShipmentChangeReason()) ? 
+			customerOrderDAO.findByConditions(
+					orderCondition.getName(), 
+					orderCondition.getOrderId(), 
+					orderCondition.getStartDate(),
+					orderCondition.getEndDate(),
+					orderCondition.getValidFlag(),
+					orderCondition.getAllowForeignFruits(),
+					orderCondition.getOrderStatusId(),
+					orderCondition.getReceiverCellphone(),
+					orderCondition.getShipmentChangeReason()) :
+			customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
@@ -182,7 +193,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	
 	@Override
 	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page, int size) {
-		Page<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
+		Page<CustomerOrder> customerOrders = AssertUtils.isEmpty(orderCondition.getShipmentChangeReason()) ? 
+			customerOrderDAO.findByConditions(
+					orderCondition.getName(), 
+					orderCondition.getOrderId(), 
+					orderCondition.getStartDate(),
+					orderCondition.getEndDate(),
+					orderCondition.getValidFlag(),
+					orderCondition.getAllowForeignFruits(),
+					orderCondition.getOrderStatusId(),
+					orderCondition.getReceiverCellphone(),
+					new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId"))) :
+			customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
