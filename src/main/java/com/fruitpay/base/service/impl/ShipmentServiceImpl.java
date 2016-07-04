@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.CommConst.VALID_FLAG;
+import com.fruitpay.base.comm.ShipmentChangeStatus;
 import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
@@ -90,6 +91,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private ConstantOption shipmentDelivered = null;
 	private ConstantOption shipmentReady = null;
 	private ConstantOption shipmentReturn = null;
+	private ConstantOption shipmentChangeStatusUnhandled = null;
 	private List<ProductItem> cacheProductItems = null;
 	
 	@PostConstruct
@@ -100,6 +102,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipmentCancel = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentCancel.toString()); 
 		shipmentReady = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReady.toString()); 
 		shipmentReturn = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentReturn.toString()); 
+		shipmentChangeStatusUnhandled = staticDataService.getConstantOptionByName(ShipmentChangeStatus.shipmentChangeStatusUnhandled.toString());
 		cacheProductItems = staticDataService.getAllProductItems();
 	}
 	
@@ -115,6 +118,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	@Transactional
 	public ShipmentChange add(ShipmentChange shipmentChange) {
+		shipmentChange.setStatus(shipmentChangeStatusUnhandled);
 		shipmentChange.setValidFlag(CommConst.VALID_FLAG.VALID.value());
 		shipmentChange = shipmentChangeDAO.save(shipmentChange);
 		return shipmentChange;

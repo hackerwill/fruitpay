@@ -291,7 +291,53 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void addOrderAndAddShipmentExchage() throws Exception {
+	public void addOrderAndUpdateStatus() throws Exception {
+		Constant shipmentChangeStatusConstant = staticDataService.getConstant(18);
+		//原本配送日期加上7天
+		int plusDay = 7;
+		
+		CustomerOrder customerOrder = addOrderAndGetFirstOne(dataUtil.getCustomerOrder());
+		int orderId = customerOrder.getOrderId();
+		
+		ShipmentChange shipmentChange = dataUtil.getShipmentChangeWithPulse();
+		shipmentChange.setCustomerOrder(customerOrder);
+		LocalDate pulseDate = customerOrderService.findOrderFirstDeliveryDate(orderId).plusDays(plusDay);
+		shipmentChange.setApplyDate(DateUtil.toDate(pulseDate));
+		
+		this.mockMvc.perform(post("/shipmentCtrl/shipmentChange")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(shipmentChange)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.shipmentChangeType.optionName", is(shipmentChange.getShipmentChangeType().getOptionName())));
+		
+		this.mockMvc.perform(get("/shipmentCtrl/shipmentChange/" + orderId))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$", hasSize(1)));
+		
+		List<ShipmentChange> shipmentChanges = shipmentService.findShipmentChangesByOrderId(orderId);
+		shipmentChange = shipmentChanges.get(0);
+		
+		ConstantOption status = shipmentChangeStatusConstant.getConstOptions().get(0);
+		shipmentChange.setStatus(status);
+		
+		this.mockMvc.perform(put("/shipmentCtrl/shipmentChange")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(shipmentChange)))
+	   		.andExpect(status().isOk())
+	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+	   		.andExpect(jsonPath("$.status.optionName", is(status.getOptionName())));
+		
+		shipmentChanges = shipmentService.findShipmentChangesByOrderId(orderId);
+		shipmentChange = shipmentChanges.get(0);
+		Assert.assertEquals(status.getOptionName(), shipmentChange.getStatus().getOptionName());
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void addOrderAndAddShipmentChage() throws Exception {
 		//原本配送日期加上7天
 		int plusDay = 7;
 		int searchPlusDay = 30;
@@ -337,7 +383,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void addOrderAndAddShipmentExchageAndTestTwoWeek() throws Exception {
+	public void addOrderAndAddShipmentChageAndTestTwoWeek() throws Exception {
 		//原本配送日期加上14天
 		int plusDay = 14;
 		int searchPlusDay = 50;
@@ -383,7 +429,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void addOrderAndAddShipmentExchageAndTestTwoWeekAndAddCancel() throws Exception {
+	public void addOrderAndAddShipmentChageAndTestTwoWeekAndAddCancel() throws Exception {
 		//原本配送日期加上14天
 		int plusDay = 14;
 		int searchPlusDay = 50;

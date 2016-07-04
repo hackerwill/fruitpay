@@ -109,9 +109,21 @@ public class ShipmentController {
 		return shipmentChange;
 	}
 	
+	@RequestMapping(value = "/shipmentChange", method = RequestMethod.PUT)
+	@UserAccessValidate(value = { AllowRole.SYSTEM_MANAGER, AllowRole.CUSTOMER })
+	public @ResponseBody ShipmentChange updateShipmentChange(@RequestBody ShipmentChange shipmentChange) {
+
+		if (AssertUtils.isEmpty(shipmentChange))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+
+		shipmentChange = shipmentService.update(shipmentChange);
+
+		return shipmentChange;
+	}
+	
 	@RequestMapping(value = "/shipmentChange/invalid", method = RequestMethod.PUT)
 	@UserAccessValidate(value = { AllowRole.CUSTOMER, AllowRole.SYSTEM_MANAGER })
-	public @ResponseBody ShipmentChange updateShipmentChange(@RequestBody ShipmentChange shipmentChange) {
+	public @ResponseBody ShipmentChange invalidShipmentChange(@RequestBody ShipmentChange shipmentChange) {
 
 		if (AssertUtils.isEmpty(shipmentChange))
 			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());

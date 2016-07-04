@@ -45,6 +45,19 @@ public class ShipmentChange extends AbstractEntity implements Serializable{
 	
 	@Column(name="reason")
 	private String reason;
+	
+	@ManyToOne
+	@JoinColumn(name="status", nullable=true)
+	@JsonProperty("status")
+	private ConstantOption status;
+
+	public ConstantOption getStatus() {
+		return status;
+	}
+
+	public void setStatus(ConstantOption status) {
+		this.status = status;
+	}
 
 	public Integer getId() {
 		return id;
