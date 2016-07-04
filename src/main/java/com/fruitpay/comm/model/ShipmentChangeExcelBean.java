@@ -30,6 +30,8 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	private String applyDate;	//日期
 	@ColumnName("下次配送日")
 	private String nextShipmentDate;	//下次配送日
+	@ColumnName("異動狀態")
+	private String shipmentChangeStatus;	//異動狀態
 	@ColumnName("暫停次數")
 	private String pauseTimes;	//暫停次數
 	@ColumnName("全部暫停日期")
@@ -60,6 +62,7 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 		this.shipmentPeriod = shipmentChange.getCustomerOrder().getShipmentPeriod().getPeriodName();
 		this.pauseDates = formatPauseDates(orderPauseChanges);
 		this.nextShipmentDate = nextShipmentLocalDate == null ? "已取消" : DateUtil.parseLocalDate(nextShipmentLocalDate, "yyyy年MM月dd日");
+		this.shipmentChangeStatus = shipmentChange.getStatus().getOptionDesc();
 	}
 	
 	private String formatPauseDates(List<ShipmentChange> orderPauseChanges) {
