@@ -6,6 +6,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1031,6 +1032,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 		allDates.addAll(shipmentChanges.stream().map(shipmentChange -> {
 			return shipmentChange.getApplyDate();
 		}).collect(Collectors.toList()));
+		
+		//去除重複
+		allDates = new ArrayList<>(new HashSet<>(allDates));
 		
 		final List<ShipmentRecordDetail> fixedShipmentRecordDetails = shipmentRecordDetails;
 		final List<ShipmentChange> fixedShipmentChanges = shipmentChanges;
