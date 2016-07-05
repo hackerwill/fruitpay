@@ -26,6 +26,7 @@ import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.AllpayOrder;
+import com.fruitpay.base.model.AllpayScheduleOrder;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CheckoutService;
 import com.fruitpay.base.service.CustomerOrderService;
@@ -33,6 +34,7 @@ import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.model.ReturnMessage;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.ConfigMap;
+import com.fruitpay.comm.utils.DateUtil;
 import com.fruitpay.comm.utils.HttpUtil;
 
 import AllPay.Payment.Integration.AllInOne;
@@ -81,7 +83,8 @@ public class AllpayCheckoutController {
 	@Inject
 	private StaticDataService staticDataService;
 	@Inject
-	CustomerOrderService customerOrderService;
+	private CustomerOrderService customerOrderService;
+	
 	
 	@PostConstruct
 	public void init() throws Exception{
@@ -247,8 +250,114 @@ public class AllpayCheckoutController {
 	@RequestMapping(value = "/schduleCallback", method = RequestMethod.POST)
 	public void allpaySchduleCallback(
 			HttpServletRequest request, HttpServletResponse response){
+	
+		PrintWriter out = null;
+		response.setContentType("text/html; charset=utf-8");
+		List<String> enErrors = new ArrayList<String>();
+		try {
+			out = response.getWriter();
+			AllInOne oPayment = new AllInOne();
+			oPayment.HashKey = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_KEY : HASH_KEY;
+			oPayment.HashIV = "true".equals(configMap.get(ConfigMap.Key.DEBUG_MODE)) ? TEST_HASH_IV : HASH_IV;
+			Hashtable<String, String> htFeedback = new Hashtable<String, String>();
 		
-		logger.debug("here");
+			enErrors.addAll(oPayment.CheckOutFeedback(htFeedback, request));
+			Set<String> key = htFeedback.keySet();
+			String name[] = key.toArray(new String[key.size()]);
+			/* 支付後的回傳的基本參數 */
+			String szMerchantID = "";
+			String szMerchantTradeNo = "";
+			String szPaymentDate = "";
+			String szPaymentType = "";
+			String szPaymentTypeChargeFee = "";
+			String szRtnCode = "";
+			String szRtnMsg = "";
+			String szSimulatePaid = "";
+			String szTradeAmt = "";
+			String szTradeDate = "";
+			String szTradeNo = "";
+			/* 使用定期定額交易時，回傳的額外參數 */
+			String szPeriodType = "";
+			String szFrequency = "";
+			String szExecTimes = "";
+			String szAmount = "";
+			String szGwsr = "";
+			String szProcessDate = "";
+			String szAuthCode = "";
+			String szFirstAuthAmount = "";
+			String szTotalSuccessTimes = "";
+		 
+			// 取得資料
+			for(int i = 0 ; i < name.length ; i++) {
+			/* 支付後的回傳的基本參數 */
+			if(name[i].equals("MerchantID"))
+				szMerchantID = htFeedback.get(name[i]);
+			else if(name[i].equals("MerchantTradeNo"))
+				szMerchantTradeNo = htFeedback.get(name[i]);
+			else if(name[i].equals("PaymentDate"))
+				szPaymentDate = htFeedback.get(name[i]);
+			else if(name[i].equals("PaymentType"))
+				szPaymentType = htFeedback.get(name[i]);
+			else if(name[i].equals("PaymentTypeChargeFee"))
+				szPaymentTypeChargeFee = htFeedback.get(name[i]);
+			else if(name[i].equals("RtnCode"))
+				szRtnCode = htFeedback.get(name[i]);
+			else if(name[i].equals("RtnMsg"))
+				szRtnMsg = htFeedback.get(name[i]);
+			else if(name[i].equals("SimulatePaid"))
+				szSimulatePaid = htFeedback.get(name[i]);
+			else if(name[i].equals("TradeAmt"))
+				szTradeAmt = htFeedback.get(name[i]);
+			else if(name[i].equals("TradeDate"))
+				szTradeDate = htFeedback.get(name[i]);
+			else if(name[i].equals("TradeNo"))
+				szTradeNo = htFeedback.get(name[i]);
+			else if(name[i].equals("PeriodType"))
+				szPeriodType = htFeedback.get(name[i]);
+			else if(name[i].equals("Frequency"))
+				szFrequency = htFeedback.get(name[i]);
+			else if(name[i].equals("ExecTimes"))
+				szExecTimes = htFeedback.get(name[i]);
+			else if(name[i].equals("Amount"))
+				szAmount = htFeedback.get(name[i]);
+			else if(name[i].equals("Gwsr"))
+				szGwsr = htFeedback.get(name[i]);
+			else if(name[i].equals("ProcessDate"))
+				szProcessDate = htFeedback.get(name[i]);
+			else if(name[i].equals("AuthCode"))
+				szAuthCode = htFeedback.get(name[i]);
+			else if(name[i].equals("FirstAuthAmount"))
+				szFirstAuthAmount = htFeedback.get(name[i]);
+			else if(name[i].equals("TotalSuccessTimes"))
+				szTotalSuccessTimes = htFeedback.get(name[i]);
+			}
+				AllpayScheduleOrder allpayScheduleOrder = new AllpayScheduleOrder();
+				allpayScheduleOrder.setMerchantTradeNo(Integer.valueOf(szMerchantTradeNo));
+				allpayScheduleOrder.setRtnCode(Integer.valueOf(szRtnCode));
+				allpayScheduleOrder.setRtnMessage(szRtnMsg);
+				allpayScheduleOrder.setPeriodType(szPeriodType);
+				allpayScheduleOrder.setFrequency(Integer.valueOf(szFrequency));
+				allpayScheduleOrder.setExecTimes(Integer.valueOf(szExecTimes));
+				allpayScheduleOrder.setAmount(Integer.valueOf(szAmount));
+				allpayScheduleOrder.setGwsr(Integer.valueOf(szGwsr));
+				allpayScheduleOrder.setProcessDate(DateUtil.toDate(szProcessDate, "yyyy/MM/dd HH:mm:ss"));
+				allpayScheduleOrder.setAuthCode(szAuthCode);
+				allpayScheduleOrder.setFirstAuthAmount(Double.valueOf(szFirstAuthAmount));
+				allpayScheduleOrder.setTotalSuccessTimes(Integer.valueOf(szFrequency));
+				customerOrderService.add(allpayScheduleOrder);
+				out.println("");
+			}
+			catch (Exception e) {
+				enErrors.add(e.getMessage());
+			}
+			finally {
+				// 回覆成功訊息。
+				if (enErrors.size() == 0)
+					out.println("1|OK");
+				// 回覆錯誤訊息。
+				else
+					out.println("0|" + enErrors);
+			}
 		
 	}
 	
@@ -271,9 +380,6 @@ public class AllpayCheckoutController {
 		PrintWriter out = null;
 		response.setContentType("text/html; charset=utf-8");
 		 
-		/*
-		 * 產生訂單的範例程式碼。
-		 */
 		List<String> enErrors = new ArrayList<String>();
 		try {
 			out = response.getWriter(); 

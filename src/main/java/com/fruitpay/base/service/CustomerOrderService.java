@@ -5,11 +5,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.fruitpay.base.model.AllpayScheduleOrder;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderCondition;
 
 public interface CustomerOrderService {
+	
+	public AllpayScheduleOrder add(AllpayScheduleOrder allpayScheduleOrder);
 
 	public CustomerOrder getCustomerOrder(Integer orderId);
 	

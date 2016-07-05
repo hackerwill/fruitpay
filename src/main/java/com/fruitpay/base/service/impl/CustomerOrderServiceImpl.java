@@ -22,10 +22,12 @@ import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.NeedRecordEnum;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
+import com.fruitpay.base.dao.AllpayScheduleOrderDAO;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
 import com.fruitpay.base.dao.OrderCommentDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
+import com.fruitpay.base.model.AllpayScheduleOrder;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.OrderComment;
@@ -57,6 +59,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private FieldChangeRecordService fieldChangeRecordService;
 	@Inject 
 	private OrderCommentDAO orderCommentDAO;
+	@Inject
+	private AllpayScheduleOrderDAO allpayScheduleOrderDAO;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -301,6 +305,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		customerOrder.setOrderId(orderId);
 		List<OrderComment> orderComments = orderCommentDAO.findByCustomerOrder(customerOrder);
 		return orderComments;
+	}
+
+	@Override
+	@Transactional
+	public AllpayScheduleOrder add(AllpayScheduleOrder allpayScheduleOrder) {
+		allpayScheduleOrder = allpayScheduleOrderDAO.save(allpayScheduleOrder);
+		return allpayScheduleOrder;
 	}
 
 }
