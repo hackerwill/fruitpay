@@ -342,7 +342,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 	@Override
 	public Page<ShipmentChange> findByValidFlag(CommConst.VALID_FLAG validFlag, int page, int size) {
 		Page<ShipmentChange> shipmentChanges = shipmentChangeDAO.findByValidFlag(
-				validFlag.value(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
+				validFlag.value(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateDate")));
 		return shipmentChanges;
 	}
 
@@ -561,7 +561,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getName(),
 				condition.getReceiverCellphone(),
 				condition.getShipmentChangeType(),
-				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
+				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateDate")));
 		return shipmentChanges;
 	}
 	
