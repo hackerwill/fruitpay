@@ -199,19 +199,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	
 	@Override
 	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page, int size) {
-		Page<CustomerOrder> customerOrders = AssertUtils.isEmpty(orderCondition.getShipmentChangeReason()) ? 
-			customerOrderDAO.findByConditions(
-					orderCondition.getName(), 
-					orderCondition.getOrderId(), 
-					orderCondition.getStartDate(),
-					orderCondition.getEndDate(),
-					orderCondition.getValidFlag(),
-					orderCondition.getAllowForeignFruits(),
-					orderCondition.getOrderStatusId(),
-					orderCondition.getReceiverCellphone(),
-					orderCondition.getEmail(),
-					new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId"))) :
-			customerOrderDAO.findByConditions(
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
