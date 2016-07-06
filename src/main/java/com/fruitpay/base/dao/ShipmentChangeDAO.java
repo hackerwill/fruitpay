@@ -29,6 +29,7 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			+ " AND STR(s.validFlag) like %:validFlag% "
 			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
 			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
+			+ " AND s.shipmentChangeType.optionDesc LIKE %:shipmentChangeType% "
 			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public Page<ShipmentChange> findByConditions(
 			@Param("deliveryStartDate") Date deliveryStartDate, 
@@ -39,6 +40,7 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			@Param("orderId") String orderId, 
 			@Param("name") String name, 
 			@Param("receiverCellphone") String receiverCellphone,
+			@Param("shipmentChangeType") String shipmentChangeType,
 			Pageable pageable);
 	
 	@Query("FROM ShipmentChange s where "
@@ -47,6 +49,7 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			+ " AND STR(s.validFlag) like %:validFlag% "
 			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
 			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
+			+ " AND s.shipmentChangeType.optionDesc LIKE %:shipmentChangeType% "
 			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
 	public List<ShipmentChange> findByConditions(
 			@Param("deliveryStartDate") Date deliveryStartDate, 
@@ -56,5 +59,6 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			@Param("validFlag") String validFlag,
 			@Param("orderId") String orderId, 
 			@Param("name") String name, 
-			@Param("receiverCellphone") String receiverCellphone);
+			@Param("receiverCellphone") String receiverCellphone,
+			@Param("shipmentChangeType") String shipmentChangeType);
 }

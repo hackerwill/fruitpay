@@ -36,7 +36,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND STR(o.validFlag) like %:validFlag% " 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
 			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
-			+ " AND o.receiverCellphone LIKE %:receiverCellphone% ")
+			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
+			+ " AND o.customer.email LIKE %:email% ")
 	public Page<CustomerOrder> findByConditions(
 			@Param("name") String name, 
 			@Param("orderId") String orderId, 
@@ -46,6 +47,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("allowForeignFruits") String allowForeignFruits,
 			@Param("orderStatusId") String orderStatusId,
 			@Param("receiverCellphone") String receiverCellphone,
+			@Param("email") String email,
 			Pageable pageable);
 	
 	@Query("SELECT o FROM CustomerOrder o "
@@ -57,6 +59,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
 			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
 			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
+			+ " AND o.customer.email LIKE %:email% "
 			+ " AND s.reason LIKE %:shipmentChangeReason% ")
 	public Page<CustomerOrder> findByConditions(
 			@Param("name") String name, 
@@ -67,6 +70,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("allowForeignFruits") String allowForeignFruits,
 			@Param("orderStatusId") String orderStatusId,
 			@Param("receiverCellphone") String receiverCellphone,
+			@Param("email") String email,
 			@Param("shipmentChangeReason") String shipmentChangeReason,
 			Pageable pageable);
 	
@@ -76,7 +80,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND STR(o.validFlag) like %:validFlag% " 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
 			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
-			+ " AND o.receiverCellphone LIKE %:receiverCellphone% ")
+			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
+			+ " AND o.customer.email LIKE %:email% ")
 	public List<CustomerOrder> findByConditions(
 			@Param("name") String name, 
 			@Param("orderId") String orderId, 
@@ -85,7 +90,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("validFlag") String validFlag, 
 			@Param("allowForeignFruits") String allowForeignFruits,
 			@Param("orderStatusId") String orderStatusId,
-			@Param("receiverCellphone") String receiverCellphone);
+			@Param("receiverCellphone") String receiverCellphone,
+			@Param("email") String email);
 	
 	@Query("SELECT o FROM CustomerOrder o "
 			+ " LEFT JOIN o.shipmentChanges s "
@@ -96,6 +102,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
 			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
 			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
+			+ " AND o.customer.email LIKE %:email% "
 			+ " AND s.reason LIKE %:shipmentChangeReason% ")
 	public List<CustomerOrder> findByConditions(
 			@Param("name") String name, 
@@ -106,5 +113,6 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			@Param("allowForeignFruits") String allowForeignFruits,
 			@Param("orderStatusId") String orderStatusId,
 			@Param("receiverCellphone") String receiverCellphone,
+			@Param("email") String email,
 			@Param("shipmentChangeReason") String shipmentChangeReason);
 }

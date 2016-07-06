@@ -16,8 +16,9 @@ public class ShipmentChangeCondition implements Serializable {
 	private String orderId;
 	private String name;
 	private String receiverCellphone;
+	private String shipmentChangeType;
 	
-	public ShipmentChangeCondition(Date deliverStartDate, Date deliverEndDate, 
+	public ShipmentChangeCondition(String shipmentChangeType, Date deliverStartDate, Date deliverEndDate, 
 			Date updateStartDate, Date updateEndDate, String validFlag, String orderId, String name, String receiverCellphone) {
 		super();
 		
@@ -39,6 +40,15 @@ public class ShipmentChangeCondition implements Serializable {
 		this.orderId = orderId;
 		this.name = name;
 		this.receiverCellphone = receiverCellphone;
+		this.shipmentChangeType = shipmentChangeType;
+	}
+
+	public String getShipmentChangeType() {
+		return shipmentChangeType;
+	}
+
+	public void setShipmentChangeType(String shipmentChangeType) {
+		this.shipmentChangeType = shipmentChangeType;
 	}
 
 	public Date getDeliverStartDate() {

@@ -175,6 +175,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 					orderCondition.getAllowForeignFruits(),
 					orderCondition.getOrderStatusId(),
 					orderCondition.getReceiverCellphone(),
+					orderCondition.getEmail(),
 					orderCondition.getShipmentChangeReason()) :
 			customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
@@ -185,6 +186,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getAllowForeignFruits(),
 				orderCondition.getOrderStatusId(),
 				orderCondition.getReceiverCellphone(),
+				orderCondition.getEmail(),
 				orderCondition.getShipmentChangeReason());
 		
 		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
@@ -207,6 +209,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 					orderCondition.getAllowForeignFruits(),
 					orderCondition.getOrderStatusId(),
 					orderCondition.getReceiverCellphone(),
+					orderCondition.getEmail(),
 					new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId"))) :
 			customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
@@ -218,6 +221,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getOrderStatusId(),
 				orderCondition.getReceiverCellphone(),
 				orderCondition.getShipmentChangeReason(),
+				orderCondition.getEmail(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}

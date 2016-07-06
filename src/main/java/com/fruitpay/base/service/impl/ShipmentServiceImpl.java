@@ -560,6 +560,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getOrderId(),
 				condition.getName(),
 				condition.getReceiverCellphone(),
+				condition.getShipmentChangeType(),
 				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "applyDate")));
 		return shipmentChanges;
 	}
@@ -574,7 +575,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 				condition.getValidFlag(),
 				condition.getOrderId(),
 				condition.getName(),
-				condition.getReceiverCellphone());
+				condition.getReceiverCellphone(),
+				condition.getShipmentChangeType());
 		return shipmentChanges;
 	}
 

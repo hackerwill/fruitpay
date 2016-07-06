@@ -10,6 +10,7 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class OrderCondition implements Serializable {
 	
+	private String email;
 	private String orderId;
 	private String name;
 	private Date startDate;
@@ -20,7 +21,7 @@ public class OrderCondition implements Serializable {
 	private String receiverCellphone;
 	private String shipmentChangeReason;
 
-	public OrderCondition(String orderId, String name, Date startDate, Date endDate, String validFlag, String allowForeignFruits, String orderStatusId, String receiverCellphone, String shipmentChangeReason) {
+	public OrderCondition(String email, String orderId, String name, Date startDate, Date endDate, String validFlag, String allowForeignFruits, String orderStatusId, String receiverCellphone, String shipmentChangeReason) {
 		super();
 		
 		if(startDate == null){
@@ -29,6 +30,7 @@ public class OrderCondition implements Serializable {
 		
 		if(endDate == null) endDate = DateUtil.getMaxDate();
 		
+		this.email = email;
 		this.orderId = orderId;
 		this.name = name.toLowerCase();
 		this.startDate = startDate;
@@ -79,6 +81,14 @@ public class OrderCondition implements Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Date getEndDate() {

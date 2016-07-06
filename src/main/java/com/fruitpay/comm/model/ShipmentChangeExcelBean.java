@@ -10,32 +10,32 @@ import com.fruitpay.comm.utils.DateUtil;
 
 public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	
+	@ColumnName("付款方式")
+	private String paymentMode;	//付款方式
+	@ColumnName("異動原因")
+	private String reason;	//異動原因
+	@ColumnName("類型")
+	private String type;	//類型
+	@ColumnName("異動狀態")
+	private String shipmentChangeStatus;	//異動狀態
 	@ColumnName("訂單編號")
 	private String orderId;	//訂單編號
 	@ColumnName("收件人")
 	private String receiverName; //收件人
 	@ColumnName("已配送次數")
 	private String shipmentCount;	//已配送次數
-	@ColumnName("類型")
-	private String type;	//類型
-	@ColumnName("異動原因")
-	private String reason;	//異動原因
-	@ColumnName("付款方式")
-	private String paymentMode;	//付款方式
-	@ColumnName("配送方案")
-	private String orderProgram; //配送方案
-	@ColumnName("配送週期")
-	private String shipmentPeriod;	//配送週期
-	@ColumnName("申請日期")
-	private String applyDate;	//日期
-	@ColumnName("下次配送日")
-	private String nextShipmentDate;	//下次配送日
-	@ColumnName("異動狀態")
-	private String shipmentChangeStatus;	//異動狀態
 	@ColumnName("暫停次數")
 	private String pauseTimes;	//暫停次數
 	@ColumnName("全部暫停日期")
 	private String pauseDates;	//暫停日期
+	@ColumnName("申請日期")
+	private String applyDate;	//日期
+	@ColumnName("下次配送日")
+	private String nextShipmentDate;	//下次配送日
+	@ColumnName("配送方案")
+	private String orderProgram; //配送方案
+	@ColumnName("配送週期")
+	private String shipmentPeriod;	//配送週期
 	@ColumnName("修改人")
 	private String updateUser;	//修改人
 	@ColumnName("修改時間")

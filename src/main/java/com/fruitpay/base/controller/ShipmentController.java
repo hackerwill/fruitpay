@@ -145,13 +145,14 @@ public class ShipmentController {
 			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "shipmentChangeType", required = false, defaultValue = "") String shipmentChangeType,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "deliverStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverStartDate,
 			@RequestParam(value = "deliverEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverEndDate,
-			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateStartDate,
-			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateEndDate) {
+			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date updateStartDate,
+			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date updateEndDate) {
 		
-		ShipmentChangeCondition condition = new ShipmentChangeCondition(deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
+		ShipmentChangeCondition condition = new ShipmentChangeCondition(shipmentChangeType, deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
 		Page<ShipmentChange> shipmentChanges = shipmentService.findAllByConditions(condition, page, size);
 
 		return shipmentChanges;
@@ -165,6 +166,7 @@ public class ShipmentController {
 			@RequestParam(value = "validFlag", required = false, defaultValue = "1") String validFlag,
 			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "shipmentChangeType", required = false, defaultValue = "") String shipmentChangeType,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "deliverStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverStartDate,
 			@RequestParam(value = "deliverEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverEndDate,
@@ -172,7 +174,7 @@ public class ShipmentController {
 			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateEndDate) {
 		
 		if(shipmentChanges.isEmpty()) {
-			ShipmentChangeCondition condition = new ShipmentChangeCondition(deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
+			ShipmentChangeCondition condition = new ShipmentChangeCondition(shipmentChangeType, deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
 			shipmentChanges = shipmentService.findAllByConditions(condition);
 		}
 		ConstantOption shipmentPulse = staticDataService.getConstantOptionByName(ShipmentStatus.shipmentPulse.toString()); 

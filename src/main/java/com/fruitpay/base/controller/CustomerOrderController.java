@@ -194,11 +194,12 @@ public class CustomerOrderController {
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
-			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason) {
+			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason,
+			@RequestParam(value = "email", required = false, defaultValue = "") String email) {
 
 		name = name.toLowerCase();
 		
-		OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
+		OrderCondition orderCondition = new OrderCondition(email, orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
 		Page<CustomerOrder> customerOrders = customerOrderService.findAllByConditions(orderCondition, page, size);
 
 		return customerOrders;
@@ -216,10 +217,11 @@ public class CustomerOrderController {
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "orderStatusId", required = false, defaultValue = "") String orderStatusId,
-			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason) {
+			@RequestParam(value = "shipmentChangeReason", required = false, defaultValue = "") String shipmentChangeReason,
+			@RequestParam(value = "email", required = false, defaultValue = "") String email) {
 		
 		if(customerOrders.size() == 0) {
-			OrderCondition orderCondition = new OrderCondition(orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
+			OrderCondition orderCondition = new OrderCondition(email, orderId, name, startDate, endDate, validFlag, allowForeignFruits, orderStatusId, receiverCellphone, shipmentChangeReason);
 			customerOrders = customerOrderService.findAllByConditions(orderCondition);
 			customerOrders = shipmentService.countShipmentTimes(customerOrders);
 		} else {
