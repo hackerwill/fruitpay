@@ -13,6 +13,14 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 	
 	@ColumnName("訂單編號")
 	private String orderId; //訂單編號
+	@ColumnName("訂購日期")
+	private String orderDate; 
+	@ColumnName("出貨次數")
+	private String shipmentCount; 
+	@ColumnName("統編抬頭")
+	private String vatTitle;
+	@ColumnName("統編號碼")
+	private String vatNumber;
 	@ColumnName("不吃水果")
 	private String unlike; //不吃水果
 	@ColumnName("數量")
@@ -96,6 +104,15 @@ public class ShipmentExcelBean extends AbstractExcelBean {
 		this.isLala = isLala;
 		
 		this.comments = customerOrder.getOrderComments() == null ? "" : getComments(customerOrder.getOrderComments());
+		
+		this.orderDate = DateUtil.parseDate(customerOrder.getOrderDate(), "yyyy年MM月dd日");
+		
+		this.vatTitle = customerOrder.getReceiptTitle();
+		
+		this.vatNumber = customerOrder.getReceiptVatNumber();
+		
+		this.shipmentCount = String.valueOf(customerOrder.getShipmentCount());
+		
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw e;

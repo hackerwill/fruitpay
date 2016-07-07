@@ -287,6 +287,7 @@ public class ShipmentController {
 		LocalDate localDate = DateUtil.toLocalDate(date);
 		
 		List<CustomerOrder> customerOrders = customerOrderService.findByOrderIdsIncludingPreferenceAndComments(orderIds);
+		customerOrders = shipmentService.countShipmentTimes(customerOrders);
 		
 	    Comparator<CustomerOrder> comparator = (o1, o2) -> {
 	    	int compare;
