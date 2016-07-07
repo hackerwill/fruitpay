@@ -3,6 +3,7 @@ package com.fruitpay.base.controller;
 
 import java.time.DayOfWeek;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -49,7 +50,6 @@ public class CheckoutController {
 		Customer customer = checkoutPostBean.getCustomer();
 		CustomerOrder customerOrder = checkoutPostBean.getCustomerOrder();
 		
-		customerOrder.setOrderDate(Calendar.getInstance().getTime());
 		//貨到付款
 		if(customerOrder.getPaymentMode().getPaymentModeId() == 2){
 			customerOrder.setOrderStatus(staticDataService.getOrderStatus(OrderStatus.AlreadyCheckout.getStatus()));

@@ -30,7 +30,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
 	
-	@Query("SELECT o FROM CustomerOrder o "
+	@Query("SELECT DISTINCT o FROM CustomerOrder o "
 			+ " LEFT JOIN o.shipmentChanges s "
 			+ " where CAST(o.orderId as string) LIKE %:orderId% "
 			+ " AND ( o.receiverLastName LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "
@@ -55,7 +55,7 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 			Pageable pageable);
 	
 	
-	@Query("SELECT o FROM CustomerOrder o "
+	@Query("SELECT DISTINCT o FROM CustomerOrder o "
 			+ " LEFT JOIN o.shipmentChanges s "
 			+ " where CAST(o.orderId as string) LIKE %:orderId% "
 			+ " AND ( o.receiverLastName LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "

@@ -4,6 +4,7 @@ package com.fruitpay.base.controller;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,12 @@ public class StaticDataController {
 				.filter(p -> "Y".equals(p.getAllowShipment()))
 				.collect(Collectors.toList());;
 		return postCodes;
+	}
+	
+	@RequestMapping(value = "/nowTime", method = RequestMethod.GET)
+	public @ResponseBody Date getNowTime(){
+		
+		return new Date();
 	}
 	
 	@RequestMapping(value = "/getAllProducts", method = RequestMethod.GET)
