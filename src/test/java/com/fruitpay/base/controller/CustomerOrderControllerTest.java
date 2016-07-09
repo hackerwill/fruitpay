@@ -129,6 +129,7 @@ public class CustomerOrderControllerTest extends AbstractSpringJnitTest{
 	@Transactional
 	@Rollback(true)
 	public void addOrderAndTestUpdatePreference() throws Exception {
+		
 		Customer customer = dataUtil.getBackgroundCustomer();
 		customer = customerService.saveCustomer(customer);
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();

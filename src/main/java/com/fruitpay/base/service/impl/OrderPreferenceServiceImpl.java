@@ -48,12 +48,12 @@ public class OrderPreferenceServiceImpl implements OrderPreferenceService {
 		}).collect(Collectors.toList());
 		
 		List<OrderPreference> deletes = origins.stream().filter(origin -> {
-			return !orderPreferences.stream().anyMatch(compare -> compare.getPreferenceId().equals(origin.getPreferenceId()));
+			return !orderPreferences.stream().anyMatch(compare -> origin.getPreferenceId().equals(compare.getPreferenceId()));
 		}).collect(Collectors.toList());
 		
 		List<OrderPreference> originUpdates = origins.stream().filter(origin -> {
 			return orderPreferences.stream().anyMatch(compare -> compare.getPreferenceId() != null && 
-					compare.getPreferenceId().equals(origin.getPreferenceId()));
+					origin.getPreferenceId().equals(compare.getPreferenceId()));
 		}).collect(Collectors.toList());
 		
 		List<OrderPreference> updates = orderPreferences.stream().filter(orderPreference -> {
