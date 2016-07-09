@@ -170,8 +170,8 @@ public class ShipmentController {
 			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
 			@RequestParam(value = "deliverStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverStartDate,
 			@RequestParam(value = "deliverEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date deliverEndDate,
-			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateStartDate,
-			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date updateEndDate) {
+			@RequestParam(value = "updateStartDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date updateStartDate,
+			@RequestParam(value = "updateEndDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date updateEndDate) {
 		
 		if(shipmentChanges.isEmpty()) {
 			ShipmentChangeCondition condition = new ShipmentChangeCondition(shipmentChangeType, deliverStartDate, deliverEndDate, updateStartDate, updateEndDate, validFlag, orderId, name, receiverCellphone);
@@ -199,7 +199,7 @@ public class ShipmentController {
 					.get();
 			shipmentChange.setCustomerOrder(matchOrder);
 			return shipmentChange;
-		}).sorted((a, b) -> a.getApplyDate().compareTo(b.getApplyDate()))
+		})
 		.collect(Collectors.toList());
 		
 		List<Map<String, Object>> map = shipmentChanges.stream().map(shipmentChange -> {

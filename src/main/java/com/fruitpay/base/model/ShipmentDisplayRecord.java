@@ -9,6 +9,8 @@ public class ShipmentDisplayRecord implements Serializable {
 	private Date date;
 	private Date cachedDate;
 	private int total;
+	private int familyTotal;
+	private int singleTotal;
 	private int familyAndEveryWeekTotal;
 	private int familyAndTwoWeekTotal;
 	private int singleAndEveryWeekTotal;
@@ -18,7 +20,7 @@ public class ShipmentDisplayRecord implements Serializable {
 		super();
 	}
 	
-	public ShipmentDisplayRecord(Date date, Date cachedDate, int total, int familyAndEveryWeekTotal,
+	public ShipmentDisplayRecord(Date date, Date cachedDate, int total, int familyTotal, int singleTotal, int familyAndEveryWeekTotal,
 			int familyAndTwoWeekTotal, int singleAndEveryWeekTotal, int singleAndTwoWeekTotal) {
 		super();
 		this.date = date;
@@ -28,6 +30,24 @@ public class ShipmentDisplayRecord implements Serializable {
 		this.familyAndTwoWeekTotal = familyAndTwoWeekTotal;
 		this.singleAndEveryWeekTotal = singleAndEveryWeekTotal;
 		this.singleAndTwoWeekTotal = singleAndTwoWeekTotal;
+		this.familyTotal = familyTotal;
+		this.singleTotal = singleTotal;
+	}
+
+	public int getFamilyTotal() {
+		return familyTotal;
+	}
+
+	public void setFamilyTotal(int familyTotal) {
+		this.familyTotal = familyTotal;
+	}
+
+	public int getSingleTotal() {
+		return singleTotal;
+	}
+
+	public void setSingleTotal(int singleTotal) {
+		this.singleTotal = singleTotal;
 	}
 
 	public int getFamilyAndEveryWeekTotal() {

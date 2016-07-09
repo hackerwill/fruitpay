@@ -49,7 +49,7 @@ public class StaticDataController {
 		List<PostalCode> postCodes = staticDataService.getAllPostalCodes();
 		postCodes = postCodes.stream()
 				.filter(p -> "Y".equals(p.getAllowShipment()))
-				.collect(Collectors.toList());;
+				.collect(Collectors.toList());
 		return postCodes;
 	}
 	

@@ -26,16 +26,16 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 	private String shipmentCount;	//已配送次數
 	@ColumnName("暫停次數")
 	private String pauseTimes;	//暫停次數
+	@ColumnName("配送週期")
+	private String shipmentPeriod;	//配送週期
 	@ColumnName("全部暫停日期")
 	private String pauseDates;	//暫停日期
-	@ColumnName("申請日期")
-	private String applyDate;	//日期
+	@ColumnName("暫停取消日")
+	private String applyDate;	//暫停取消日
 	@ColumnName("下次配送日")
 	private String nextShipmentDate;	//下次配送日
 	@ColumnName("配送方案")
 	private String orderProgram; //配送方案
-	@ColumnName("配送週期")
-	private String shipmentPeriod;	//配送週期
 	@ColumnName("修改人")
 	private String updateUser;	//修改人
 	@ColumnName("修改時間")
@@ -54,7 +54,7 @@ public class ShipmentChangeExcelBean extends AbstractExcelBean {
 		this.type = shipmentChange.getShipmentChangeType().getOptionDesc();
 		this.applyDate = DateUtil.parseDate(shipmentChange.getApplyDate(), "yyyy年MM月dd日");
 		this.updateUser = shipmentChange.getUpdateUserName();
-		this.updateDate = DateUtil.parseDate(shipmentChange.getUpdateDate(), "yyyy年MM月dd日");
+		this.updateDate = DateUtil.parseDate(shipmentChange.getUpdateDate(), "yyyy年MM月dd日 HH時mm分");
 		this.reason = shipmentChange.getReason();
 		this.paymentMode = shipmentChange.getCustomerOrder().getPaymentMode().getPaymentModeName();
 		this.pauseTimes = String.valueOf(orderPauseChanges.size());

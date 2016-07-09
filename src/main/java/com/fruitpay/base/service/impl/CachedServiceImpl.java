@@ -116,10 +116,15 @@ public class CachedServiceImpl implements CachedService {
 						customerOrder.getShipmentPeriod().getPeriodId().equals(ShipmentPeriod.DOUBLE_WEEK.value());
 			}).count();
 			
+			int familytotal = familyAndSingleWeekTotal + familyAndDoubleWeekTotal;
+			int singletotal = singleAndEveryWeekTotal + singleAndDoubleWeekTotal;
+			
 			return new ShipmentDisplayRecord(
 					DateUtil.toDate(localDate), 
 					cachedBean.getDate(), 
 					total, 
+					familytotal,
+					singletotal,
 					familyAndSingleWeekTotal, 
 					familyAndDoubleWeekTotal,
 					singleAndEveryWeekTotal,

@@ -50,7 +50,8 @@ public interface ShipmentChangeDAO extends JpaRepository<ShipmentChange, Integer
 			+ " AND ( s.customerOrder.receiverLastName LIKE %:name% OR s.customerOrder.receiverFirstName LIKE %:name% ) "
 			+ " AND CAST(s.customerOrder.orderId as string) LIKE %:orderId% "
 			+ " AND s.shipmentChangeType.optionDesc LIKE %:shipmentChangeType% "
-			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% ")
+			+ " AND s.customerOrder.receiverCellphone LIKE %:receiverCellphone% "
+			+ " ORDER BY s.updateDate DESC ")
 	public List<ShipmentChange> findByConditions(
 			@Param("deliveryStartDate") Date deliveryStartDate, 
 			@Param("deliveryEndDate") Date deliveryEndDate,
