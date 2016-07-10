@@ -17,6 +17,9 @@ public class DateUtil {
 	}
 	
 	public static String parseLocalDate(LocalDate localDate, String pattern){
+		if(localDate == null) {
+			return null;
+		}
 		return parseDate(toDate(localDate), pattern);
 	}
 	
@@ -25,10 +28,16 @@ public class DateUtil {
 	}
 	
 	public static LocalDate toLocalDate(String dateStr, String pattern){
+		if(dateStr == null) {
+			return null;
+		}
 		return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(pattern));	
 	}
 	
 	public static LocalDate toLocalDate(Date date){
+		if(date == null) {
+			return null;
+		}
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
@@ -37,6 +46,9 @@ public class DateUtil {
 	}
 	
 	public static String parseDate(Date date, String pattern){
+		if(date == null) {
+			return null;
+		}
 		return new SimpleDateFormat(pattern).format(date);
 	}
 	
@@ -45,6 +57,9 @@ public class DateUtil {
 	}
 	
 	public static Date toDate(String dateStr, String pattern){
+		if(dateStr == null) {
+			return null;
+		}
 		DateFormat format = new SimpleDateFormat(pattern);
 		try {
 			return format.parse(dateStr);
