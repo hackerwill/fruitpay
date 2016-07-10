@@ -53,5 +53,7 @@ public interface CustomerOrderService {
 	public OrderComment invalidate(int commentId);
 	
 	public List<OrderComment> findCommentsByOrderId(int orderId);
+	
+	public boolean calculateDailyRecord(LocalDate localDate);
 
 }

@@ -28,6 +28,8 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public List<CustomerOrder> findByValidFlagAndDeliveryDayAndOrderStatusIn(int validFlag, ConstantOption deliveryDay, List<OrderStatus> orderStatues);
 	
+	public List<CustomerOrder> findByValidFlagAndOrderStatusIn(int validFlag, List<OrderStatus> orderStatues);
+	
 	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
 	
 	@Query("SELECT DISTINCT o FROM CustomerOrder o "

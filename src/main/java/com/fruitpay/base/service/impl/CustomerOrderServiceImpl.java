@@ -3,8 +3,11 @@ package com.fruitpay.base.service.impl;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -25,11 +28,13 @@ import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.AllpayScheduleOrderDAO;
 import com.fruitpay.base.dao.CustomerDAO;
 import com.fruitpay.base.dao.CustomerOrderDAO;
+import com.fruitpay.base.dao.DailyOrderRecordDAO;
 import com.fruitpay.base.dao.OrderCommentDAO;
 import com.fruitpay.base.dao.OrderPreferenceDAO;
 import com.fruitpay.base.model.AllpayScheduleOrder;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.DailyOrderRecord;
 import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderCondition;
 import com.fruitpay.base.model.OrderPreference;
@@ -39,6 +44,7 @@ import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.base.service.FieldChangeRecordService;
 import com.fruitpay.base.service.StaticDataService;
 import com.fruitpay.comm.utils.AssertUtils;
+import com.fruitpay.comm.utils.DateUtil;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -61,6 +67,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private OrderCommentDAO orderCommentDAO;
 	@Inject
 	private AllpayScheduleOrderDAO allpayScheduleOrderDAO;
+	@Inject
+	private DailyOrderRecordDAO dailyOrderRecordDAO;
 	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer orderId) {
@@ -304,6 +312,38 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public AllpayScheduleOrder add(AllpayScheduleOrder allpayScheduleOrder) {
 		allpayScheduleOrder = allpayScheduleOrderDAO.save(allpayScheduleOrder);
 		return allpayScheduleOrder;
+	}
+
+	@Override
+	@Transactional
+	public boolean calculateDailyRecord(LocalDate localDate) {
+		List<OrderStatus> orderStatues = staticDataService.getAllOrderStatus().stream()
+				.filter(orderStatus -> {
+					return orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.AlreadyCheckout.getStatus()
+							|| orderStatus.getOrderStatusId() == com.fruitpay.base.comm.OrderStatus.CreditPaySuccessful.getStatus();
+				}).collect(Collectors.toList());
+		// get all orders
+		Map<LocalDate, List<CustomerOrder>> customerOrderMap = customerOrderDAO.findByValidFlagAndOrderStatusIn(VALID_FLAG.VALID.value(), orderStatues).stream()
+				.collect(Collectors.groupingBy(CustomerOrder::getOrderLocalDate));
+		//groups
+		List<DailyOrderRecord> dailyOrderRecords = new ArrayList<>();
+		Iterator<Entry<LocalDate, List<CustomerOrder>>> iterator = customerOrderMap.entrySet().iterator();
+		while(iterator.hasNext()) {
+			Entry<LocalDate, List<CustomerOrder>> entry = iterator.next();
+			DailyOrderRecord dailyOrderRecord = new DailyOrderRecord();
+			List<String> inOrderIds = entry.getValue().stream()
+					.map(customerOrder -> String.valueOf(customerOrder.getOrderId()))
+					.collect(Collectors.toList());
+			
+			dailyOrderRecord.setCount(inOrderIds.size());
+			dailyOrderRecord.setInOrderIds(String.join(",", inOrderIds));
+			dailyOrderRecord.setOrderDate(DateUtil.toDate(entry.getKey()));
+			dailyOrderRecord.setDate(DateUtil.toDate(localDate));
+			dailyOrderRecords.add(dailyOrderRecord);
+		}
+		
+		dailyOrderRecords = dailyOrderRecordDAO.save(dailyOrderRecords);
+		return true;
 	}
 
 }

@@ -17,6 +17,7 @@ import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.model.ScheduledRecord;
 import com.fruitpay.base.model.ShipmentRecord;
 import com.fruitpay.base.service.CachedService;
+import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.ShipmentService;
 import com.fruitpay.comm.utils.DateUtil;
 
@@ -32,6 +33,8 @@ public class TaskScheduler {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Inject
+	private CustomerOrderService customerOrderService;
+	@Inject
 	private ShipmentService shipmentService;
 	@Inject
 	private CachedService cachedService;
@@ -41,6 +44,11 @@ public class TaskScheduler {
 	@Scheduled(cron="0 0 6-23 * * *")
 	public void calulcateShipmentData() {
 		cachedService.setShipmentPreviewBean();
+	}
+	
+	@Scheduled(cron="0 0 1 * * *")
+	public void addDailyOrderRecord() {
+		customerOrderService.calculateDailyRecord(LocalDate.now().minusDays(1));
 	}
 	
 	@Scheduled(cron="0 0 22 * * *")

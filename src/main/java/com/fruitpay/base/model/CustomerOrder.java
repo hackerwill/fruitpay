@@ -1,6 +1,8 @@
 package com.fruitpay.base.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fruitpay.comm.annotation.NeedRecord;
+import com.fruitpay.comm.utils.DateUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -191,6 +194,10 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 
 	public Date getOrderDate() {
 		return this.orderDate;
+	}
+	
+	public LocalDate getOrderLocalDate() {
+		return DateUtil.toLocalDate(this.orderDate);
 	}
 
 	public void setOrderDate(Date orderDate) {

@@ -107,6 +107,14 @@ public class ShipmentServiceTest extends AbstractSpringJnitTest{
 	
 	@Test
 	@Transactional
+	@Rollback(true)
+	public void testCalculateDailyRecord() throws Exception {
+		boolean flag = customerOrderService.calculateDailyRecord(LocalDate.now());
+		Assert.assertTrue(flag);
+	}
+	
+	@Test
+	@Transactional
 	public void testGetOneOrderNextShipmentDate() throws Exception {
 		Customer customer = customerService.findByEmail(dataUtil.getBackgroundCustomer().getEmail());
 		List<CustomerOrder> customerOrders = customerOrderService.getCustomerOrdersByCustomerId(customer.getCustomerId());
