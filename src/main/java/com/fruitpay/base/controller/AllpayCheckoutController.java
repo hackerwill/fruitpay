@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.comm.OrderStatus;
+import com.fruitpay.base.comm.CommConst.CREDIT_CARD_PERIOD;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.AllpayOrder;
@@ -364,7 +365,7 @@ public class AllpayCheckoutController {
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public void allpayCheckout(
 			@RequestParam("orderId") Integer orderId,
-			@RequestParam("price") Decimal price,
+			@RequestParam("price") Integer price,
 			@RequestParam("programId") Integer programId,
 			@RequestParam("duration") Integer duration,
 			HttpServletRequest request, HttpServletResponse response){
@@ -374,7 +375,6 @@ public class AllpayCheckoutController {
 			logger.error("OrderId not found");
 			return;
 		}	
-		
 		String programName = staticDataService.getOrderProgram(programId).getProgramName();
 		
 		PrintWriter out = null;
@@ -396,7 +396,7 @@ public class AllpayCheckoutController {
 			oPayment.Send.OrderResultURL = SHOW_ORDER_SUCCESS_POST_URL + "/" + orderId;
 			oPayment.Send.MerchantTradeNo = String.valueOf((int)(orderId));
 			oPayment.Send.MerchantTradeDate = new Date();// "<<您此筆訂單的交易時間>>"
-			oPayment.Send.TotalAmount = price;
+			oPayment.Send.TotalAmount = new Decimal(String.valueOf(price));
 			oPayment.Send.TradeDesc = programName;
 			oPayment.Send.ChoosePayment = PaymentMethod.Credit;
 			oPayment.Send.Remark = "";
@@ -405,15 +405,15 @@ public class AllpayCheckoutController {
 			// 加入選購商品資料。
 			Item a1 = new Item();
 			a1.Name = programName;
-			a1.Price = price;
+			a1.Price = new Decimal(String.valueOf(price / (CREDIT_CARD_PERIOD.PERIOD.value() / duration)));
 			a1.Currency = "NTD";
-			a1.Quantity = 1;// <<數量>>
+			a1.Quantity = CREDIT_CARD_PERIOD.PERIOD.value() / duration; // <<數量>>
 			a1.URL = "";
 			oPayment.Send.Items.add(a1);
 			/* Credit 定期定額延伸參數 */
-			oPayment.SendExtend.PeriodAmount = price;
+			oPayment.SendExtend.PeriodAmount = new Decimal(String.valueOf(price));
 			oPayment.SendExtend.PeriodType = PeriodType.Day;
-			oPayment.SendExtend.Frequency = duration;// "<<執行頻率>>";
+			oPayment.SendExtend.Frequency = CREDIT_CARD_PERIOD.PERIOD.value();// "<<執行頻率>>";
 			oPayment.SendExtend.ExecTimes = MAX_EXCUTE_TIME;// "<<執行次數>>";
 			oPayment.SendExtend.PeriodReturnURL = PERIOD_RETURN_URL;
 			/* 產生訂單 */

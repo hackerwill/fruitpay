@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fruitpay.base.comm.CommConst;
+import com.fruitpay.base.comm.CommConst.CREDIT_CARD_PERIOD;
 import com.fruitpay.base.comm.OrderStatus;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.dao.CustomerDAO;
@@ -92,7 +93,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 	@Override
 	public int getTotalPriceWithoutShipment(CustomerOrder customerOrder) {
 		//加上Coupon打折的金額
-		int totalProductsPrice = customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum();
+		int totalTimes = CREDIT_CARD_PERIOD.PERIOD.value() / customerOrder.getShipmentPeriod().getDuration();
+		int totalProductsPrice = totalTimes * customerOrder.getOrderProgram().getPrice() * customerOrder.getProgramNum();
 		for (int i = 0; i < customerOrder.getCoupons().size(); i++) {
 			Coupon coupon = customerOrder.getCoupons().get(i);
 			totalProductsPrice = couponService.countFinalPrice(coupon, totalProductsPrice);

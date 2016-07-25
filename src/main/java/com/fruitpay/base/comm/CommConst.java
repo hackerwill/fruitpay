@@ -17,5 +17,19 @@ public class CommConst {
 		}
 	}
 	
+	public enum CREDIT_CARD_PERIOD {
+		PERIOD(28);
+		
+		private int value;
+		
+		private CREDIT_CARD_PERIOD(int value){
+			this.value = value;
+		}
+		
+		public int value(){
+			return this.value;
+		}
+	}
+	
 }
 
