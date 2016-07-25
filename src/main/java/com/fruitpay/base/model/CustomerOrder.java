@@ -180,7 +180,7 @@ public class CustomerOrder extends AbstractEntity  implements Serializable {
 	
 	@Column(name="shipment_count")
 	private Integer shipmentCount;
-
+	
 	public CustomerOrder() {
 	}
 

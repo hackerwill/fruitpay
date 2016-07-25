@@ -1,0 +1,96 @@
+package com.fruitpay.base.model;
+
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.fruitpay.comm.utils.DateUtil;
+
+public class CustomerClaimCondition implements Serializable {
+	
+	private String email;
+	private String orderId;
+	private String name;
+	private Date startDate;
+	private Date endDate;
+	private String validFlag;
+	private String receiverCellphone;
+
+	public CustomerClaimCondition(String email, String orderId, String name, Date startDate, Date endDate, String validFlag, String receiverCellphone) {
+		super();
+		
+		if(startDate == null){
+			startDate = new Date(0L);
+		}
+		
+		if(endDate == null) endDate = DateUtil.getMaxDate();
+		
+		this.email = email;
+		this.orderId = orderId;
+		this.name = name.toLowerCase();
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.validFlag = validFlag;
+		this.receiverCellphone = receiverCellphone;
+		
+	}
+
+	public String getReceiverCellphone() {
+		return receiverCellphone;
+	}
+
+	public void setReceiverCellphone(String receiverCellphone) {
+		this.receiverCellphone = receiverCellphone;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getValidFlag() {
+		return validFlag;
+	}
+
+	public void setValidFlag(String validFlag) {
+		this.validFlag = validFlag;
+	}
+
+}

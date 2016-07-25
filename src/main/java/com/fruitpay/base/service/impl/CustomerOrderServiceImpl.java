@@ -173,8 +173,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public List<CustomerOrder> findAllByConditions(OrderCondition orderCondition) {
-		List<CustomerOrder> customerOrders = AssertUtils.isEmpty(orderCondition.getShipmentChangeReason()) ? 
-			customerOrderDAO.findByConditions(
+		List<Integer> orderIds = customerOrderDAO.findByConditions(
 					orderCondition.getName(), 
 					orderCondition.getOrderId(), 
 					orderCondition.getStartDate(),
@@ -184,18 +183,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 					orderCondition.getOrderStatusId(),
 					orderCondition.getReceiverCellphone(),
 					orderCondition.getEmail(),
-					orderCondition.getShipmentChangeReason()) :
-			customerOrderDAO.findByConditions(
-				orderCondition.getName(), 
-				orderCondition.getOrderId(), 
-				orderCondition.getStartDate(),
-				orderCondition.getEndDate(),
-				orderCondition.getValidFlag(),
-				orderCondition.getAllowForeignFruits(),
-				orderCondition.getOrderStatusId(),
-				orderCondition.getReceiverCellphone(),
-				orderCondition.getEmail(),
-				orderCondition.getShipmentChangeReason());
+					orderCondition.getShipmentChangeReason());
+		
+		List<CustomerOrder> customerOrders = customerOrderDAO.findByOrderIdIn(orderIds);
 		
 		for (Iterator<CustomerOrder> iterator = customerOrders.iterator(); iterator.hasNext();) {
 			CustomerOrder customerOrder = iterator.next();
@@ -207,7 +197,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	
 	@Override
 	public Page<CustomerOrder> findAllByConditions(OrderCondition orderCondition, int page, int size) {
-		Page<CustomerOrder> customerOrders = customerOrderDAO.findByConditions(
+		
+		List<Integer> orderIds = customerOrderDAO.findByConditions(
 				orderCondition.getName(), 
 				orderCondition.getOrderId(), 
 				orderCondition.getStartDate(),
@@ -216,9 +207,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				orderCondition.getAllowForeignFruits(),
 				orderCondition.getOrderStatusId(),
 				orderCondition.getReceiverCellphone(),
-				orderCondition.getShipmentChangeReason(),
 				orderCondition.getEmail(),
-				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
+				orderCondition.getShipmentChangeReason());
+		
+		Page<CustomerOrder> customerOrders = customerOrderDAO.findByOrderIdIn(orderIds, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "orderId")));
 		return customerOrders;
 	}
 

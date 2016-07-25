@@ -1,6 +1,7 @@
 
 package com.fruitpay.base.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +22,10 @@ import com.fruitpay.base.comm.AllowRole;
 import com.fruitpay.base.comm.exception.HttpServiceException;
 import com.fruitpay.base.comm.returndata.ReturnMessageEnum;
 import com.fruitpay.base.model.Customer;
+import com.fruitpay.base.model.CustomerClaim;
+import com.fruitpay.base.model.CustomerClaimCondition;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.service.CustomerClaimService;
 import com.fruitpay.base.service.CustomerOrderService;
 import com.fruitpay.base.service.CustomerService;
 import com.fruitpay.comm.annotation.UserAccessValidate;
@@ -33,11 +38,11 @@ import com.fruitpay.comm.utils.Md5Util;
 public class CustomerDataController {
 	
 	@Inject
-	CustomerOrderService customerOrderService;
+	private CustomerOrderService customerOrderService;
 	@Inject
-	CustomerService customerService;
-	@Inject
-	AuthenticationUtil authenticationUtil;
+	private CustomerService customerService;
+	@Inject 
+	private CustomerClaimService customerClaimService;
 	
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -154,4 +159,44 @@ public class CustomerDataController {
 		return customerOrders;
 	}
 	
+	@RequestMapping(value = "/customerClaim", method = RequestMethod.GET)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody Page<CustomerClaim> getCustomerClaims(
+			@RequestParam(value = "validFlag", required = false, defaultValue = "") String validFlag,
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endDate,
+			@RequestParam(value = "receiverCellphone", required = false, defaultValue = "") String receiverCellphone,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(value = "email", required = false, defaultValue = "") String email){
+		
+		CustomerClaimCondition customerClaimCondition = new CustomerClaimCondition(
+				email, orderId, name, startDate, endDate, validFlag, receiverCellphone);
+		Page<CustomerClaim> customerClaims = customerClaimService.findAllByCondition(
+				customerClaimCondition, page, size);
+				
+		return customerClaims;
+	}
+	
+	@RequestMapping(value = "/customerClaim", method = RequestMethod.POST)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody CustomerClaim add(@RequestBody CustomerClaim customerClaim){
+		if(AssertUtils.isEmpty(customerClaim))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		customerClaim = customerClaimService.add(customerClaim);
+		return customerClaim;
+	}
+	
+	@RequestMapping(value = "/customerClaim", method = RequestMethod.PUT)
+	@UserAccessValidate(AllowRole.SYSTEM_MANAGER)
+	public @ResponseBody CustomerClaim update(@RequestBody CustomerClaim customerClaim){
+		if(AssertUtils.isEmpty(customerClaim))
+			throw new HttpServiceException(ReturnMessageEnum.Common.RequiredFieldsIsEmpty.getReturnMessage());
+		
+		customerClaim = customerClaimService.update(customerClaim);
+		return customerClaim;
+	}
 }

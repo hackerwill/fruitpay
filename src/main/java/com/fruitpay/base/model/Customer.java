@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * The persistent class for the Customer database table.
- * 
  */
 @Entity
 @NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
@@ -289,6 +288,14 @@ public class Customer extends AbstractEntity implements Serializable {
 
 	public void setRegisterFrom(ConstantOption registerFrom) {
 		this.registerFrom = registerFrom;
+	}
+
+	public List<UserRole> getUserRoles() {
+		return userRoles;
+	}
+
+	public void setUserRoles(List<UserRole> userRoles) {
+		this.userRoles = userRoles;
 	}
 
 }

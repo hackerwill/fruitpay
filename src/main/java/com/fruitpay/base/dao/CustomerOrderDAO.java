@@ -32,51 +32,29 @@ public interface CustomerOrderDAO extends JpaRepository<CustomerOrder, Integer> 
 	
 	public CustomerOrder findByOrderIdAndValidFlag(int orderId, int validFlag);
 	
-	@Query("SELECT DISTINCT o FROM CustomerOrder o "
-			+ " LEFT JOIN o.shipmentChanges s "
-			+ " where CAST(o.orderId as string) LIKE %:orderId% "
-			+ " AND ( o.receiverLastName LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "
-			+ " AND o.orderDate BETWEEN :startDate AND :endDate "
-			+ " AND STR(o.validFlag) like %:validFlag% " 
-			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
-			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
-			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
-			+ " AND (o.customer.email LIKE %:email% OR o.customer.email IS NULL)"
-			+ " AND (s.reason LIKE %:shipmentChangeReason% OR s.reason IS NULL)")
-	public Page<CustomerOrder> findByConditions(
-			@Param("name") String name, 
-			@Param("orderId") String orderId, 
-			@Param("startDate") Date startDate, 
-			@Param("endDate") Date endDate,
-			@Param("validFlag") String validFlag, 
-			@Param("allowForeignFruits") String allowForeignFruits,
-			@Param("orderStatusId") String orderStatusId,
-			@Param("receiverCellphone") String receiverCellphone,
-			@Param("email") String email,
-			@Param("shipmentChangeReason") String shipmentChangeReason,
-			Pageable pageable);
-	
-	
-	@Query("SELECT DISTINCT o FROM CustomerOrder o "
-			+ " LEFT JOIN o.shipmentChanges s "
-			+ " where CAST(o.orderId as string) LIKE %:orderId% "
-			+ " AND ( o.receiverLastName LIKE %:name% OR o.receiverFirstName LIKE %:name% ) "
-			+ " AND o.orderDate BETWEEN :startDate AND :endDate "
-			+ " AND STR(o.validFlag) like %:validFlag% " 
-			+ " AND o.allowForeignFruits like %:allowForeignFruits% "
-			+ " AND STR(o.orderStatus.orderStatusId) like %:orderStatusId% "
-			+ " AND o.receiverCellphone LIKE %:receiverCellphone% "
-			+ " AND (o.customer.email LIKE %:email% OR o.customer.email IS NULL)"
-			+ " AND (s.reason LIKE %:shipmentChangeReason% OR s.reason IS NULL)")
-	public List<CustomerOrder> findByConditions(
-			@Param("name") String name, 
-			@Param("orderId") String orderId, 
-			@Param("startDate") Date startDate, 
-			@Param("endDate") Date endDate,
-			@Param("validFlag") String validFlag, 
-			@Param("allowForeignFruits") String allowForeignFruits,
-			@Param("orderStatusId") String orderStatusId,
-			@Param("receiverCellphone") String receiverCellphone,
-			@Param("email") String email,
-			@Param("shipmentChangeReason") String shipmentChangeReason);
+	@Query(value="SELECT DISTINCT o.order_id FROM CustomerOrder o "
+			+ " LEFT JOIN ShipmentChange s ON o.order_id = s.order_id "
+			+ " LEFT JOIN Customer c ON o.customer_id = c.customer_id "
+			+ " WHERE CAST(o.order_id as CHAR(11)) LIKE %?2% "
+			+ " AND (o.receiver_last_name LIKE %?1% OR o.receiver_first_name LIKE %?1%) "
+			+ " AND o.order_date BETWEEN ?3 AND ?4 "
+			+ " AND CAST(o.valid_flag as CHAR(1)) like %?5% " 
+			+ " AND o.allow_foreign_fruits like %?6% "
+			+ " AND CAST(o.order_status_id as CHAR(2)) like %?7% "
+			+ " AND o.receiver_cellphone LIKE %?8% "
+			+ " AND CASE WHEN '' NOT LIKE %?9% THEN (c.email LIKE %?9%) ELSE TRUE END  "
+			+ " AND CASE WHEN '' NOT LIKE %?10% THEN (s.reason LIKE %?10%) ELSE TRUE END  "
+			+ " ORDER BY o.order_id DESC ",
+			nativeQuery = true)
+	public List<Integer> findByConditions(
+			String name, 
+			String orderId, 
+			Date startDate, 
+			Date endDate,
+			String validFlag, 
+			String allowForeignFruits,
+			String orderStatusId,
+			String receiverCellphone,
+			String email,
+			String shipmentChangeReason);
 }

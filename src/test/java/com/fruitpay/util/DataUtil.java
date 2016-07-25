@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -20,12 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fruitpay.base.comm.CommConst.VALID_FLAG;
 import com.fruitpay.base.comm.OrderStatus;
-import com.fruitpay.base.comm.ShipmentStatus;
 import com.fruitpay.base.model.Constant;
 import com.fruitpay.base.model.ConstantOption;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
 import com.fruitpay.base.model.CustomerOrder;
+import com.fruitpay.base.model.CustomerClaim;
+import com.fruitpay.base.model.CustomerClaimStatus;
 import com.fruitpay.base.model.OrderComment;
 import com.fruitpay.base.model.OrderPlatform;
 import com.fruitpay.base.model.OrderPreference;
@@ -38,11 +38,9 @@ import com.fruitpay.base.model.ShipmentChange;
 import com.fruitpay.base.model.ShipmentDay;
 import com.fruitpay.base.model.ShipmentPeriod;
 import com.fruitpay.base.model.ShipmentRecord;
-import com.fruitpay.base.model.ShipmentRecordDetail;
 import com.fruitpay.base.model.UserRole;
 import com.fruitpay.base.service.LoginService;
 import com.fruitpay.base.service.StaticDataService;
-import com.fruitpay.comm.auth.Base64;
 import com.fruitpay.comm.auth.LoginConst;
 import com.fruitpay.comm.utils.AssertUtils;
 import com.fruitpay.comm.utils.Md5Util;
@@ -54,6 +52,32 @@ public class DataUtil {
 	StaticDataService staticDataService;
 	@Inject
 	LoginService loginService;
+	
+	public CustomerClaimStatus getCustomerClaimStatus() {
+		Constant claimStatusType = staticDataService.getConstant(21);
+		CustomerClaimStatus customerClaimStatus = new CustomerClaimStatus();
+		customerClaimStatus.setClaimStatusType(claimStatusType.getConstOptions().get(1));
+		customerClaimStatus.setNote("note");
+		return customerClaimStatus;
+	}
+	
+	public CustomerClaim getCustomerClaim() {
+		Constant claimPlatform = staticDataService.getConstant(19);
+		Constant claimType = staticDataService.getConstant(20);
+		Constant claimStatusType = staticDataService.getConstant(21);
+		CustomerClaimStatus customerClaimStatus = new CustomerClaimStatus();
+		customerClaimStatus.setClaimStatusType(claimStatusType.getConstOptions().get(0));
+		customerClaimStatus.setNote("note");
+		CustomerClaim customerClaim = new CustomerClaim();
+		customerClaim.setContent("Not handled");
+		customerClaim.setHandleWay("HandleWay");
+		customerClaim.setNote("Note");
+		customerClaim.setDate(new Date());
+		customerClaim.setClaimPlatform(claimPlatform.getConstOptions().get(0).getOptionDesc());
+		customerClaim.setClaimType(claimType.getConstOptions().get(0).getOptionDesc());
+		customerClaim.add(customerClaimStatus);
+		return customerClaim;
+	}
 	
 	public OrderComment getOrderComment(CustomerOrder customerOrder) {
 		OrderComment orderComment = new OrderComment();
