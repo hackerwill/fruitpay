@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.CustomerOrder;
 import com.fruitpay.base.service.CouponService;
@@ -40,7 +41,7 @@ public class EmailNewOrderServiceImpl extends EmailContentService<CustomerOrder>
 		map.put("TOTAL_PRICE", String.valueOf(order.getTotalPrice()));
 		map.put("PRICE", String.valueOf(getRealPrice(order)));
 		map.put("COUPON_DESC",  getCouponDescs(order.getCoupons()));
-		map.put("PRODUCT_NUMBER", String.valueOf(order.getProgramNum()));
+		map.put("PRODUCT_NUMBER", String.valueOf((Integer)(order.getProgramNum() * (CommConst.CREDIT_CARD_PERIOD.PERIOD.value() / order.getShipmentPeriod().getDuration()))));
 		map.put("PAYMENT_MODE_NAME", order.getPaymentMode().getPaymentModeName());
 		map.put("PAYMENT_EXTRA_PRICE", String.valueOf(order.getPaymentMode().getPaymentExtraPrice()));
 		map.put("EMAIL", order.getCustomer().getEmail());

@@ -115,7 +115,7 @@ public class CouponServiceImpl implements CouponService {
 		switch(getType(coupon)){
 			//打折比例
 			case byPercentage: 
-				discountPrice = (int)(Math.round(price * countDiscountPercentOff(coupon, price)));
+				discountPrice = (int)(Math.ceil(price * countDiscountPercentOff(coupon, price)));
 				break;
 			//依照打折數
 			case byAmount:

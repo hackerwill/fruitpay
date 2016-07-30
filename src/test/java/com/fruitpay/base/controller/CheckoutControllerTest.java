@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fruitpay.base.comm.CommConst;
 import com.fruitpay.base.model.CheckoutPostBean;
 import com.fruitpay.base.model.Coupon;
 import com.fruitpay.base.model.Customer;
@@ -126,14 +127,15 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 		
 		checkoutPostBean.setCustomer(customer);
 		checkoutPostBean.setCustomerOrder(customerOrder);
-		
+		double discount = (100 - customerOrder.getCoupons().get(0).getValue()) / 100.0;
+		int total = (int)((customerOrder.getTotalPrice() * (CommConst.CREDIT_CARD_PERIOD.PERIOD.value() / customerOrder.getShipmentPeriod().getDuration()) * discount));
 		this.mockMvc.perform(post("/checkoutCtrl/checkout")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(checkoutPostBean)))
 	   		.andExpect(status().isOk())
 	   		.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
 	   		.andExpect(jsonPath("$.receiverCellphone", is(dataUtil.getCustomerOrder().getReceiverCellphone())))
-	   		.andExpect(jsonPath("$.totalPrice", is(449 * customerOrder.getProgramNum())));
+	   		.andExpect(jsonPath("$.totalPrice", is(total)));
 		
 	}
 	
@@ -142,12 +144,13 @@ public class CheckoutControllerTest extends AbstractSpringJnitTest{
 		
 		CustomerOrder customerOrder = dataUtil.getCustomerOrder();
 		customerOrder.setCoupons(dataUtil.getCouponList());
-		
+		double discount = (100 - customerOrder.getCoupons().get(0).getValue()) / 100.0;
+		int total = (int)((customerOrder.getTotalPrice() * (CommConst.CREDIT_CARD_PERIOD.PERIOD.value() / customerOrder.getShipmentPeriod().getDuration()) * discount));
 		this.mockMvc.perform(post("/checkoutCtrl/totalPrice")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(customerOrder)))
 	   		.andExpect(status().isOk())
-	   		.andExpect(content().string(String.valueOf(customerOrder.getProgramNum() * 449)));
+	   		.andExpect(content().string(String.valueOf(total)));
 	} 
 
 }
