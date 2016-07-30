@@ -296,6 +296,12 @@
 			<artifactId>gson</artifactId>
 			<version>2.6.2</version>
 		</dependency>
+		<!-- Allpay 電子發票API -->
+		<dependency>
+			<groupId>com.fruitpay</groupId>
+			<artifactId>allpayInvoice</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		
 	</dependencies>
 
